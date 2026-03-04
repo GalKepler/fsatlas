@@ -1,0 +1,192 @@
+# fsatlas built-in atlas catalog
+# Each atlas entry defines how to acquire, identify, and use the atlas.
+#
+# Fields:
+#   name:        Short identifier used in CLI (e.g., schaefer100-7)
+#   description: Human-readable description
+#   type:        "surface" (.annot in fsaverage) or "volumetric" (NIfTI in MNI)
+#   space:       Source space (fsaverage, MNI152NLin6Asym, MNI152NLin2009cAsym)
+#   source_url:  Where to download the atlas files
+#   files:       Dict of files to download (key = local name, value = URL or path within archive)
+#   labels_tsv:  Optional URL/path to a TSV mapping index -> label name
+#   citation:    Short citation string
+#   family:      Grouping key for related atlases (e.g., "schaefer2018")
+
+# =============================================================================
+# Schaefer 2018 — Local-Global Parcellation (surface-based, fsaverage)
+# =============================================================================
+# .annot files are available from the CBIG GitHub repo for fsaverage space.
+
+schaefer100-7:
+  name: schaefer100-7
+  family: schaefer2018
+  description: "Schaefer 2018, 100 parcels, 7-network"
+  type: surface
+  space: fsaverage
+  source_url: "https://github.com/ThomasYeoLab/CBIG/raw/v0.14.3-Update_Yeo2011_Schaefer2018_labelname/stable_projects/brain_parcellation/Schaefer2018_LocalGlobal/Parcellations/FreeSurfer5.3/fsaverage/label"
+  files:
+    lh.annot: "lh.Schaefer2018_100Parcels_7Networks_order.annot"
+    rh.annot: "rh.Schaefer2018_100Parcels_7Networks_order.annot"
+  citation: "Schaefer et al., Cerebral Cortex, 2018"
+
+schaefer200-7:
+  name: schaefer200-7
+  family: schaefer2018
+  description: "Schaefer 2018, 200 parcels, 7-network"
+  type: surface
+  space: fsaverage
+  source_url: "https://github.com/ThomasYeoLab/CBIG/raw/v0.14.3-Update_Yeo2011_Schaefer2018_labelname/stable_projects/brain_parcellation/Schaefer2018_LocalGlobal/Parcellations/FreeSurfer5.3/fsaverage/label"
+  files:
+    lh.annot: "lh.Schaefer2018_200Parcels_7Networks_order.annot"
+    rh.annot: "rh.Schaefer2018_200Parcels_7Networks_order.annot"
+  citation: "Schaefer et al., Cerebral Cortex, 2018"
+
+schaefer400-7:
+  name: schaefer400-7
+  family: schaefer2018
+  description: "Schaefer 2018, 400 parcels, 7-network"
+  type: surface
+  space: fsaverage
+  source_url: "https://github.com/ThomasYeoLab/CBIG/raw/v0.14.3-Update_Yeo2011_Schaefer2018_labelname/stable_projects/brain_parcellation/Schaefer2018_LocalGlobal/Parcellations/FreeSurfer5.3/fsaverage/label"
+  files:
+    lh.annot: "lh.Schaefer2018_400Parcels_7Networks_order.annot"
+    rh.annot: "rh.Schaefer2018_400Parcels_7Networks_order.annot"
+  citation: "Schaefer et al., Cerebral Cortex, 2018"
+
+schaefer100-17:
+  name: schaefer100-17
+  family: schaefer2018
+  description: "Schaefer 2018, 100 parcels, 17-network"
+  type: surface
+  space: fsaverage
+  source_url: "https://github.com/ThomasYeoLab/CBIG/raw/v0.14.3-Update_Yeo2011_Schaefer2018_labelname/stable_projects/brain_parcellation/Schaefer2018_LocalGlobal/Parcellations/FreeSurfer5.3/fsaverage/label"
+  files:
+    lh.annot: "lh.Schaefer2018_100Parcels_17Networks_order.annot"
+    rh.annot: "rh.Schaefer2018_100Parcels_17Networks_order.annot"
+  citation: "Schaefer et al., Cerebral Cortex, 2018"
+
+schaefer200-17:
+  name: schaefer200-17
+  family: schaefer2018
+  description: "Schaefer 2018, 200 parcels, 17-network"
+  type: surface
+  space: fsaverage
+  source_url: "https://github.com/ThomasYeoLab/CBIG/raw/v0.14.3-Update_Yeo2011_Schaefer2018_labelname/stable_projects/brain_parcellation/Schaefer2018_LocalGlobal/Parcellations/FreeSurfer5.3/fsaverage/label"
+  files:
+    lh.annot: "lh.Schaefer2018_200Parcels_17Networks_order.annot"
+    rh.annot: "rh.Schaefer2018_200Parcels_17Networks_order.annot"
+  citation: "Schaefer et al., Cerebral Cortex, 2018"
+
+schaefer400-17:
+  name: schaefer400-17
+  family: schaefer2018
+  description: "Schaefer 2018, 400 parcels, 17-network"
+  type: surface
+  space: fsaverage
+  source_url: "https://github.com/ThomasYeoLab/CBIG/raw/v0.14.3-Update_Yeo2011_Schaefer2018_labelname/stable_projects/brain_parcellation/Schaefer2018_LocalGlobal/Parcellations/FreeSurfer5.3/fsaverage/label"
+  files:
+    lh.annot: "lh.Schaefer2018_400Parcels_17Networks_order.annot"
+    rh.annot: "rh.Schaefer2018_400Parcels_17Networks_order.annot"
+  citation: "Schaefer et al., Cerebral Cortex, 2018"
+
+# =============================================================================
+# Tian 2020 — Melbourne Subcortex Atlas (volumetric, MNI152NLin6Asym)
+# =============================================================================
+
+tian-s1:
+  name: tian-s1
+  family: tian2020
+  description: "Tian 2020 Melbourne Subcortex Atlas, Scale I (16 regions)"
+  type: volumetric
+  space: MNI152NLin6Asym
+  source_url: "https://github.com/yetianmed/subcortex/raw/master/Group-Parcellation/3T/Subcortex-Only"
+  files:
+    atlas.nii.gz: "Tian_Subcortex_S1_3T.nii.gz"
+  labels_tsv: "Tian_Subcortex_S1_3T_label.txt"
+  citation: "Tian et al., Nature Neuroscience, 2020"
+
+tian-s2:
+  name: tian-s2
+  family: tian2020
+  description: "Tian 2020 Melbourne Subcortex Atlas, Scale II (32 regions)"
+  type: volumetric
+  space: MNI152NLin6Asym
+  source_url: "https://github.com/yetianmed/subcortex/raw/master/Group-Parcellation/3T/Subcortex-Only"
+  files:
+    atlas.nii.gz: "Tian_Subcortex_S2_3T.nii.gz"
+  labels_tsv: "Tian_Subcortex_S2_3T_label.txt"
+  citation: "Tian et al., Nature Neuroscience, 2020"
+
+tian-s3:
+  name: tian-s3
+  family: tian2020
+  description: "Tian 2020 Melbourne Subcortex Atlas, Scale III (50 regions)"
+  type: volumetric
+  space: MNI152NLin6Asym
+  source_url: "https://github.com/yetianmed/subcortex/raw/master/Group-Parcellation/3T/Subcortex-Only"
+  files:
+    atlas.nii.gz: "Tian_Subcortex_S3_3T.nii.gz"
+  labels_tsv: "Tian_Subcortex_S3_3T_label.txt"
+  citation: "Tian et al., Nature Neuroscience, 2020"
+
+tian-s4:
+  name: tian-s4
+  family: tian2020
+  description: "Tian 2020 Melbourne Subcortex Atlas, Scale IV (54 regions)"
+  type: volumetric
+  space: MNI152NLin6Asym
+  source_url: "https://github.com/yetianmed/subcortex/raw/master/Group-Parcellation/3T/Subcortex-Only"
+  files:
+    atlas.nii.gz: "Tian_Subcortex_S4_3T.nii.gz"
+  labels_tsv: "Tian_Subcortex_S4_3T_label.txt"
+  citation: "Tian et al., Nature Neuroscience, 2020"
+
+# =============================================================================
+# HCP-MMP 1.0 — Glasser Multi-Modal Parcellation (surface-based)
+# =============================================================================
+
+hcp-mmp:
+  name: hcp-mmp
+  family: glasser2016
+  description: "HCP Multi-Modal Parcellation 1.0 (360 cortical areas)"
+  type: surface
+  space: fsaverage
+  source_url: "https://github.com/ggseg/ggsegGlasser/raw/master/data-raw"
+  files:
+    lh.annot: "lh.HCPMMP1.annot"
+    rh.annot: "rh.HCPMMP1.annot"
+  citation: "Glasser et al., Nature, 2016"
+
+# =============================================================================
+# DKT Atlas (ships with FreeSurfer — no download needed)
+# =============================================================================
+
+dkt:
+  name: dkt
+  family: freesurfer-builtin
+  description: "Desikan-Killiany-Tourville Atlas (FreeSurfer built-in)"
+  type: surface
+  space: fsaverage
+  builtin: true
+  annot_name: "aparc.DKTatlas"
+  citation: "Klein & Tourville, Frontiers in Neuroscience, 2012"
+
+desikan:
+  name: desikan
+  family: freesurfer-builtin
+  description: "Desikan-Killiany Atlas (FreeSurfer built-in)"
+  type: surface
+  space: fsaverage
+  builtin: true
+  annot_name: "aparc"
+  citation: "Desikan et al., NeuroImage, 2006"
+
+destrieux:
+  name: destrieux
+  family: freesurfer-builtin
+  description: "Destrieux Atlas (FreeSurfer built-in)"
+  type: surface
+  space: fsaverage
+  builtin: true
+  annot_name: "aparc.a2009s"
+  citation: "Destrieux et al., NeuroImage, 2010"

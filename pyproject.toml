@@ -1,0 +1,78 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "fsatlas"
+version = "0.1.0"
+description = "Extract morphometric measures from FreeSurfer-processed subjects using arbitrary atlases"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [
+    { name = "Gal" },
+]
+keywords = [
+    "neuroimaging",
+    "freesurfer",
+    "atlas",
+    "parcellation",
+    "morphometry",
+    "brain",
+    "MRI",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Medical Science Apps.",
+]
+dependencies = [
+    "nibabel>=5.0",
+    "nilearn>=0.10",
+    "numpy>=1.24",
+    "pandas>=2.0",
+    "pyyaml>=6.0",
+    "click>=8.0",
+    "rich>=13.0",
+    "platformdirs>=3.0",
+    "requests>=2.28",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "ruff>=0.4",
+    "mypy>=1.0",
+]
+
+[project.scripts]
+fsatlas = "fsatlas.cli.main:cli"
+
+[project.urls]
+Homepage = "https://github.com/SNBB/fsatlas"
+Documentation = "https://github.com/SNBB/fsatlas#readme"
+Issues = "https://github.com/SNBB/fsatlas/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/fsatlas"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
