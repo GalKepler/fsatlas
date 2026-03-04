@@ -1,0 +1,65 @@
+/* fsatlas custom styles */
+
+.md-header__topic {
+  font-weight: 600;
+}
+
+/* Hero section on home page */
+.hero {
+  text-align: center;
+  padding: 3rem 1rem 2rem;
+}
+
+.hero img {
+  max-width: 180px;
+  margin-bottom: 1.5rem;
+}
+
+.hero h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.hero p {
+  font-size: 1.2rem;
+  color: var(--md-default-fg-color--light);
+  max-width: 600px;
+  margin: 0 auto 2rem;
+}
+
+/* Badge row */
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+/* Feature grid */
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.2rem;
+  margin: 2rem 0;
+}
+
+.feature-card {
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 8px;
+  padding: 1.2rem 1.4rem;
+  background: var(--md-code-bg-color);
+}
+
+.feature-card h3 {
+  margin-top: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.feature-card p {
+  margin-bottom: 0;
+  font-size: 0.9rem;
+  color: var(--md-default-fg-color--light);
+}
