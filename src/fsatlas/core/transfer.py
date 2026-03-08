@@ -14,6 +14,8 @@ import logging
 import subprocess
 from pathlib import Path
 
+import nibabel as nib
+
 from ..atlases.registry import AtlasSpec, CustomAtlasSpec
 from .environment import FreeSurferEnv, SubjectPaths
 
@@ -107,10 +109,14 @@ def transfer_volumetric_atlas(
     out_path = out_dir / f"{atlas_name}_native.nii.gz"
 
     if out_path.exists() and not overwrite:
-        logger.info(f"  Volumetric atlas already at {out_path}, skipping")
-        return out_path
+        if _nifti_shape_matches(out_path, subject.norm_mgz):
+            logger.info(f"  Volumetric atlas already at {out_path}, skipping")
+            return out_path
+        logger.warning(
+            f"  Existing {out_path} has wrong dimensions (stale cache); re-running transfer."
+        )
 
-    src_nifti = atlas.get_file("atlas.nii.gz")
+    src_nifti = _get_nifti_file(atlas)
 
     # Use mri_vol2vol with talairach.xfm (inverse) to go MNI -> native
     # --interp nearest is critical for label volumes
@@ -121,7 +127,6 @@ def transfer_volumetric_atlas(
         "--mov", str(src_nifti),
         "--targ", str(subject.norm_mgz),
         "--xfm", str(subject.talairach_xfm),
-        "--inv",
         "--interp", "nearest",
         "--o", str(out_path),
         "--no-save-reg",
@@ -144,6 +149,29 @@ def transfer_atlas(
         return transfer_volumetric_atlas(atlas, subject, env, overwrite)
     else:
         raise ValueError(f"Unknown atlas type: {atlas.type}")
+
+
+def _nifti_shape_matches(path_a: Path, path_b: Path) -> bool:
+    """Return True if both NIfTI/MGZ files have the same spatial dimensions."""
+    try:
+        return nib.load(str(path_a)).shape[:3] == nib.load(str(path_b)).shape[:3]
+    except Exception:
+        return False
+
+
+def _get_nifti_file(atlas: AnyAtlasSpec) -> Path:
+    """Return the NIfTI source path for a volumetric atlas, trying both extensions."""
+    for key in ("atlas.nii.gz", "atlas.nii"):
+        try:
+            return atlas.get_file(key)
+        except KeyError:
+            continue
+    # Fallback: scan available keys for any .nii or .nii.gz entry
+    files = atlas.files if isinstance(atlas, AtlasSpec) else atlas.paths
+    for key in files:
+        if key.endswith(".nii.gz") or key.endswith(".nii"):
+            return atlas.get_file(key)
+    raise KeyError(f"No NIfTI file found in atlas '{atlas.name}'. Available: {list(files)}")
 
 
 def _atlas_annot_name(atlas: AnyAtlasSpec) -> str:

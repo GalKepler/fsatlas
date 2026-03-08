@@ -69,7 +69,7 @@ def cli() -> None:
     default=Path("fsatlas_output"),
     help="Output directory for TSV files.",
 )
-@click.option("--overwrite", is_flag=True, help="Overwrite existing transferred atlases and stats.")
+@click.option("--force", "-f", is_flag=True, help="Recalculate and overwrite existing transferred atlases and stats.")
 @click.option("--verbose", "-v", is_flag=True, help="Verbose logging.")
 def extract(
     subjects_dir: Path | None,
@@ -78,7 +78,7 @@ def extract(
     subjects: tuple[str, ...],
     subjects_file: Path | None,
     output_dir: Path,
-    overwrite: bool,
+    force: bool,
     verbose: bool,
 ) -> None:
     """Extract morphometric measures for one atlas across subjects."""
@@ -122,7 +122,7 @@ def extract(
         subjects=subject_list,
         env=env,
         output_dir=output_dir,
-        overwrite=overwrite,
+        force=force,
     )
 
     # Report

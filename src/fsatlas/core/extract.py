@@ -8,9 +8,11 @@ Both are then converted to long-format pandas DataFrames.
 
 from __future__ import annotations
 
+import gzip
 import io
 import logging
 import re
+import tempfile
 from pathlib import Path
 
 import numpy as np
@@ -81,6 +83,7 @@ def extract_cortical_stats(
     subject: SubjectPaths,
     env: FreeSurferEnv,
     annot_paths: dict[str, Path],
+    force: bool = False,
 ) -> pd.DataFrame:
     """Extract cortical morphometrics using mris_anatomical_stats.
 
@@ -104,6 +107,7 @@ def extract_cortical_stats(
             hemi=hemi,
             annot_path=annot_path,
             atlas_name=atlas.name,
+            force=force,
         )
 
         if tiv is None:
@@ -127,6 +131,7 @@ def extract_volumetric_stats(
     subject: SubjectPaths,
     env: FreeSurferEnv,
     atlas_native_path: Path,
+    force: bool = False,
 ) -> pd.DataFrame:
     """Extract volumetric stats using mri_segstats.
 
@@ -140,11 +145,16 @@ def extract_volumetric_stats(
         Long-format DataFrame with columns:
         subject_id, atlas, hemisphere, region, measure, value
     """
+    labels_path = _resolve_labels_path(atlas)
+    ctab_path = _build_ctab(labels_path) if labels_path else None
+
     stats_path = _run_segstats(
         subject=subject,
         env=env,
         seg_path=atlas_native_path,
         atlas_name=atlas.name,
+        ctab_path=ctab_path,
+        force=force,
     )
 
     tiv = _parse_etiv_from_header(stats_path)
@@ -169,12 +179,17 @@ def _run_anatomical_stats(
     hemi: str,
     annot_path: Path,
     atlas_name: str,
+    force: bool = False,
 ) -> Path:
     """Run mris_anatomical_stats and return the output .stats path."""
     stats_dir = subject.stats_dir
     stats_dir.mkdir(exist_ok=True)
 
     stats_path = stats_dir / f"{hemi}.{atlas_name}.stats"
+
+    if stats_path.exists() and not force:
+        logger.info(f"  Stats already exist at {stats_path}, skipping (use --force to recompute)")
+        return stats_path
 
     logger.info(f"  Running mris_anatomical_stats for {hemi} {atlas_name}")
 
@@ -196,12 +211,18 @@ def _run_segstats(
     env: FreeSurferEnv,
     seg_path: Path,
     atlas_name: str,
+    ctab_path: Path | None = None,
+    force: bool = False,
 ) -> Path:
     """Run mri_segstats and return the output .stats path."""
     stats_dir = subject.stats_dir
     stats_dir.mkdir(exist_ok=True)
 
     stats_path = stats_dir / f"{atlas_name}.subcortical.stats"
+
+    if stats_path.exists() and not force:
+        logger.info(f"  Stats already exist at {stats_path}, skipping (use --force to recompute)")
+        return stats_path
 
     logger.info(f"  Running mri_segstats for {atlas_name}")
 
@@ -215,6 +236,9 @@ def _run_segstats(
         "--subject", subject.subject_id,
     ]
 
+    if ctab_path is not None:
+        cmd += ["--ctab", str(ctab_path)]
+
     _run_fs_command(cmd, env)
     return stats_path
 
@@ -225,13 +249,76 @@ def _run_segstats(
 
 
 def _parse_etiv_from_header(stats_path: Path) -> float | None:
-    """Extract eTIV from the '# Measure eTIV, ..., VALUE, mm^3' header line."""
+    """Extract eTIV from the stats file header.
+
+    mris_anatomical_stats writes:
+        # Measure eTIV, eTIV, Estimated Total Intracranial Volume, VALUE, mm^3
+    mri_segstats writes:
+        # Measure EstimatedTotalIntraCranialVol, eTIV, Estimated Total Intracranial Volume, VALUE, mm^3
+    """
     for line in stats_path.read_text().splitlines():
-        # e.g. "# Measure eTIV, eTIV, Estimated Total Intracranial Volume, 1234567.0, mm^3"
-        m = re.match(r"#\s+Measure\s+eTIV\s*,.*,\s*([\d.]+)\s*,\s*mm\^3", line)
+        m = re.search(r"Measure\s+\w+,\s*eTIV\s*,.*,\s*([\d.]+)\s*,\s*mm\^3", line)
         if m:
             return float(m.group(1))
     return None
+
+
+def _resolve_labels_path(atlas: AnyAtlasSpec) -> Path | None:
+    """Return the path to the atlas labels file, if available."""
+    if isinstance(atlas, AtlasSpec):
+        labels = atlas.cache_dir / "labels.tsv"
+        return labels if labels.exists() else None
+    elif isinstance(atlas, CustomAtlasSpec):
+        return atlas.labels_tsv
+    return None
+
+
+def _build_ctab(labels_path: Path) -> Path | None:
+    """Build a FreeSurfer color table from a labels file.
+
+    Supports two formats:
+      - "index name" per line  (e.g. "1 HIPl-lh")
+      - name-only per line, 1-indexed  (e.g. Tian atlas label files)
+
+    Also handles gzip-compressed label files (from cached downloads before
+    the download fix that ensures Content-Encoding decompression).
+
+    Returns path to a temp ctab file, or None if the labels file can't be parsed.
+    """
+    raw = labels_path.read_bytes()
+    if raw[:2] == b"\x1f\x8b":
+        raw = gzip.decompress(raw)
+    text = raw.decode("utf-8", errors="replace")
+
+    entries: list[tuple[int, str]] = []
+    for lineno, line in enumerate(text.splitlines(), start=1):
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        parts = line.split()
+        # If first token is an integer, treat as "index name [...]"
+        try:
+            idx = int(parts[0])
+            name = parts[1] if len(parts) > 1 else f"region_{idx}"
+        except (ValueError, IndexError):
+            # Name-only format: assign 1-based index by line number
+            idx = lineno
+            name = parts[0]
+        entries.append((idx, name))
+
+    if not entries:
+        logger.warning(f"No entries parsed from labels file: {labels_path}")
+        return None
+
+    # Write a FreeSurfer-format color table (index name R G B A)
+    # Colors don't matter for stats extraction; use neutral grey.
+    tmp = tempfile.NamedTemporaryFile(
+        mode="w", suffix=".ctab", delete=False, prefix="fsatlas_"
+    )
+    for idx, name in entries:
+        tmp.write(f"{idx} {name} 100 100 100 0\n")
+    tmp.close()
+    return Path(tmp.name)
 
 
 def _parse_cortical_stats_file(stats_path: Path) -> pd.DataFrame:

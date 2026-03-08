@@ -50,14 +50,19 @@ dev = [
     "ruff>=0.4",
     "mypy>=1.0",
 ]
+docs = [
+    "mkdocs-material>=9.5",
+    "mkdocstrings[python]>=0.24",
+    "mike>=2.0",
+]
 
 [project.scripts]
 fsatlas = "fsatlas.cli.main:cli"
 
 [project.urls]
-Homepage = "https://github.com/SNBB/fsatlas"
-Documentation = "https://github.com/SNBB/fsatlas#readme"
-Issues = "https://github.com/SNBB/fsatlas/issues"
+Homepage = "https://github.com/GalKepler/fsatlas"
+Documentation = "https://snbb.github.io/fsatlas"
+Issues = "https://github.com/GalKepler/fsatlas/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/fsatlas"]

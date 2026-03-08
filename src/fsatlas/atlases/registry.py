@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import logging
-import shutil
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Literal
@@ -191,8 +190,9 @@ class AtlasRegistry:
 
 
 def _download_file(url: str, dest: Path) -> None:
-    """Download a file with progress logging."""
+    """Download a file with progress logging, respecting Content-Encoding decompression."""
     resp = requests.get(url, stream=True, timeout=60)
     resp.raise_for_status()
     with open(dest, "wb") as f:
-        shutil.copyfileobj(resp.raw, f)
+        for chunk in resp.iter_content(chunk_size=65536):
+            f.write(chunk)

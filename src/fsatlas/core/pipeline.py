@@ -23,7 +23,7 @@ def run_extraction(
     subjects: list[str],
     env: FreeSurferEnv,
     output_dir: Path,
-    overwrite: bool = False,
+    force: bool = False,
 ) -> dict[str, Path]:
     """Run the full extraction pipeline for one atlas across subjects.
 
@@ -38,7 +38,7 @@ def run_extraction(
         subjects: List of subject IDs.
         env: FreeSurfer environment.
         output_dir: Where to write output TSVs.
-        overwrite: Re-run transfer/extraction even if outputs exist.
+        force: Re-run transfer/extraction even if outputs exist.
 
     Returns:
         Dict with keys "cortical" and/or "subcortical" mapping to output TSV paths.
@@ -78,14 +78,14 @@ def run_extraction(
 
                 # Transfer
                 logger.info(f"Processing {subject_id} with atlas {atlas.name}")
-                transfer_result = transfer_atlas(atlas, subject, env, overwrite)
+                transfer_result = transfer_atlas(atlas, subject, env, force)
 
                 # Extract
                 if atlas.type == "surface":
-                    df = extract_cortical_stats(atlas, subject, env, transfer_result)
+                    df = extract_cortical_stats(atlas, subject, env, transfer_result, force)
                     cortical_frames.append(df)
                 elif atlas.type == "volumetric":
-                    df = extract_volumetric_stats(atlas, subject, env, transfer_result)
+                    df = extract_volumetric_stats(atlas, subject, env, transfer_result, force)
                     volumetric_frames.append(df)
 
             except Exception as e:
