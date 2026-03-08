@@ -657,10 +657,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#7-overwrite-cached-results" class="md-nav__link">
+  <a href="#7-force-re-processing" class="md-nav__link">
     <span class="md-ellipsis">
       
-        7. Overwrite Cached Results
+        7. Force Re-Processing
       
     </span>
   </a>
@@ -1161,10 +1161,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#7-overwrite-cached-results" class="md-nav__link">
+  <a href="#7-force-re-processing" class="md-nav__link">
     <span class="md-ellipsis">
       
-        7. Overwrite Cached Results
+        7. Force Re-Processing
       
     </span>
   </a>
@@ -1302,9 +1302,9 @@
 </span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>fsatlas<span class="w"> </span>download<span class="w"> </span>tian-s2
 </span></code></pre></div>
 <hr />
-<h2 id="7-overwrite-cached-results">7. Overwrite Cached Results<a class="headerlink" href="#7-overwrite-cached-results" title="Permanent link">&para;</a></h2>
-<p>By default, fsatlas skips subjects where transferred atlas files already exist in the subject directory. To force re-processing:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>fsatlas<span class="w"> </span>extract<span class="w"> </span>--atlas<span class="w"> </span>schaefer100-7<span class="w"> </span>--overwrite<span class="w"> </span>-o<span class="w"> </span>./results
+<h2 id="7-force-re-processing">7. Force Re-Processing<a class="headerlink" href="#7-force-re-processing" title="Permanent link">&para;</a></h2>
+<p>By default, fsatlas skips subjects where transferred atlas files and stats already exist. To force re-processing:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>fsatlas<span class="w"> </span>extract<span class="w"> </span>--atlas<span class="w"> </span>schaefer100-7<span class="w"> </span>--force<span class="w"> </span>-o<span class="w"> </span>./results
 </span></code></pre></div>
 <hr />
 <h2 id="8-custom-surface-atlas">8. Custom Surface Atlas<a class="headerlink" href="#8-custom-surface-atlas" title="Permanent link">&para;</a></h2>

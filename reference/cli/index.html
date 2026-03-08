@@ -1402,10 +1402,10 @@
 <td>Text file with one subject ID per line</td>
 </tr>
 <tr>
-<td><code>--overwrite</code></td>
+<td><code>--force</code>, <code>-f</code></td>
 <td>flag</td>
 <td>No</td>
-<td>Re-run atlas transfer even if output files already exist</td>
+<td>Recalculate and overwrite existing transferred atlases and stats</td>
 </tr>
 <tr>
 <td><code>--subjects-dir</code></td>
@@ -1441,7 +1441,7 @@
 </span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>fsatlas<span class="w"> </span>extract<span class="w"> </span>--atlas<span class="w"> </span>desikan<span class="w"> </span>--subjects-dir<span class="w"> </span>/data/fs_subjects<span class="w"> </span>-o<span class="w"> </span>./results
 </span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>
 </span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="c1"># Force re-processing</span>
-</span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>fsatlas<span class="w"> </span>extract<span class="w"> </span>--atlas<span class="w"> </span>schaefer100-7<span class="w"> </span>--overwrite<span class="w"> </span>-o<span class="w"> </span>./results
+</span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>fsatlas<span class="w"> </span>extract<span class="w"> </span>--atlas<span class="w"> </span>schaefer100-7<span class="w"> </span>--force<span class="w"> </span>-o<span class="w"> </span>./results
 </span></code></pre></div>
 <h3 id="output">Output<a class="headerlink" href="#output" title="Permanent link">&para;</a></h3>
 <p>Written to <code>--output-dir</code>:</p>
