@@ -306,3 +306,19 @@ BN_Atlas:
     lh.annot: "lh.BN_Atlas.annot"
     rh.annot: "rh.BN_Atlas.annot"
   citation: "Fan et al., Cerebral Cortex, 2016"
+
+# Brainnetome subcortical segmentation.
+# Stats file is BN_Atlas_subcotex.stats (note intentional "subcotex" spelling —
+# that is the filename produced by the existing FreeSurfer pipeline).
+# The segmentation volume is BN_Atlas_subcotex.mgz in the subject mri/ dir.
+# Pre-computed stats files are detected and parsed directly; the fsatlas
+# volumetric transfer pipeline is used as a fallback for new subjects.
+
+BN_Atlas_subcotex:
+  name: BN_Atlas_subcotex
+  family: brainnetome
+  description: "Brainnetome Atlas subcortical segmentation (BN_Atlas_subcotex)"
+  type: volumetric
+  space: subject
+  files: {}
+  citation: "Fan et al., Cerebral Cortex, 2016"
