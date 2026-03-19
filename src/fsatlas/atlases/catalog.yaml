@@ -247,10 +247,10 @@ hcp-mmp:
   description: "HCP Multi-Modal Parcellation 1.0 (360 cortical areas)"
   type: surface
   space: fsaverage
-  source_url: "https://github.com/ggseg/ggsegGlasser/raw/master/data-raw"
+  source_url: "https://ndownloader.figshare.com/files"
   files:
-    lh.annot: "lh.HCPMMP1.annot"
-    rh.annot: "rh.HCPMMP1.annot"
+    lh.annot: "5528816"
+    rh.annot: "5528819"
   citation: "Glasser et al., Nature, 2016"
 
 # =============================================================================
@@ -286,3 +286,23 @@ destrieux:
   builtin: true
   annot_name: "aparc.a2009s"
   citation: "Destrieux et al., NeuroImage, 2010"
+
+# =============================================================================
+# Brainnetome Atlas (BNA) — surface-based, fsaverage
+# =============================================================================
+# .annot files are distributed as lh.BN_Atlas.annot / rh.BN_Atlas.annot.
+# Pre-generated subject-space annots and stats files are expected to already
+# exist in the FreeSurfer subject directory (label/ and stats/); the transfer
+# and stats computation steps are skipped automatically when they do.
+
+BN_Atlas:
+  name: BN_Atlas
+  family: brainnetome
+  description: "Brainnetome Atlas (BNA), 246 cortical parcels"
+  type: surface
+  space: fsaverage
+  source_url: "https://github.com/NeuroDataDesign/brainnetome/raw/main/BNA_PM_3D_246_Surf/fsaverage/label"
+  files:
+    lh.annot: "lh.BN_Atlas.annot"
+    rh.annot: "rh.BN_Atlas.annot"
+  citation: "Fan et al., Cerebral Cortex, 2016"
