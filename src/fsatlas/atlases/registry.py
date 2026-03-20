@@ -7,6 +7,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Literal
 
+import shutil
+
 import requests
 import yaml
 from platformdirs import user_cache_dir
@@ -32,6 +34,7 @@ class AtlasSpec:
     labels_tsv: str = ""
     builtin: bool = False
     annot_name: str = ""  # For FreeSurfer built-in atlases
+    local_source_dir: str = ""  # Local directory to copy files from (takes priority over source_url)
 
     @property
     def cache_dir(self) -> Path:
@@ -103,6 +106,7 @@ class AtlasRegistry:
                 builtin=entry.get("builtin", False),
                 annot_name=entry.get("annot_name", ""),
                 citation=entry.get("citation", ""),
+                local_source_dir=entry.get("local_source_dir", ""),
             )
 
     def list_atlases(self) -> list[AtlasSpec]:
@@ -130,10 +134,15 @@ class AtlasRegistry:
         atlas.cache_dir.mkdir(parents=True, exist_ok=True)
 
         for local_name, remote_filename in atlas.files.items():
-            url = f"{atlas.source_url}/{remote_filename}"
             dest = atlas.cache_dir / local_name
-            logger.info(f"Downloading {url} -> {dest}")
-            _download_file(url, dest)
+            local_dir = Path(atlas.local_source_dir) if atlas.local_source_dir else None
+            if local_dir and (local_dir / remote_filename).exists():
+                logger.info(f"Copying {local_dir / remote_filename} -> {dest}")
+                shutil.copy2(local_dir / remote_filename, dest)
+            else:
+                url = f"{atlas.source_url}/{remote_filename}"
+                logger.info(f"Downloading {url} -> {dest}")
+                _download_file(url, dest)
 
         # Download labels TSV if specified
         if atlas.labels_tsv:

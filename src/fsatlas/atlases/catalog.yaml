@@ -301,6 +301,7 @@ BN_Atlas:
   description: "Brainnetome Atlas (BNA), 246 cortical parcels"
   type: surface
   space: fsaverage
+  local_source_dir: "/media/storage/yalab-dev/voxelops/snbb-atlas-pack/sourcedata/Brainnetome/BN_Atlas_freesurfer/BN_Atlas_freesurfer/fsaverage/label"
   source_url: "https://github.com/NeuroDataDesign/brainnetome/raw/main/BNA_PM_3D_246_Surf/fsaverage/label"
   files:
     lh.annot: "lh.BN_Atlas.annot"
