@@ -144,12 +144,18 @@ class AtlasRegistry:
                 logger.info(f"Downloading {url} -> {dest}")
                 _download_file(url, dest)
 
-        # Download labels TSV if specified
+        # Copy or download labels TSV if specified
         if atlas.labels_tsv:
-            labels_url = f"{atlas.source_url}/{atlas.labels_tsv}"
             labels_dest = atlas.cache_dir / "labels.tsv"
-            logger.info(f"Downloading labels {labels_url} -> {labels_dest}")
-            _download_file(labels_url, labels_dest)
+            # Check for the labels file alongside the catalog first (package data)
+            catalog_labels = CATALOG_PATH.parent / atlas.labels_tsv
+            if catalog_labels.exists():
+                logger.info(f"Copying catalog labels {catalog_labels} -> {labels_dest}")
+                shutil.copy2(catalog_labels, labels_dest)
+            else:
+                labels_url = f"{atlas.source_url}/{atlas.labels_tsv}"
+                logger.info(f"Downloading labels {labels_url} -> {labels_dest}")
+                _download_file(labels_url, labels_dest)
 
         logger.info(f"Atlas '{name}' downloaded to {atlas.cache_dir}")
         return atlas

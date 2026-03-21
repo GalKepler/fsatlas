@@ -253,6 +253,115 @@ hcp-mmp:
     rh.annot: "5528819"
   citation: "Glasser et al., Nature, 2016"
 
+# HCPex subcortical component (66 parcels, thalamus + amygdala + hippocampus etc., indices 361–426).
+# Uses the combined HCPex NIfTI (hcp-mmp cortical + subcortical extension).
+
+hcpex_subcortical:
+  name: hcpex_subcortical
+  family: glasser2016
+  description: "HCPex subcortical component (66 parcels, indices 361–426)"
+  type: volumetric
+  space: MNI152NLin2009cAsym
+  local_source_dir: "/media/storage/yalab-dev/voxelops/snbb-atlas-pack/atlases/atlas-HCPex"
+  source_url: null
+  files:
+    atlas.nii.gz: "atlas-HCPex_space-MNI152NLin2009cAsym_res-01_dseg.nii.gz"
+  labels_tsv: "hcpex_subcortical_labels.tsv"
+  citation: "Huang et al., Cerebral Cortex, 2022"
+
+# =============================================================================
+# Gordon 2016 — Gordon 333-parcel Parcellation (surface-based, fsaverage)
+# =============================================================================
+# fsaverage .annot files must be present in the local source directory or
+# downloaded from the Gordon lab / CBIG / templateflow.  No stable public URL
+# for the fsaverage-projected annot files is hard-coded here; set
+# local_source_dir to a directory containing lh.Gordon333.annot and
+# rh.Gordon333.annot before use.
+
+gordon333:
+  name: gordon333
+  family: gordon2016
+  description: "Gordon 2016 Parcellation (333 cortical areas)"
+  type: surface
+  space: fsaverage
+  local_source_dir: null
+  source_url: null
+  files:
+    lh.annot: "lh.Gordon333.annot"
+    rh.annot: "rh.Gordon333.annot"
+  citation: "Gordon et al., Cerebral Cortex, 2016"
+
+# Gordon333Ext subcortical component (52 parcels, CIT168 + Cerebellum, indices 335–386).
+# Uses the combined Gordon333Ext NIfTI with a subcortical-only color table so that
+# mri_segstats reports only these labels.
+
+gordon333_subcortical:
+  name: gordon333_subcortical
+  family: gordon2016
+  description: "Gordon333Ext subcortical component (52 parcels, indices 335–386)"
+  type: volumetric
+  space: MNI152NLin2009cAsym
+  local_source_dir: "/media/storage/yalab-dev/voxelops/atlases/atlas-Gordon333Ext"
+  source_url: null
+  files:
+    atlas.nii.gz: "atlas-Gordon333Ext_space-MNI152NLin2009cAsym_res-01_dseg.nii.gz"
+  labels_tsv: "gordon333_subcortical_labels.tsv"
+  citation: "Gordon et al., Cerebral Cortex, 2016"
+
+# =============================================================================
+# AICHA 2015 — AICHA 384-parcel Atlas (volumetric, MNI152NLin2009cAsym)
+# =============================================================================
+# AICHA (Atlas of Intrinsic Connectivity of Homotopic Areas) is a volumetric
+# MNI-space atlas.  The combined AICHA384Ext NIfTI (cortical + cerebellar) is
+# used as the source; a cortical-only color table (indices 1–384) restricts
+# mri_segstats to the 384 bilateral cortical regions.
+
+aicha384:
+  name: aicha384
+  family: aicha2015
+  description: "AICHA 2015 Atlas (384 bilateral symmetric regions, indices 1–384)"
+  type: volumetric
+  space: MNI152NLin2009cAsym
+  local_source_dir: "/media/storage/yalab-dev/voxelops/atlases/atlas-AICHA384Ext"
+  source_url: null
+  files:
+    atlas.nii.gz: "atlas-AICHA384Ext_space-MNI152NLin2009cAsym_res-01_dseg.nii.gz"
+  labels_tsv: "aicha384_labels.tsv"
+  citation: "Joliot et al., Journal of Neuroscience Methods, 2015"
+
+# AICHA384Ext cerebellar/subcortical component (10 parcels, indices 386–395).
+aicha384_subcortical:
+  name: aicha384_subcortical
+  family: aicha2015
+  description: "AICHA384Ext cerebellar component (10 parcels, indices 386–395)"
+  type: volumetric
+  space: MNI152NLin2009cAsym
+  local_source_dir: "/media/storage/yalab-dev/voxelops/atlases/atlas-AICHA384Ext"
+  source_url: null
+  files:
+    atlas.nii.gz: "atlas-AICHA384Ext_space-MNI152NLin2009cAsym_res-01_dseg.nii.gz"
+  labels_tsv: "aicha384_subcortical_labels.tsv"
+  citation: "Joliot et al., Journal of Neuroscience Methods, 2015"
+
+# =============================================================================
+# AAL 2002 — Automated Anatomical Labeling, 116 regions (volumetric, MNI)
+# =============================================================================
+# Standard AAL atlas (Tzourio-Mazoyer et al. 2002) in MNI space.
+# Indices use the original AAL numbering (2001–9170), not 1-based.
+
+aal116:
+  name: aal116
+  family: aal2002
+  description: "Automated Anatomical Labeling 2002 (116 regions, MNI space)"
+  type: volumetric
+  space: MNI152NLin2009cAsym
+  local_source_dir: "/media/storage/yalab-dev/voxelops/atlases/atlas-AAL116"
+  source_url: null
+  files:
+    atlas.nii.gz: "atlas-AAL116_space-MNI152NLin2009cAsym_res-01_dseg.nii.gz"
+  labels_tsv: "aal116_labels.tsv"
+  citation: "Tzourio-Mazoyer et al., NeuroImage, 2002"
+
 # =============================================================================
 # DKT Atlas (ships with FreeSurfer — no download needed)
 # =============================================================================
@@ -287,6 +396,15 @@ destrieux:
   annot_name: "aparc.a2009s"
   citation: "Destrieux et al., NeuroImage, 2010"
 
+aseg:
+  name: aseg
+  family: freesurfer-builtin
+  description: "FreeSurfer automatic subcortical segmentation (aseg)"
+  type: volumetric
+  space: subject
+  builtin: true
+  citation: "Fischl et al., Neuron, 2002"
+
 # =============================================================================
 # Brainnetome Atlas (BNA) — surface-based, fsaverage
 # =============================================================================
@@ -318,8 +436,12 @@ BN_Atlas:
 BN_Atlas_subcotex:
   name: BN_Atlas_subcotex
   family: brainnetome
-  description: "Brainnetome Atlas subcortical segmentation (BN_Atlas_subcotex)"
+  description: "Brainnetome Atlas subcortical component (10 parcels, indices 248–257)"
   type: volumetric
-  space: subject
-  files: {}
+  space: MNI152NLin2009cAsym
+  local_source_dir: "/media/storage/yalab-dev/voxelops/atlases/atlas-Brainnetome246Ext"
+  source_url: null
+  files:
+    atlas.nii.gz: "atlas-Brainnetome246Ext_space-MNI152NLin2009cAsym_res-01_dseg.nii.gz"
+  labels_tsv: "BN_Atlas_subcotex_labels.tsv"
   citation: "Fan et al., Cerebral Cortex, 2016"
