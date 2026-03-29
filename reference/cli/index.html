@@ -1000,6 +1000,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#fsatlas-generate-lut" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fsatlas generate-lut
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="fsatlas generate-lut">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#options_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Options
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#examples_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#output-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output format
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#environment-variables" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1307,6 +1357,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#fsatlas-generate-lut" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fsatlas generate-lut
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="fsatlas generate-lut">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#options_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Options
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#examples_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Examples
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#output-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output format
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#environment-variables" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1371,6 +1471,7 @@
 <thead>
 <tr>
 <th>Option</th>
+<th>Short</th>
 <th>Type</th>
 <th>Required</th>
 <th>Description</th>
@@ -1378,49 +1479,71 @@
 </thead>
 <tbody>
 <tr>
-<td><code>--atlas</code>, <code>-a</code></td>
+<td><code>--atlas</code></td>
+<td><code>-a</code></td>
 <td>TEXT</td>
 <td><strong>Yes</strong></td>
-<td>Atlas ID (from catalog) or path to a <code>.annot</code> or <code>.nii.gz</code> file</td>
+<td>Atlas ID from catalog, or path to an atlas file</td>
 </tr>
 <tr>
-<td><code>--output-dir</code>, <code>-o</code></td>
+<td><code>--output-dir</code></td>
+<td><code>-o</code></td>
 <td>PATH</td>
-<td><strong>Yes</strong></td>
-<td>Directory where TSV results are written</td>
+<td>No</td>
+<td>Output directory (default: <code>fsatlas_output</code>)</td>
 </tr>
 <tr>
-<td><code>--subject</code>, <code>-s</code></td>
+<td><code>--format</code></td>
+<td><code>-F</code></td>
+<td>CHOICE</td>
+<td>No</td>
+<td>Atlas file format: <code>annot</code>, <code>nifti</code>, <code>dlabel_gii</code>, <code>gca</code>, <code>auto</code> (default: <code>auto</code>)</td>
+</tr>
+<tr>
+<td><code>--lut</code></td>
+<td><code>-l</code></td>
+<td>PATH</td>
+<td>No</td>
+<td>Path to a custom LUT TSV (<code>index</code>, <code>label</code>, <code>hemisphere</code>). Required for custom atlases without embedded labels.</td>
+</tr>
+<tr>
+<td><code>--subjects</code></td>
+<td><code>-s</code></td>
 <td>TEXT</td>
 <td>No</td>
-<td>Subject ID to process (repeatable; default: all subjects in <code>$SUBJECTS_DIR</code>)</td>
+<td>Subject IDs to process (repeatable; default: all in <code>$SUBJECTS_DIR</code>)</td>
 </tr>
 <tr>
 <td><code>--subjects-file</code></td>
+<td></td>
 <td>PATH</td>
 <td>No</td>
 <td>Text file with one subject ID per line</td>
 </tr>
 <tr>
-<td><code>--force</code>, <code>-f</code></td>
+<td><code>--force</code></td>
+<td><code>-f</code></td>
 <td>flag</td>
 <td>No</td>
-<td>Recalculate and overwrite existing transferred atlases and stats</td>
+<td>Recompute even if cached outputs exist</td>
 </tr>
 <tr>
 <td><code>--subjects-dir</code></td>
+<td><code>-d</code></td>
 <td>PATH</td>
 <td>No</td>
 <td>Override <code>$SUBJECTS_DIR</code> for this run</td>
 </tr>
 <tr>
-<td><code>--verbose</code>, <code>-v</code></td>
+<td><code>--verbose</code></td>
+<td><code>-v</code></td>
 <td>flag</td>
 <td>No</td>
 <td>Increase logging verbosity</td>
 </tr>
 </tbody>
 </table>
+<p><code>--atlas-type</code> is accepted for backward compatibility but is deprecated — use <code>--format</code> instead.</p>
 <h3 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># All subjects, catalog atlas</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>fsatlas<span class="w"> </span>extract<span class="w"> </span>--atlas<span class="w"> </span>schaefer100-7<span class="w"> </span>-o<span class="w"> </span>./results
@@ -1431,17 +1554,30 @@
 </span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c1"># From subjects file</span>
 </span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>fsatlas<span class="w"> </span>extract<span class="w"> </span>--atlas<span class="w"> </span>tian-s2<span class="w"> </span>--subjects-file<span class="w"> </span>cohort.txt<span class="w"> </span>-o<span class="w"> </span>./results
 </span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="c1"># Custom surface atlas</span>
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>fsatlas<span class="w"> </span>extract<span class="w"> </span>--atlas<span class="w"> </span>/data/atlases/lh.myatlas.annot<span class="w"> </span>-o<span class="w"> </span>./results
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>
-</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="c1"># Custom volumetric atlas</span>
-</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>fsatlas<span class="w"> </span>extract<span class="w"> </span>--atlas<span class="w"> </span>/data/atlases/my_atlas.nii.gz<span class="w"> </span>-o<span class="w"> </span>./results
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="c1"># Custom surface atlas with LUT</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>fsatlas<span class="w"> </span>extract<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">    </span>--atlas<span class="w"> </span>/data/atlases/lh.myatlas.annot<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="w">    </span>--lut<span class="w"> </span>/data/atlases/myatlas_lut.tsv<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="w">    </span>-o<span class="w"> </span>./results
 </span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>
-</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="c1"># Override SUBJECTS_DIR</span>
-</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>fsatlas<span class="w"> </span>extract<span class="w"> </span>--atlas<span class="w"> </span>desikan<span class="w"> </span>--subjects-dir<span class="w"> </span>/data/fs_subjects<span class="w"> </span>-o<span class="w"> </span>./results
-</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>
-</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="c1"># Force re-processing</span>
-</span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>fsatlas<span class="w"> </span>extract<span class="w"> </span>--atlas<span class="w"> </span>schaefer100-7<span class="w"> </span>--force<span class="w"> </span>-o<span class="w"> </span>./results
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="c1"># Custom volumetric atlas with LUT</span>
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>fsatlas<span class="w"> </span>extract<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="w">    </span>--atlas<span class="w"> </span>/data/atlases/my_atlas.nii.gz<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="w">    </span>--lut<span class="w"> </span>/data/atlases/my_atlas_lut.tsv<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a><span class="w">    </span>-o<span class="w"> </span>./results
+</span><span id="__span-2-21"><a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>
+</span><span id="__span-2-22"><a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a><span class="c1"># CIFTI atlas</span>
+</span><span id="__span-2-23"><a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a>fsatlas<span class="w"> </span>extract<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-24"><a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a><span class="w">    </span>--atlas<span class="w"> </span>/data/atlases/lh.myatlas.dlabel.gii<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-25"><a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a><span class="w">    </span>--format<span class="w"> </span>dlabel_gii<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-26"><a id="__codelineno-2-26" name="__codelineno-2-26" href="#__codelineno-2-26"></a><span class="w">    </span>--lut<span class="w"> </span>/data/atlases/lut.tsv<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-27"><a id="__codelineno-2-27" name="__codelineno-2-27" href="#__codelineno-2-27"></a><span class="w">    </span>-o<span class="w"> </span>./results
+</span><span id="__span-2-28"><a id="__codelineno-2-28" name="__codelineno-2-28" href="#__codelineno-2-28"></a>
+</span><span id="__span-2-29"><a id="__codelineno-2-29" name="__codelineno-2-29" href="#__codelineno-2-29"></a><span class="c1"># Override SUBJECTS_DIR</span>
+</span><span id="__span-2-30"><a id="__codelineno-2-30" name="__codelineno-2-30" href="#__codelineno-2-30"></a>fsatlas<span class="w"> </span>extract<span class="w"> </span>--atlas<span class="w"> </span>desikan<span class="w"> </span>--subjects-dir<span class="w"> </span>/data/fs_subjects<span class="w"> </span>-o<span class="w"> </span>./results
+</span><span id="__span-2-31"><a id="__codelineno-2-31" name="__codelineno-2-31" href="#__codelineno-2-31"></a>
+</span><span id="__span-2-32"><a id="__codelineno-2-32" name="__codelineno-2-32" href="#__codelineno-2-32"></a><span class="c1"># Force re-processing</span>
+</span><span id="__span-2-33"><a id="__codelineno-2-33" name="__codelineno-2-33" href="#__codelineno-2-33"></a>fsatlas<span class="w"> </span>extract<span class="w"> </span>--atlas<span class="w"> </span>schaefer100-7<span class="w"> </span>--force<span class="w"> </span>-o<span class="w"> </span>./results
 </span></code></pre></div>
 <h3 id="output">Output<a class="headerlink" href="#output" title="Permanent link">&para;</a></h3>
 <p>Written to <code>--output-dir</code>:</p>
@@ -1454,12 +1590,8 @@
 </thead>
 <tbody>
 <tr>
-<td><code>{atlas}_cortical.tsv</code></td>
-<td>Long-format cortical morphometry (surface atlases)</td>
-</tr>
-<tr>
-<td><code>{atlas}_subcortical.tsv</code></td>
-<td>Long-format subcortical morphometry (volumetric atlases)</td>
+<td><code>{atlas}.tsv</code></td>
+<td>Wide-format morphometry (one row per region per subject)</td>
 </tr>
 <tr>
 <td><code>{atlas}_failures.tsv</code></td>
@@ -1501,49 +1633,41 @@
 </thead>
 <tbody>
 <tr>
-<td>ID</td>
+<td>Name</td>
 <td>Atlas identifier for use with <code>--atlas</code></td>
+</tr>
+<tr>
+<td>Format</td>
+<td>File format: <code>annot</code>, <code>nifti</code>, <code>dlabel_gii</code>, or <code>gca</code></td>
 </tr>
 <tr>
 <td>Family</td>
 <td>Atlas family / publication</td>
 </tr>
 <tr>
-<td>Type</td>
-<td><code>surface</code> or <code>volumetric</code></td>
+<td>Description</td>
+<td>Short description</td>
 </tr>
 <tr>
-<td>Parcels</td>
-<td>Number of regions</td>
-</tr>
-<tr>
-<td>Space</td>
-<td>Reference space</td>
-</tr>
-<tr>
-<td>Downloaded</td>
-<td>Whether the atlas is already in the local cache</td>
-</tr>
-<tr>
-<td>Citation</td>
-<td>Short citation key</td>
+<td>Cached</td>
+<td>Whether the atlas is already in the local cache (✓ or —)</td>
 </tr>
 </tbody>
 </table>
 <h3 id="example-output">Example output<a class="headerlink" href="#example-output" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>┌─────────────────┬──────────────┬─────────────┬─────────┬────────────┬────────────┐
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>│ ID              │ Family       │ Type        │ Parcels │ Downloaded │ Space      │
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>├─────────────────┼──────────────┼─────────────┼─────────┼────────────┼────────────┤
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>│ schaefer100-7   │ Schaefer2018 │ surface     │ 100     │ ✓          │ fsaverage  │
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>│ schaefer200-7   │ Schaefer2018 │ surface     │ 200     │            │ fsaverage  │
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>│ tian-s1         │ Tian2020     │ volumetric  │ 16      │            │ MNI152     │
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>│ desikan         │ FreeSurfer   │ surface     │ 68      │ built-in   │ fsaverage  │
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>└─────────────────┴──────────────┴─────────────┴─────────┴────────────┴────────────┘
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>┌─────────────────┬────────┬──────────────┬───────────────────────────┬────────┐
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>│ Name            │ Format │ Family       │ Description               │ Cached │
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>├─────────────────┼────────┼──────────────┼───────────────────────────┼────────┤
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>│ schaefer100-7   │ annot  │ schaefer2018 │ Schaefer 2018, 100 parcels│   ✓    │
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>│ schaefer200-7   │ annot  │ schaefer2018 │ Schaefer 2018, 200 parcels│   —    │
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>│ tian-s1         │ nifti  │ tian2020     │ Tian 2020 Scale I (16 reg)│   —    │
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>│ desikan         │ annot  │ freesurfer.. │ Desikan-Killiany (builtin)│   —    │
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>└─────────────────┴────────┴──────────────┴───────────────────────────┴────────┘
 </span></code></pre></div>
 <hr />
 <h2 id="fsatlas-download"><code>fsatlas download</code><a class="headerlink" href="#fsatlas-download" title="Permanent link">&para;</a></h2>
-<p>Pre-downloads one or more atlases to the local cache.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>fsatlas<span class="w"> </span>download<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>ATLAS_ID<span class="w"> </span><span class="o">[</span>ATLAS_ID<span class="w"> </span>...<span class="o">]</span>
+<p>Pre-downloads an atlas to the local cache and generates its LUT.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>fsatlas<span class="w"> </span>download<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>ATLAS_NAME
 </span></code></pre></div>
 <h3 id="arguments">Arguments<a class="headerlink" href="#arguments" title="Permanent link">&para;</a></h3>
 <table>
@@ -1555,8 +1679,8 @@
 </thead>
 <tbody>
 <tr>
-<td><code>ATLAS_ID</code></td>
-<td>One or more atlas IDs to download (from the catalog)</td>
+<td><code>ATLAS_NAME</code></td>
+<td>Atlas ID to download (from the catalog)</td>
 </tr>
 </tbody>
 </table>
@@ -1573,20 +1697,104 @@
 <td><code>--force</code></td>
 <td>Re-download even if already cached</td>
 </tr>
+<tr>
+<td><code>--subjects-dir</code>, <code>-d</code></td>
+<td>FreeSurfer SUBJECTS_DIR (needed to generate LUTs for built-in surface atlases)</td>
+</tr>
 </tbody>
 </table>
 <h3 id="examples_1">Examples<a class="headerlink" href="#examples_1" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Download a single atlas</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Download and cache atlas + LUT</span>
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>fsatlas<span class="w"> </span>download<span class="w"> </span>schaefer400-7
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1"># Download multiple atlases</span>
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>fsatlas<span class="w"> </span>download<span class="w"> </span>schaefer100-7<span class="w"> </span>schaefer400-17<span class="w"> </span>tian-s2<span class="w"> </span>hcp-mmp
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1"># Built-in atlas LUT generation (requires FREESURFER_HOME)</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>fsatlas<span class="w"> </span>download<span class="w"> </span>desikan
 </span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>
 </span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="c1"># Force re-download</span>
 </span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>fsatlas<span class="w"> </span>download<span class="w"> </span>--force<span class="w"> </span>schaefer100-7
 </span></code></pre></div>
 <h3 id="cache-location">Cache location<a class="headerlink" href="#cache-location" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>~/.cache/fsatlas/atlases/{atlas_id}/
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>~/.cache/fsatlas/atlases/{atlas_name}/
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>    lh.annot          # surface atlases
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>    rh.annot
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>    labels.tsv        # LUT (auto-generated or downloaded)
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>    atlas.nii.gz      # volumetric atlases
+</span></code></pre></div>
+<hr />
+<h2 id="fsatlas-generate-lut"><code>fsatlas generate-lut</code><a class="headerlink" href="#fsatlas-generate-lut" title="Permanent link">&para;</a></h2>
+<p>Generate a LUT TSV from a <code>.annot</code> file pair or a catalog atlas.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>fsatlas<span class="w"> </span>generate-lut<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</span></code></pre></div>
+<h3 id="options_2">Options<a class="headerlink" href="#options_2" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Short</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--atlas</code></td>
+<td><code>-a</code></td>
+<td>TEXT</td>
+<td>*</td>
+<td>Catalog atlas name (e.g. <code>desikan</code>)</td>
+</tr>
+<tr>
+<td><code>--lh-annot</code></td>
+<td></td>
+<td>PATH</td>
+<td>*</td>
+<td>Left-hemisphere <code>.annot</code> file</td>
+</tr>
+<tr>
+<td><code>--rh-annot</code></td>
+<td></td>
+<td>PATH</td>
+<td>*</td>
+<td>Right-hemisphere <code>.annot</code> file</td>
+</tr>
+<tr>
+<td><code>--output</code></td>
+<td><code>-o</code></td>
+<td>PATH</td>
+<td><strong>Yes</strong></td>
+<td>Output TSV path</td>
+</tr>
+<tr>
+<td><code>--subjects-dir</code></td>
+<td><code>-d</code></td>
+<td>PATH</td>
+<td>No</td>
+<td>FreeSurfer SUBJECTS_DIR (required for built-in atlases)</td>
+</tr>
+</tbody>
+</table>
+<p>* Provide either <code>--atlas</code> OR both <code>--lh-annot</code> and <code>--rh-annot</code>.</p>
+<h3 id="examples_2">Examples<a class="headerlink" href="#examples_2" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># From .annot files</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>fsatlas<span class="w"> </span>generate-lut<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">    </span>--lh-annot<span class="w"> </span>/data/lh.myatlas.annot<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">    </span>--rh-annot<span class="w"> </span>/data/rh.myatlas.annot<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">    </span>--output<span class="w"> </span>myatlas_lut.tsv
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="c1"># From a downloaded catalog atlas</span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>fsatlas<span class="w"> </span>download<span class="w"> </span>schaefer100-7
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>fsatlas<span class="w"> </span>generate-lut<span class="w"> </span>--atlas<span class="w"> </span>schaefer100-7<span class="w"> </span>--output<span class="w"> </span>schaefer100-7_lut.tsv
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>
+</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="c1"># From a FreeSurfer built-in (reads from fsaverage)</span>
+</span><span id="__span-9-12"><a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a>fsatlas<span class="w"> </span>generate-lut<span class="w"> </span>--atlas<span class="w"> </span>desikan<span class="w"> </span>--output<span class="w"> </span>desikan_lut.tsv
+</span></code></pre></div>
+<h3 id="output-format">Output format<a class="headerlink" href="#output-format" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>index   label                   hemisphere
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>1       7Networks_LH_Vis_1      lh
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>2       7Networks_LH_Vis_2      lh
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>...
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>51      7Networks_RH_Vis_1      rh
 </span></code></pre></div>
 <hr />
 <h2 id="environment-variables">Environment Variables<a class="headerlink" href="#environment-variables" title="Permanent link">&para;</a></h2>

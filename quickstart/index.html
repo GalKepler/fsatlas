@@ -668,10 +668,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#8-custom-surface-atlas" class="md-nav__link">
+  <a href="#8-custom-surface-atlas-annot" class="md-nav__link">
     <span class="md-ellipsis">
       
-        8. Custom Surface Atlas
+        8. Custom Surface Atlas (.annot)
       
     </span>
   </a>
@@ -679,10 +679,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#9-custom-volumetric-atlas" class="md-nav__link">
+  <a href="#9-custom-volumetric-atlas-niigz" class="md-nav__link">
     <span class="md-ellipsis">
       
-        9. Custom Volumetric Atlas
+        9. Custom Volumetric Atlas (.nii.gz)
       
     </span>
   </a>
@@ -690,10 +690,32 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#10-reading-the-output" class="md-nav__link">
+  <a href="#10-cifti-atlas-dlabelgii" class="md-nav__link">
     <span class="md-ellipsis">
       
-        10. Reading the Output
+        10. CIFTI Atlas (.dlabel.gii)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-generate-a-lut-for-a-built-in-atlas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Generate a LUT for a Built-in Atlas
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-reading-the-output" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12. Reading the Output
       
     </span>
   </a>
@@ -1172,10 +1194,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#8-custom-surface-atlas" class="md-nav__link">
+  <a href="#8-custom-surface-atlas-annot" class="md-nav__link">
     <span class="md-ellipsis">
       
-        8. Custom Surface Atlas
+        8. Custom Surface Atlas (.annot)
       
     </span>
   </a>
@@ -1183,10 +1205,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#9-custom-volumetric-atlas" class="md-nav__link">
+  <a href="#9-custom-volumetric-atlas-niigz" class="md-nav__link">
     <span class="md-ellipsis">
       
-        9. Custom Volumetric Atlas
+        9. Custom Volumetric Atlas (.nii.gz)
       
     </span>
   </a>
@@ -1194,10 +1216,32 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#10-reading-the-output" class="md-nav__link">
+  <a href="#10-cifti-atlas-dlabelgii" class="md-nav__link">
     <span class="md-ellipsis">
       
-        10. Reading the Output
+        10. CIFTI Atlas (.dlabel.gii)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-generate-a-lut-for-a-built-in-atlas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Generate a LUT for a Built-in Atlas
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-reading-the-output" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12. Reading the Output
       
     </span>
   </a>
@@ -1247,7 +1291,7 @@
 <h2 id="1-explore-available-atlases">1. Explore Available Atlases<a class="headerlink" href="#1-explore-available-atlases" title="Permanent link">&para;</a></h2>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>fsatlas<span class="w"> </span>list-atlases
 </span></code></pre></div>
-<p>This prints a table of all built-in atlases with their IDs, type (surface/volumetric), parcel counts, and citations. Use the <strong>ID</strong> column as the <code>--atlas</code> argument in subsequent commands.</p>
+<p>This prints a table of all built-in atlases with their IDs, format, parcel counts, and citations. The <strong>Name</strong> column is the <code>--atlas</code> argument for subsequent commands.</p>
 <hr />
 <h2 id="2-extract-cortical-morphometry-all-subjects">2. Extract Cortical Morphometry (All Subjects)<a class="headerlink" href="#2-extract-cortical-morphometry-all-subjects" title="Permanent link">&para;</a></h2>
 <p>Run on all subjects discovered in <code>$SUBJECTS_DIR</code>:</p>
@@ -1256,7 +1300,7 @@
 <p>On first run, fsatlas downloads the Schaefer 100-parcel atlas to <code>~/.cache/fsatlas/atlases/</code>. Subsequent runs use the cached copy.</p>
 <p><strong>Output files:</strong></p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>results/
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>├── schaefer100-7_cortical.tsv
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>├── schaefer100-7.tsv         # wide-format: one row per region per subject
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>└── schaefer100-7_failures.tsv
 </span></code></pre></div>
 <hr />
@@ -1271,95 +1315,125 @@
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>sub-01
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>sub-02
 </span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>sub-03
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>fsatlas<span class="w"> </span>extract<span class="w"> </span>--atlas<span class="w"> </span>schaefer100-7<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">    </span>--subjects-file<span class="w"> </span>subjects.txt<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">    </span>-o<span class="w"> </span>./results
+</span></code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>fsatlas<span class="w"> </span>extract<span class="w"> </span>--atlas<span class="w"> </span>schaefer100-7<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">    </span>--subjects-file<span class="w"> </span>subjects.txt<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span>-o<span class="w"> </span>./results
 </span></code></pre></div>
 <hr />
 <h2 id="4-extract-subcortical-morphometry">4. Extract Subcortical Morphometry<a class="headerlink" href="#4-extract-subcortical-morphometry" title="Permanent link">&para;</a></h2>
 <p>The Tian 2020 atlas provides multi-scale subcortical parcellations:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Scale 2 — 32 bilateral subcortical regions</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>fsatlas<span class="w"> </span>extract<span class="w"> </span>--atlas<span class="w"> </span>tian-s2<span class="w"> </span>-o<span class="w"> </span>./results
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Scale 2 — 32 bilateral subcortical regions</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>fsatlas<span class="w"> </span>extract<span class="w"> </span>--atlas<span class="w"> </span>tian-s2<span class="w"> </span>-o<span class="w"> </span>./results
 </span></code></pre></div>
 <p>Output:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>results/
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>├── tian-s2_subcortical.tsv
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>└── tian-s2_failures.tsv
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>results/
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>├── tian-s2.tsv
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>└── tian-s2_failures.tsv
 </span></code></pre></div>
 <hr />
 <h2 id="5-higher-resolution-cortical-atlas">5. Higher-Resolution Cortical Atlas<a class="headerlink" href="#5-higher-resolution-cortical-atlas" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># Schaefer 400-parcel with 17-network assignment</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>fsatlas<span class="w"> </span>extract<span class="w"> </span>--atlas<span class="w"> </span>schaefer400-17<span class="w"> </span>-o<span class="w"> </span>./results
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="c1"># HCP-MMP1 — 360 cortical areas (Glasser et al. 2016)</span>
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>fsatlas<span class="w"> </span>extract<span class="w"> </span>--atlas<span class="w"> </span>hcp-mmp<span class="w"> </span>-o<span class="w"> </span>./results
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># Schaefer 400-parcel with 17-network assignment</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>fsatlas<span class="w"> </span>extract<span class="w"> </span>--atlas<span class="w"> </span>schaefer400-17<span class="w"> </span>-o<span class="w"> </span>./results
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="c1"># HCP-MMP1 — 360 cortical areas (Glasser et al. 2016)</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>fsatlas<span class="w"> </span>extract<span class="w"> </span>--atlas<span class="w"> </span>hcp-mmp<span class="w"> </span>-o<span class="w"> </span>./results
 </span></code></pre></div>
 <hr />
 <h2 id="6-pre-download-before-a-batch-job">6. Pre-Download Before a Batch Job<a class="headerlink" href="#6-pre-download-before-a-batch-job" title="Permanent link">&para;</a></h2>
 <p>To avoid download latency during a long batch run, pre-download atlases:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>fsatlas<span class="w"> </span>download<span class="w"> </span>schaefer400-7
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>fsatlas<span class="w"> </span>download<span class="w"> </span>tian-s2
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>fsatlas<span class="w"> </span>download<span class="w"> </span>schaefer400-7
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>fsatlas<span class="w"> </span>download<span class="w"> </span>tian-s2
 </span></code></pre></div>
 <hr />
 <h2 id="7-force-re-processing">7. Force Re-Processing<a class="headerlink" href="#7-force-re-processing" title="Permanent link">&para;</a></h2>
 <p>By default, fsatlas skips subjects where transferred atlas files and stats already exist. To force re-processing:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>fsatlas<span class="w"> </span>extract<span class="w"> </span>--atlas<span class="w"> </span>schaefer100-7<span class="w"> </span>--force<span class="w"> </span>-o<span class="w"> </span>./results
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>fsatlas<span class="w"> </span>extract<span class="w"> </span>--atlas<span class="w"> </span>schaefer100-7<span class="w"> </span>--force<span class="w"> </span>-o<span class="w"> </span>./results
 </span></code></pre></div>
 <hr />
-<h2 id="8-custom-surface-atlas">8. Custom Surface Atlas<a class="headerlink" href="#8-custom-surface-atlas" title="Permanent link">&para;</a></h2>
-<p>Supply a FreeSurfer annotation file (<code>.annot</code>) in <code>fsaverage</code> space. Provide either hemisphere; fsatlas auto-detects the other:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># Using lh annotation</span>
-</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>fsatlas<span class="w"> </span>extract<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">    </span>--atlas<span class="w"> </span>/path/to/lh.myatlas.annot<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">    </span>-o<span class="w"> </span>./results
+<h2 id="8-custom-surface-atlas-annot">8. Custom Surface Atlas (<code>.annot</code>)<a class="headerlink" href="#8-custom-surface-atlas-annot" title="Permanent link">&para;</a></h2>
+<p>Supply a FreeSurfer annotation file in <code>fsaverage</code> space. Provide either hemisphere; fsatlas auto-detects the other. A LUT (lookup table) is required.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1"># Generate a LUT from the .annot colour table</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>fsatlas<span class="w"> </span>generate-lut<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w">    </span>--lh-annot<span class="w"> </span>/path/to/lh.myatlas.annot<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="w">    </span>--rh-annot<span class="w"> </span>/path/to/rh.myatlas.annot<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="w">    </span>--output<span class="w"> </span>myatlas_lut.tsv
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="c1"># Extract</span>
+</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>fsatlas<span class="w"> </span>extract<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a><span class="w">    </span>--atlas<span class="w"> </span>/path/to/lh.myatlas.annot<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-11-10"><a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a><span class="w">    </span>--lut<span class="w"> </span>myatlas_lut.tsv<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-11-11"><a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a><span class="w">    </span>-o<span class="w"> </span>./results
 </span></code></pre></div>
 <p>The file naming convention must follow <code>{hemi}.{atlas_name}.annot</code>. fsatlas will look for <code>rh.myatlas.annot</code> in the same directory.</p>
 <hr />
-<h2 id="9-custom-volumetric-atlas">9. Custom Volumetric Atlas<a class="headerlink" href="#9-custom-volumetric-atlas" title="Permanent link">&para;</a></h2>
-<p>Supply a NIfTI file (<code>.nii</code> or <code>.nii.gz</code>) in MNI152 space:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>fsatlas<span class="w"> </span>extract<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">    </span>--atlas<span class="w"> </span>/path/to/my_subcortical_atlas.nii.gz<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w">    </span>-o<span class="w"> </span>./results
+<h2 id="9-custom-volumetric-atlas-niigz">9. Custom Volumetric Atlas (<code>.nii.gz</code>)<a class="headerlink" href="#9-custom-volumetric-atlas-niigz" title="Permanent link">&para;</a></h2>
+<p>Supply a NIfTI file in MNI152 space with a matching LUT:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>fsatlas<span class="w"> </span>extract<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="w">    </span>--atlas<span class="w"> </span>/path/to/my_subcortical_atlas.nii.gz<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="w">    </span>--lut<span class="w"> </span>/path/to/lut.tsv<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="w">    </span>-o<span class="w"> </span>./results
 </span></code></pre></div>
 <p>fsatlas registers this to each subject's native space via <code>mri_vol2vol</code> and the subject's <code>talairach.xfm</code>.</p>
 <hr />
-<h2 id="10-reading-the-output">10. Reading the Output<a class="headerlink" href="#10-reading-the-output" title="Permanent link">&para;</a></h2>
-<p>The TSV output is in long (tidy) format — one row per measure per region per subject:</p>
+<h2 id="10-cifti-atlas-dlabelgii">10. CIFTI Atlas (<code>.dlabel.gii</code>)<a class="headerlink" href="#10-cifti-atlas-dlabelgii" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>fsatlas<span class="w"> </span>extract<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="w">    </span>--atlas<span class="w"> </span>/path/to/lh.myatlas.dlabel.gii<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="w">    </span>--format<span class="w"> </span>dlabel_gii<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="w">    </span>--lut<span class="w"> </span>/path/to/lut.tsv<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="w">    </span>-o<span class="w"> </span>./results
+</span></code></pre></div>
+<hr />
+<h2 id="11-generate-a-lut-for-a-built-in-atlas">11. Generate a LUT for a Built-in Atlas<a class="headerlink" href="#11-generate-a-lut-for-a-built-in-atlas" title="Permanent link">&para;</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1"># Desikan atlas (FreeSurfer built-in)</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>fsatlas<span class="w"> </span>generate-lut<span class="w"> </span>--atlas<span class="w"> </span>desikan<span class="w"> </span>--output<span class="w"> </span>desikan_lut.tsv
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="c1"># Schaefer 400-parcel (must be downloaded first)</span>
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>fsatlas<span class="w"> </span>download<span class="w"> </span>schaefer400-7
+</span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>fsatlas<span class="w"> </span>generate-lut<span class="w"> </span>--atlas<span class="w"> </span>schaefer400-7<span class="w"> </span>--output<span class="w"> </span>schaefer400-7_lut.tsv
+</span></code></pre></div>
+<hr />
+<h2 id="12-reading-the-output">12. Reading the Output<a class="headerlink" href="#12-reading-the-output" title="Permanent link">&para;</a></h2>
+<p>The TSV output is in wide format — one row per region per subject, measures as columns:</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Python / pandas</label><label for="__tabbed_1_2">R / tidyverse</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="language-python highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>
-</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;results/schaefer100-7_cortical.tsv&quot;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>
-</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="c1"># Filter to thickness only</span>
-</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="n">thickness</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;measure&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;thickness_mean_mm&quot;</span><span class="p">]</span>
-</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>
-</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="c1"># Pivot to wide format (regions as columns)</span>
-</span><span id="__span-12-9"><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="n">wide</span> <span class="o">=</span> <span class="n">thickness</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span>
-</span><span id="__span-12-10"><a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a>    <span class="n">index</span><span class="o">=</span><span class="s2">&quot;subject_id&quot;</span><span class="p">,</span>
-</span><span id="__span-12-11"><a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a>    <span class="n">columns</span><span class="o">=</span><span class="s2">&quot;region&quot;</span><span class="p">,</span>
-</span><span id="__span-12-12"><a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a>    <span class="n">values</span><span class="o">=</span><span class="s2">&quot;value&quot;</span>
-</span><span id="__span-12-13"><a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;results/schaefer100-7.tsv&quot;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="c1"># Select thickness only, left hemisphere</span>
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="n">lh_thickness</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;hemisphere&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;lh&quot;</span><span class="p">][</span>
+</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a>    <span class="p">[</span><span class="s2">&quot;subject_id&quot;</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="s2">&quot;thickness_mean_mm&quot;</span><span class="p">]</span>
+</span><span id="__span-15-8"><a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a><span class="p">]</span>
+</span><span id="__span-15-9"><a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a>
+</span><span id="__span-15-10"><a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a><span class="c1"># Subjects × regions matrix</span>
+</span><span id="__span-15-11"><a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a><span class="n">matrix</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span>
+</span><span id="__span-15-12"><a id="__codelineno-15-12" name="__codelineno-15-12" href="#__codelineno-15-12"></a>    <span class="n">index</span><span class="o">=</span><span class="s2">&quot;subject_id&quot;</span><span class="p">,</span>
+</span><span id="__span-15-13"><a id="__codelineno-15-13" name="__codelineno-15-13" href="#__codelineno-15-13"></a>    <span class="n">columns</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">,</span>
+</span><span id="__span-15-14"><a id="__codelineno-15-14" name="__codelineno-15-14" href="#__codelineno-15-14"></a>    <span class="n">values</span><span class="o">=</span><span class="s2">&quot;thickness_mean_mm&quot;</span><span class="p">,</span>
+</span><span id="__span-15-15"><a id="__codelineno-15-15" name="__codelineno-15-15" href="#__codelineno-15-15"></a><span class="p">)</span>
+</span><span id="__span-15-16"><a id="__codelineno-15-16" name="__codelineno-15-16" href="#__codelineno-15-16"></a>
+</span><span id="__span-15-17"><a id="__codelineno-15-17" name="__codelineno-15-17" href="#__codelineno-15-17"></a><span class="c1"># eTIV normalization</span>
+</span><span id="__span-15-18"><a id="__codelineno-15-18" name="__codelineno-15-18" href="#__codelineno-15-18"></a><span class="n">df</span><span class="p">[</span><span class="s2">&quot;surface_area_norm&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;surface_area_mm2&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;tiv_mm3&quot;</span><span class="p">]</span>
 </span></code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="language-r highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="nf">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span>
-</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>
-</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="n">df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">read_tsv</span><span class="p">(</span><span class="s">&quot;results/schaefer100-7_cortical.tsv&quot;</span><span class="p">)</span>
-</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>
-</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="c1"># Filter to left hemisphere thickness</span>
-</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="n">thickness_lh</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">df</span><span class="w"> </span><span class="o">|&gt;</span>
-</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="w">  </span><span class="nf">filter</span><span class="p">(</span><span class="n">measure</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;thickness_mean_mm&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">hemisphere</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;lh&quot;</span><span class="p">)</span>
-</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>
-</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a><span class="c1"># Wide format</span>
-</span><span id="__span-13-10"><a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a><span class="n">wide</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">thickness_lh</span><span class="w"> </span><span class="o">|&gt;</span>
-</span><span id="__span-13-11"><a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a><span class="w">  </span><span class="nf">pivot_wider</span><span class="p">(</span>
-</span><span id="__span-13-12"><a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a><span class="w">    </span><span class="n">id_cols</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">subject_id</span><span class="p">,</span>
-</span><span id="__span-13-13"><a id="__codelineno-13-13" name="__codelineno-13-13" href="#__codelineno-13-13"></a><span class="w">    </span><span class="n">names_from</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">region</span><span class="p">,</span>
-</span><span id="__span-13-14"><a id="__codelineno-13-14" name="__codelineno-13-14" href="#__codelineno-13-14"></a><span class="w">    </span><span class="n">values_from</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">value</span>
-</span><span id="__span-13-15"><a id="__codelineno-13-15" name="__codelineno-13-15" href="#__codelineno-13-15"></a><span class="w">  </span><span class="p">)</span>
+<div class="language-r highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="nf">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="n">df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">read_tsv</span><span class="p">(</span><span class="s">&quot;results/schaefer100-7.tsv&quot;</span><span class="p">)</span>
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="c1"># Filter to left hemisphere thickness</span>
+</span><span id="__span-16-6"><a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a><span class="n">lh_thickness</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">df</span><span class="w"> </span><span class="o">|&gt;</span>
+</span><span id="__span-16-7"><a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="w">  </span><span class="nf">filter</span><span class="p">(</span><span class="n">hemisphere</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;lh&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">|&gt;</span>
+</span><span id="__span-16-8"><a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a><span class="w">  </span><span class="nf">select</span><span class="p">(</span><span class="n">subject_id</span><span class="p">,</span><span class="w"> </span><span class="n">label</span><span class="p">,</span><span class="w"> </span><span class="n">thickness_mean_mm</span><span class="p">)</span>
+</span><span id="__span-16-9"><a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a>
+</span><span id="__span-16-10"><a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a><span class="c1"># Wide matrix (subjects × regions)</span>
+</span><span id="__span-16-11"><a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a><span class="n">matrix</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lh_thickness</span><span class="w"> </span><span class="o">|&gt;</span>
+</span><span id="__span-16-12"><a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a><span class="w">  </span><span class="nf">pivot_wider</span><span class="p">(</span><span class="n">names_from</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">label</span><span class="p">,</span><span class="w"> </span><span class="n">values_from</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">thickness_mean_mm</span><span class="p">)</span>
+</span><span id="__span-16-13"><a id="__codelineno-16-13" name="__codelineno-16-13" href="#__codelineno-16-13"></a>
+</span><span id="__span-16-14"><a id="__codelineno-16-14" name="__codelineno-16-14" href="#__codelineno-16-14"></a><span class="c1"># eTIV normalization</span>
+</span><span id="__span-16-15"><a id="__codelineno-16-15" name="__codelineno-16-15" href="#__codelineno-16-15"></a><span class="n">df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">df</span><span class="w"> </span><span class="o">|&gt;</span><span class="w"> </span><span class="nf">mutate</span><span class="p">(</span><span class="n">surface_area_norm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">surface_area_mm2</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">tiv_mm3</span><span class="p">)</span>
 </span></code></pre></div>
 </div>
 </div>
@@ -1367,23 +1441,23 @@
 <hr />
 <h2 id="failure-handling">Failure Handling<a class="headerlink" href="#failure-handling" title="Permanent link">&para;</a></h2>
 <p>If a subject fails (missing files, FreeSurfer error), fsatlas logs the error and moves to the next subject. Review failures in:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>results/{atlas}_failures.tsv
+<div class="language-text highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>results/{atlas}_failures.tsv
 </span></code></pre></div>
 <table>
 <thead>
 <tr>
 <th>subject_id</th>
-<th>atlas</th>
-<th>stage</th>
-<th>error</th>
+<th>reason</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>sub-99</td>
-<td>schaefer100-7</td>
-<td>transfer</td>
-<td>Missing transform: talairach.xfm</td>
+<td>Missing: ['.../mri/norm.mgz']</td>
+</tr>
+<tr>
+<td>sub-55</td>
+<td>Command failed (exit 1): mri_surf2surf ...</td>
 </tr>
 </tbody>
 </table>

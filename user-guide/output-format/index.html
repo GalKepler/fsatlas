@@ -744,22 +744,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cortical-output-schema" class="md-nav__link">
+  <a href="#output-schema" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Cortical Output Schema
+        Output Schema
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Cortical Output Schema">
+    <nav class="md-nav" aria-label="Output Schema">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#cortical-measures" class="md-nav__link">
+  <a href="#cortical-measures-annot-dlabelgii-atlases" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Cortical Measures
+        Cortical measures (.annot, .dlabel.gii atlases)
       
     </span>
   </a>
@@ -767,10 +767,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#example" class="md-nav__link">
+  <a href="#volumetric-measures-nii-gca-atlases" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Example
+        Volumetric measures (.nii, .gca atlases)
       
     </span>
   </a>
@@ -783,22 +783,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#subcortical-output-schema" class="md-nav__link">
+  <a href="#example-output" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Subcortical Output Schema
+        Example Output
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Subcortical Output Schema">
+    <nav class="md-nav" aria-label="Example Output">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#subcortical-measures" class="md-nav__link">
+  <a href="#cortical-schaefer-100-parcel" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Subcortical Measures
+        Cortical (Schaefer 100-parcel)
       
     </span>
   </a>
@@ -806,10 +806,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#example_1" class="md-nav__link">
+  <a href="#volumetric-tian-s2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Example
+        Volumetric (Tian S2)
       
     </span>
   </a>
@@ -834,7 +834,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#example_2" class="md-nav__link">
+  <a href="#example" class="md-nav__link">
     <span class="md-ellipsis">
       
         Example
@@ -1091,22 +1091,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cortical-output-schema" class="md-nav__link">
+  <a href="#output-schema" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Cortical Output Schema
+        Output Schema
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Cortical Output Schema">
+    <nav class="md-nav" aria-label="Output Schema">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#cortical-measures" class="md-nav__link">
+  <a href="#cortical-measures-annot-dlabelgii-atlases" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Cortical Measures
+        Cortical measures (.annot, .dlabel.gii atlases)
       
     </span>
   </a>
@@ -1114,10 +1114,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#example" class="md-nav__link">
+  <a href="#volumetric-measures-nii-gca-atlases" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Example
+        Volumetric measures (.nii, .gca atlases)
       
     </span>
   </a>
@@ -1130,22 +1130,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#subcortical-output-schema" class="md-nav__link">
+  <a href="#example-output" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Subcortical Output Schema
+        Example Output
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Subcortical Output Schema">
+    <nav class="md-nav" aria-label="Example Output">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#subcortical-measures" class="md-nav__link">
+  <a href="#cortical-schaefer-100-parcel" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Subcortical Measures
+        Cortical (Schaefer 100-parcel)
       
     </span>
   </a>
@@ -1153,10 +1153,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#example_1" class="md-nav__link">
+  <a href="#volumetric-tian-s2" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Example
+        Volumetric (Tian S2)
       
     </span>
   </a>
@@ -1181,7 +1181,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#example_2" class="md-nav__link">
+  <a href="#example" class="md-nav__link">
     <span class="md-ellipsis">
       
         Example
@@ -1228,10 +1228,10 @@
 
 
 <h1 id="output-format">Output Format<a class="headerlink" href="#output-format" title="Permanent link">&para;</a></h1>
-<p>fsatlas produces long-format (tidy) TSV files — one row per measure, per region, per subject. This format is directly compatible with pandas, R tidyverse, and statistical analysis software.</p>
+<p>fsatlas produces a single <strong>wide-format</strong> TSV file per extraction run — one row per region per subject, with every measure as a separate column. The schema is driven by the atlas's lookup table (LUT), so every region defined in the LUT appears as a row, even if the FreeSurfer stats command produced no data for it (the measure columns will be <code>NaN</code>).</p>
 <hr />
 <h2 id="files-written">Files Written<a class="headerlink" href="#files-written" title="Permanent link">&para;</a></h2>
-<p>For each extraction run, fsatlas writes up to three files to <code>--output-dir</code>:</p>
+<p>For each extraction run, fsatlas writes up to two files to <code>--output-dir</code>:</p>
 <table>
 <thead>
 <tr>
@@ -1242,25 +1242,20 @@
 </thead>
 <tbody>
 <tr>
-<td><code>{atlas}_cortical.tsv</code></td>
-<td>Cortical morphometry</td>
-<td>Surface atlases</td>
-</tr>
-<tr>
-<td><code>{atlas}_subcortical.tsv</code></td>
-<td>Subcortical morphometry</td>
-<td>Volumetric atlases</td>
+<td><code>{atlas}.tsv</code></td>
+<td>Wide-format morphometry</td>
+<td>Always (if any subject succeeded)</td>
 </tr>
 <tr>
 <td><code>{atlas}_failures.tsv</code></td>
 <td>Per-subject errors</td>
-<td>Always (if any failures)</td>
+<td>When any subject failed</td>
 </tr>
 </tbody>
 </table>
 <hr />
-<h2 id="cortical-output-schema">Cortical Output Schema<a class="headerlink" href="#cortical-output-schema" title="Permanent link">&para;</a></h2>
-<p><strong>File:</strong> <code>{atlas}_cortical.tsv</code></p>
+<h2 id="output-schema">Output Schema<a class="headerlink" href="#output-schema" title="Permanent link">&para;</a></h2>
+<p><strong>File:</strong> <code>{atlas}.tsv</code></p>
 <table>
 <thead>
 <tr>
@@ -1276,51 +1271,57 @@
 <td>Subject directory name (from <code>$SUBJECTS_DIR</code>)</td>
 </tr>
 <tr>
-<td><code>atlas</code></td>
+<td><code>index</code></td>
+<td>int</td>
+<td>Integer label index from the atlas LUT</td>
+</tr>
+<tr>
+<td><code>label</code></td>
 <td>string</td>
-<td>Atlas ID or custom atlas name</td>
+<td>Region name from the atlas LUT</td>
 </tr>
 <tr>
 <td><code>hemisphere</code></td>
 <td>string</td>
-<td><code>lh</code> or <code>rh</code></td>
+<td><code>lh</code>, <code>rh</code>, or <code>bilateral</code></td>
 </tr>
 <tr>
-<td><code>region</code></td>
-<td>string</td>
-<td>Parcel/region label from the annotation</td>
+<td><em>(extra LUT columns)</em></td>
+<td>varies</td>
+<td>Any additional columns present in the LUT TSV (e.g. <code>network</code>, <code>color_r</code>)</td>
 </tr>
 <tr>
-<td><code>measure</code></td>
-<td>string</td>
-<td>Morphometric measure name (see below)</td>
-</tr>
-<tr>
-<td><code>value</code></td>
+<td><em>(measure columns)</em></td>
 <td>float</td>
-<td>Numeric measurement value</td>
+<td>One column per morphometric measure (see below)</td>
+</tr>
+<tr>
+<td><code>tiv_mm3</code></td>
+<td>float</td>
+<td>Estimated total intracranial volume in mm³</td>
 </tr>
 </tbody>
 </table>
-<h3 id="cortical-measures">Cortical Measures<a class="headerlink" href="#cortical-measures" title="Permanent link">&para;</a></h3>
+<p>The exact measure columns depend on the atlas format:</p>
+<h3 id="cortical-measures-annot-dlabelgii-atlases">Cortical measures (<code>.annot</code>, <code>.dlabel.gii</code> atlases)<a class="headerlink" href="#cortical-measures-annot-dlabelgii-atlases" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
-<th>Measure</th>
+<th>Column</th>
 <th>Unit</th>
 <th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>thickness_mean_mm</code></td>
-<td>mm</td>
-<td>Mean cortical thickness across the parcel</td>
+<td><code>num_vertices</code></td>
+<td>vertices</td>
+<td>Number of surface vertices in the parcel</td>
 </tr>
 <tr>
 <td><code>surface_area_mm2</code></td>
 <td>mm²</td>
-<td>Total pial surface area of the parcel</td>
+<td>Total pial surface area</td>
 </tr>
 <tr>
 <td><code>gray_matter_volume_mm3</code></td>
@@ -1328,109 +1329,56 @@
 <td>Gray matter volume (thickness × area)</td>
 </tr>
 <tr>
-<td><code>mean_curvature</code></td>
-<td>1/mm</td>
-<td>Mean curvature (mean of principal curvatures)</td>
+<td><code>thickness_mean_mm</code></td>
+<td>mm</td>
+<td>Mean cortical thickness</td>
 </tr>
 <tr>
-<td><code>gauss_curvature</code></td>
+<td><code>thickness_std_mm</code></td>
+<td>mm</td>
+<td>Standard deviation of cortical thickness</td>
+</tr>
+<tr>
+<td><code>mean_curvature</code></td>
+<td>1/mm</td>
+<td>Mean curvature</td>
+</tr>
+<tr>
+<td><code>gaussian_curvature</code></td>
 <td>1/mm²</td>
 <td>Gaussian curvature</td>
 </tr>
 <tr>
-<td><code>fold_index</code></td>
+<td><code>folding_index</code></td>
 <td>—</td>
-<td>Folding index (measure of sulcal depth)</td>
+<td>Folding index</td>
 </tr>
 <tr>
 <td><code>curvature_index</code></td>
 <td>—</td>
 <td>Intrinsic curvature index</td>
 </tr>
-<tr>
-<td><code>integrated_rect_curvature</code></td>
-<td>—</td>
-<td>Integrated rectified curvature</td>
-</tr>
-<tr>
-<td><code>eTIV</code></td>
-<td>mm³</td>
-<td>Estimated total intracranial volume (for normalization)</td>
-</tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p class="admonition-title">eTIV is parcel-level</p>
-<p>The <code>eTIV</code> value is the same for all regions within a subject and hemisphere — it is a subject-level measure replicated per row for convenience in normalization.</p>
-</div>
-<h3 id="example">Example<a class="headerlink" href="#example" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>subject_id  atlas          hemisphere  region               measure           value
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>----------  -------------  ----------  -------------------  ----------------  ---------
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>sub-01      schaefer100-7  lh          7Networks_LH_Vis_1   thickness_mean_mm  2.341
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>sub-01      schaefer100-7  lh          7Networks_LH_Vis_1   surface_area_mm2   843.0
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>sub-01      schaefer100-7  lh          7Networks_LH_Vis_1   gray_matter_volume_mm3  2110.0
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>sub-01      schaefer100-7  lh          7Networks_LH_Vis_1   mean_curvature     0.128
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>sub-01      schaefer100-7  lh          7Networks_LH_Vis_1   eTIV               1458203.0
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>sub-01      schaefer100-7  rh          7Networks_RH_Vis_1   thickness_mean_mm  2.289
-</span></code></pre></div>
-<hr />
-<h2 id="subcortical-output-schema">Subcortical Output Schema<a class="headerlink" href="#subcortical-output-schema" title="Permanent link">&para;</a></h2>
-<p><strong>File:</strong> <code>{atlas}_subcortical.tsv</code></p>
+<h3 id="volumetric-measures-nii-gca-atlases">Volumetric measures (<code>.nii</code>, <code>.gca</code> atlases)<a class="headerlink" href="#volumetric-measures-nii-gca-atlases" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
 <th>Column</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>subject_id</code></td>
-<td>string</td>
-<td>Subject directory name</td>
-</tr>
-<tr>
-<td><code>atlas</code></td>
-<td>string</td>
-<td>Atlas ID or custom atlas name</td>
-</tr>
-<tr>
-<td><code>hemisphere</code></td>
-<td>string</td>
-<td><code>lh</code>, <code>rh</code>, or <code>bilateral</code> (inferred from region name)</td>
-</tr>
-<tr>
-<td><code>region</code></td>
-<td>string</td>
-<td>Segmentation label from the atlas</td>
-</tr>
-<tr>
-<td><code>measure</code></td>
-<td>string</td>
-<td>Morphometric measure name (see below)</td>
-</tr>
-<tr>
-<td><code>value</code></td>
-<td>float</td>
-<td>Numeric measurement value</td>
-</tr>
-</tbody>
-</table>
-<h3 id="subcortical-measures">Subcortical Measures<a class="headerlink" href="#subcortical-measures" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Measure</th>
 <th>Unit</th>
 <th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
+<td><code>num_voxels</code></td>
+<td>voxels</td>
+<td>Number of voxels in the region</td>
+</tr>
+<tr>
 <td><code>volume_mm3</code></td>
 <td>mm³</td>
-<td>Segmentation volume</td>
+<td>Region volume</td>
 </tr>
 <tr>
 <td><code>intensity_mean</code></td>
@@ -1455,22 +1403,25 @@
 <tr>
 <td><code>intensity_range</code></td>
 <td>—</td>
-<td><code>intensity_max - intensity_min</code></td>
-</tr>
-<tr>
-<td><code>voxel_count</code></td>
-<td>voxels</td>
-<td>Number of voxels in the segmentation</td>
+<td><code>intensity_max − intensity_min</code></td>
 </tr>
 </tbody>
 </table>
-<h3 id="example_1">Example<a class="headerlink" href="#example_1" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>subject_id  atlas    hemisphere  region   measure       value
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>----------  -------  ----------  -------  ------------  --------
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>sub-01      tian-s2  lh          CAU-lh   volume_mm3    1248.0
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>sub-01      tian-s2  lh          CAU-lh   intensity_mean  72.34
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>sub-01      tian-s2  lh          CAU-lh   intensity_std   8.21
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>sub-01      tian-s2  rh          CAU-rh   volume_mm3    1301.0
+<hr />
+<h2 id="example-output">Example Output<a class="headerlink" href="#example-output" title="Permanent link">&para;</a></h2>
+<h3 id="cortical-schaefer-100-parcel">Cortical (Schaefer 100-parcel)<a class="headerlink" href="#cortical-schaefer-100-parcel" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>subject_id  index  label                  hemisphere  num_vertices  surface_area_mm2  thickness_mean_mm  ...  tiv_mm3
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sub-01      1      7Networks_LH_Vis_1     lh          843           843.0             2.341              ...  1458203.0
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>sub-01      2      7Networks_LH_Vis_2     lh          701           700.5             2.289              ...  1458203.0
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>sub-01      3      7Networks_LH_Vis_3     lh          NaN           NaN               NaN                ...  1458203.0
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>sub-02      1      7Networks_LH_Vis_1     lh          857           857.2             2.311              ...  1501044.0
+</span></code></pre></div>
+<p>Regions present in the LUT but absent from the stats file (e.g. parcels with zero vertices for a subject) appear as <code>NaN</code> rows — so every subject has the same number of rows.</p>
+<h3 id="volumetric-tian-s2">Volumetric (Tian S2)<a class="headerlink" href="#volumetric-tian-s2" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>subject_id  index  label   hemisphere  num_voxels  volume_mm3  intensity_mean  ...  tiv_mm3
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>sub-01      1      HIP-lh  lh          1574        1573.6      74.12           ...  1458203.0
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>sub-01      2      HIP-rh  rh          1622        1621.7      73.98           ...  1458203.0
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>sub-02      1      HIP-lh  lh          1487        1487.1      75.33           ...  1501044.0
 </span></code></pre></div>
 <hr />
 <h2 id="failures-output-schema">Failures Output Schema<a class="headerlink" href="#failures-output-schema" title="Permanent link">&para;</a></h2>
@@ -1490,91 +1441,85 @@
 <td>Subject that failed</td>
 </tr>
 <tr>
-<td><code>atlas</code></td>
-<td>string</td>
-<td>Atlas being processed</td>
-</tr>
-<tr>
-<td><code>stage</code></td>
-<td>string</td>
-<td>Pipeline stage where failure occurred (<code>validation</code>, <code>transfer</code>, <code>extract</code>)</td>
-</tr>
-<tr>
-<td><code>error</code></td>
+<td><code>reason</code></td>
 <td>string</td>
 <td>Error message</td>
 </tr>
 </tbody>
 </table>
-<h3 id="example_2">Example<a class="headerlink" href="#example_2" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>subject_id  atlas          stage       error
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>----------  -------------  ----------  ------------------------------------
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>sub-99      schaefer100-7  validation  Missing file: mri/orig.mgz
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>sub-55      schaefer100-7  transfer    mri_surf2surf returned exit code 1
+<h3 id="example">Example<a class="headerlink" href="#example" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>subject_id  reason
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>sub-99      Missing: [&#39;.../surf/lh.white&#39;, &#39;.../mri/norm.mgz&#39;]
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>sub-55      Command failed (exit 1): mri_surf2surf ...
 </span></code></pre></div>
 <hr />
 <h2 id="working-with-the-output">Working with the Output<a class="headerlink" href="#working-with-the-output" title="Permanent link">&para;</a></h2>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Python / pandas</label><label for="__tabbed_1_2">R / tidyverse</label><label for="__tabbed_1_3">Checking failures</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:4"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><input id="__tabbed_1_4" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Python / pandas</label><label for="__tabbed_1_2">R / tidyverse</label><label for="__tabbed_1_3">Multi-atlas merge</label><label for="__tabbed_1_4">Checking failures</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1"># Load cortical output</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;results/schaefer100-7_cortical.tsv&quot;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1"># Load output</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;results/schaefer100-7.tsv&quot;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
 </span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="c1"># All thickness values, left hemisphere</span>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="n">thickness</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span>
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>    <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;measure&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;thickness_mean_mm&quot;</span><span class="p">)</span> <span class="o">&amp;</span>
-</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>    <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;hemisphere&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;lh&quot;</span><span class="p">)</span>
-</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="p">]</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="c1"># All rows are already wide — just select the columns you need</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="n">thickness</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s2">&quot;subject_id&quot;</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="s2">&quot;hemisphere&quot;</span><span class="p">,</span> <span class="s2">&quot;thickness_mean_mm&quot;</span><span class="p">]]</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="c1"># Filter to left hemisphere</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="n">lh</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;hemisphere&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;lh&quot;</span><span class="p">]</span>
 </span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>
-</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="c1"># Pivot to wide format: rows = subjects, columns = regions</span>
-</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="n">wide</span> <span class="o">=</span> <span class="n">thickness</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="c1"># Pivot to subjects × regions matrix</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="n">matrix</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span>
 </span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>    <span class="n">index</span><span class="o">=</span><span class="s2">&quot;subject_id&quot;</span><span class="p">,</span>
-</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>    <span class="n">columns</span><span class="o">=</span><span class="s2">&quot;region&quot;</span><span class="p">,</span>
-</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>    <span class="n">values</span><span class="o">=</span><span class="s2">&quot;value&quot;</span>
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>    <span class="n">columns</span><span class="o">=</span><span class="s2">&quot;label&quot;</span><span class="p">,</span>
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>    <span class="n">values</span><span class="o">=</span><span class="s2">&quot;thickness_mean_mm&quot;</span><span class="p">,</span>
 </span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="p">)</span>
 </span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a>
-</span><span id="__span-3-19"><a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a><span class="c1"># Normalize by eTIV</span>
-</span><span id="__span-3-20"><a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a><span class="n">etiv</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;measure&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;eTIV&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;subject_id&quot;</span><span class="p">)[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
-</span><span id="__span-3-21"><a id="__codelineno-3-21" name="__codelineno-3-21" href="#__codelineno-3-21"></a><span class="n">area</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;measure&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;surface_area_mm2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-</span><span id="__span-3-22"><a id="__codelineno-3-22" name="__codelineno-3-22" href="#__codelineno-3-22"></a><span class="n">area</span><span class="p">[</span><span class="s2">&quot;value_norm&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">area</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
-</span><span id="__span-3-23"><a id="__codelineno-3-23" name="__codelineno-3-23" href="#__codelineno-3-23"></a>    <span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">etiv</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;subject_id&quot;</span><span class="p">]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
-</span><span id="__span-3-24"><a id="__codelineno-3-24" name="__codelineno-3-24" href="#__codelineno-3-24"></a><span class="p">)</span>
+</span><span id="__span-3-19"><a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a><span class="c1"># eTIV normalization</span>
+</span><span id="__span-3-20"><a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a><span class="n">df</span><span class="p">[</span><span class="s2">&quot;surface_area_norm&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;surface_area_mm2&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;tiv_mm3&quot;</span><span class="p">]</span>
 </span></code></pre></div>
 </div>
 <div class="tabbed-block">
 <div class="language-r highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nf">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">read_tsv</span><span class="p">(</span><span class="s">&quot;results/schaefer100-7_cortical.tsv&quot;</span><span class="p">)</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">read_tsv</span><span class="p">(</span><span class="s">&quot;results/schaefer100-7.tsv&quot;</span><span class="p">)</span>
 </span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="c1"># Wide format: subjects × regions for thickness</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="n">thickness_wide</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">df</span><span class="w"> </span><span class="o">|&gt;</span>
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">  </span><span class="nf">filter</span><span class="p">(</span><span class="n">measure</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;thickness_mean_mm&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">hemisphere</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;lh&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">|&gt;</span>
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">  </span><span class="nf">pivot_wider</span><span class="p">(</span>
-</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">    </span><span class="n">id_cols</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">subject_id</span><span class="p">,</span>
-</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">    </span><span class="n">names_from</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">region</span><span class="p">,</span>
-</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">    </span><span class="n">values_from</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">value</span>
-</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="w">  </span><span class="p">)</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="c1"># Filter to left hemisphere thickness</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="n">lh_thickness</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">df</span><span class="w"> </span><span class="o">|&gt;</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">  </span><span class="nf">filter</span><span class="p">(</span><span class="n">hemisphere</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;lh&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">|&gt;</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">  </span><span class="nf">select</span><span class="p">(</span><span class="n">subject_id</span><span class="p">,</span><span class="w"> </span><span class="n">label</span><span class="p">,</span><span class="w"> </span><span class="n">thickness_mean_mm</span><span class="p">)</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="c1"># Subjects × regions matrix (already wide, just reshape if needed)</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="n">matrix</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lh_thickness</span><span class="w"> </span><span class="o">|&gt;</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="w">  </span><span class="nf">pivot_wider</span><span class="p">(</span><span class="n">names_from</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">label</span><span class="p">,</span><span class="w"> </span><span class="n">values_from</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">thickness_mean_mm</span><span class="p">)</span>
 </span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>
-</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="c1"># eTIV-normalized surface area</span>
-</span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="n">etiv</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">df</span><span class="w"> </span><span class="o">|&gt;</span>
-</span><span id="__span-4-16"><a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="w">  </span><span class="nf">filter</span><span class="p">(</span><span class="n">measure</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;eTIV&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">|&gt;</span>
-</span><span id="__span-4-17"><a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a><span class="w">  </span><span class="nf">select</span><span class="p">(</span><span class="n">subject_id</span><span class="p">,</span><span class="w"> </span><span class="n">hemisphere</span><span class="p">,</span><span class="w"> </span><span class="n">etiv</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="o">|&gt;</span>
-</span><span id="__span-4-18"><a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a><span class="w">  </span><span class="nf">distinct</span><span class="p">()</span>
-</span><span id="__span-4-19"><a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a>
-</span><span id="__span-4-20"><a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a><span class="n">area_norm</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">df</span><span class="w"> </span><span class="o">|&gt;</span>
-</span><span id="__span-4-21"><a id="__codelineno-4-21" name="__codelineno-4-21" href="#__codelineno-4-21"></a><span class="w">  </span><span class="nf">filter</span><span class="p">(</span><span class="n">measure</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;surface_area_mm2&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">|&gt;</span>
-</span><span id="__span-4-22"><a id="__codelineno-4-22" name="__codelineno-4-22" href="#__codelineno-4-22"></a><span class="w">  </span><span class="nf">left_join</span><span class="p">(</span><span class="n">etiv</span><span class="p">,</span><span class="w"> </span><span class="n">by</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;subject_id&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;hemisphere&quot;</span><span class="p">))</span><span class="w"> </span><span class="o">|&gt;</span>
-</span><span id="__span-4-23"><a id="__codelineno-4-23" name="__codelineno-4-23" href="#__codelineno-4-23"></a><span class="w">  </span><span class="nf">mutate</span><span class="p">(</span><span class="n">value_norm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">etiv</span><span class="p">)</span>
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="c1"># eTIV normalization</span>
+</span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="n">df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">df</span><span class="w"> </span><span class="o">|&gt;</span><span class="w"> </span><span class="nf">mutate</span><span class="p">(</span><span class="n">surface_area_norm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">surface_area_mm2</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">tiv_mm3</span><span class="p">)</span>
 </span></code></pre></div>
 </div>
 <div class="tabbed-block">
 <div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="n">failures</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;results/schaefer100-7_failures.tsv&quot;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">failures</span><span class="p">)</span><span class="si">}</span><span class="s2"> subjects failed&quot;</span><span class="p">)</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="nb">print</span><span class="p">(</span><span class="n">failures</span><span class="p">[[</span><span class="s2">&quot;subject_id&quot;</span><span class="p">,</span> <span class="s2">&quot;stage&quot;</span><span class="p">,</span> <span class="s2">&quot;error&quot;</span><span class="p">]])</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="n">results_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;results&quot;</span><span class="p">)</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="n">frames</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="k">for</span> <span class="n">tsv</span> <span class="ow">in</span> <span class="n">results_dir</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.tsv&quot;</span><span class="p">):</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>    <span class="k">if</span> <span class="s2">&quot;_failures&quot;</span> <span class="ow">in</span> <span class="n">tsv</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>        <span class="k">continue</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>    <span class="n">atlas_name</span> <span class="o">=</span> <span class="n">tsv</span><span class="o">.</span><span class="n">stem</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">tsv</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;atlas&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">atlas_name</span>
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>    <span class="n">frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>
+</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="n">combined</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="n">failures</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;results/schaefer100-7_failures.tsv&quot;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">failures</span><span class="p">)</span><span class="si">}</span><span class="s2"> subjects failed:&quot;</span><span class="p">)</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="nb">print</span><span class="p">(</span><span class="n">failures</span><span class="p">)</span>
 </span></code></pre></div>
 </div>
 </div>

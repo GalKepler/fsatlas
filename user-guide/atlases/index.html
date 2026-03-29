@@ -721,6 +721,28 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#brainnetome-atlas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Brainnetome Atlas
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gordon-2016" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gordon 2016
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -743,6 +765,39 @@
     <span class="md-ellipsis">
       
         Tian 2020 — Melbourne Subcortex Atlas
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hcpex-subcortical" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HCPex Subcortical
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aicha-2015" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AICHA 2015
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aal-2002" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AAL 2002
       
     </span>
   </a>
@@ -1096,6 +1151,28 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#brainnetome-atlas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Brainnetome Atlas
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gordon-2016" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gordon 2016
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1118,6 +1195,39 @@
     <span class="md-ellipsis">
       
         Tian 2020 — Melbourne Subcortex Atlas
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hcpex-subcortical" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HCPex Subcortical
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aicha-2015" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AICHA 2015
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aal-2002" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AAL 2002
       
     </span>
   </a>
@@ -1172,11 +1282,11 @@
 
 
 <h1 id="atlas-catalog">Atlas Catalog<a class="headerlink" href="#atlas-catalog" title="Permanent link">&para;</a></h1>
-<p>fsatlas ships with 22 built-in atlases across 5 families. All atlases are downloaded automatically on first use and cached to <code>~/.cache/fsatlas/atlases/</code>.</p>
+<p>fsatlas ships with 31 built-in atlases across 8 families. All atlases are downloaded automatically on first use (including LUT generation) and cached to <code>~/.cache/fsatlas/atlases/</code>.</p>
 <p>Use <code>fsatlas list-atlases</code> to view the catalog in your terminal.</p>
 <hr />
 <h2 id="cortical-atlases-surface">Cortical Atlases (Surface)<a class="headerlink" href="#cortical-atlases-surface" title="Permanent link">&para;</a></h2>
-<p>Surface atlases are stored as FreeSurfer annotation files (<code>.annot</code>) in <code>fsaverage</code> space. fsatlas transfers them to each subject's native surface via <code>mri_surf2surf</code>.</p>
+<p>Surface atlases are stored as FreeSurfer annotation files (<code>.annot</code>) in <code>fsaverage</code> space. fsatlas transfers them to each subject's native surface via <code>mri_surf2surf</code>. A LUT TSV (<code>index</code>, <code>label</code>, <code>hemisphere</code>) is auto-generated from the <code>.annot</code> colour table at download time.</p>
 <h3 id="schaefer-2018">Schaefer 2018<a class="headerlink" href="#schaefer-2018" title="Permanent link">&para;</a></h3>
 <p>A popular functional parcellation of the cerebral cortex derived from resting-state fMRI functional connectivity. Available in multiple resolutions and two network assignment schemes (7 or 17 Yeo networks).</p>
 <blockquote>
@@ -1326,6 +1436,7 @@
 <tr>
 <th>Atlas ID</th>
 <th>Name</th>
+<th>Format</th>
 <th>Parcels</th>
 <th>Notes</th>
 </tr>
@@ -1334,20 +1445,30 @@
 <tr>
 <td><code>desikan</code></td>
 <td>Desikan-Killiany</td>
+<td>annot</td>
 <td>68</td>
 <td>Default FreeSurfer atlas</td>
 </tr>
 <tr>
 <td><code>destrieux</code></td>
 <td>Destrieux 2010</td>
+<td>annot</td>
 <td>148</td>
 <td>High-resolution sulco-gyral</td>
 </tr>
 <tr>
 <td><code>dkt</code></td>
 <td>DKT</td>
+<td>annot</td>
 <td>62</td>
 <td>Mindboggle compatible</td>
+</tr>
+<tr>
+<td><code>aseg</code></td>
+<td>FreeSurfer aseg</td>
+<td>nifti</td>
+<td>49</td>
+<td>Automatic subcortical segmentation</td>
 </tr>
 </tbody>
 </table>
@@ -1356,8 +1477,72 @@
 <p><strong>Citation (Destrieux):</strong> Destrieux C et al. (2010). <em>Automatic parcellation of human cortical gyri and sulci using standard anatomical nomenclature</em>. NeuroImage, 53(1):1–15.</p>
 </blockquote>
 <hr />
+<h3 id="brainnetome-atlas">Brainnetome Atlas<a class="headerlink" href="#brainnetome-atlas" title="Permanent link">&para;</a></h3>
+<p>A connectivity-based parcellation of the human cerebral cortex.</p>
+<blockquote>
+<p><strong>Citation:</strong> Fan L et al. (2016). <em>The Human Brainnetome Atlas: A New Brain Atlas Based on Connectional Architecture</em>. Cerebral Cortex, 26(8):3508–3526.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Atlas ID</th>
+<th>Format</th>
+<th>Parcels</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BN_Atlas</code></td>
+<td>annot</td>
+<td>246</td>
+<td>123 per hemisphere, cortical</td>
+</tr>
+<tr>
+<td><code>BN_Atlas_subcotex</code></td>
+<td>nifti</td>
+<td>36</td>
+<td>Subcortical component</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Local files required</p>
+<p>The Brainnetome atlas is not available for public download via URL. Set <code>local_source_dir</code> in your environment or use the atlas after manual placement.</p>
+</div>
+<hr />
+<h3 id="gordon-2016">Gordon 2016<a class="headerlink" href="#gordon-2016" title="Permanent link">&para;</a></h3>
+<p>A resting-state parcellation of the cerebral cortex.</p>
+<blockquote>
+<p><strong>Citation:</strong> Gordon EM et al. (2016). <em>Generation and Evaluation of a Cortical Area Parcellation from Resting-State Correlations</em>. Cerebral Cortex, 26(1):288–303.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Atlas ID</th>
+<th>Format</th>
+<th>Parcels</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>gordon333</code></td>
+<td>annot</td>
+<td>333</td>
+<td>Cortical</td>
+</tr>
+<tr>
+<td><code>gordon333_subcortical</code></td>
+<td>nifti</td>
+<td>52</td>
+<td>CIT168 + Cerebellum extension</td>
+</tr>
+</tbody>
+</table>
+<hr />
 <h2 id="subcortical-atlases-volumetric">Subcortical Atlases (Volumetric)<a class="headerlink" href="#subcortical-atlases-volumetric" title="Permanent link">&para;</a></h2>
-<p>Volumetric atlases are NIfTI files in MNI152NLin6Asym space. fsatlas registers them to each subject's native space using <code>mri_vol2vol</code> and the <code>talairach.xfm</code> transform.</p>
+<p>Volumetric atlases are NIfTI files in MNI152 space. fsatlas registers them to each subject's native space using <code>mri_vol2vol</code> and the <code>talairach.xfm</code> transform. A LUT TSV is required (either bundled in the package or downloaded alongside the atlas).</p>
 <h3 id="tian-2020-melbourne-subcortex-atlas">Tian 2020 — Melbourne Subcortex Atlas<a class="headerlink" href="#tian-2020-melbourne-subcortex-atlas" title="Permanent link">&para;</a></h3>
 <p>A multi-scale subcortical atlas derived from resting-state fMRI, with parcellations ranging from coarse (Scale I) to fine-grained (Scale IV).</p>
 <blockquote>
@@ -1401,6 +1586,85 @@
 </table>
 <p><strong>Structures covered:</strong> Caudate, Putamen, Pallidum, Hippocampus, Amygdala, Accumbens, Thalamus (and more at finer scales).</p>
 <p><strong>Region naming example:</strong> <code>CAU-lh</code>, <code>PUT-rh</code>, <code>HIP-lh</code></p>
+<hr />
+<h3 id="hcpex-subcortical">HCPex Subcortical<a class="headerlink" href="#hcpex-subcortical" title="Permanent link">&para;</a></h3>
+<p>Subcortical extension of the HCP-MMP atlas covering thalamus, amygdala, hippocampus, and related structures.</p>
+<blockquote>
+<p><strong>Citation:</strong> Huang CC et al. (2022). <em>Subcortical brain atlas using the Human Connectome Project parcellation</em>. Cerebral Cortex.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Atlas ID</th>
+<th>Format</th>
+<th>Parcels</th>
+<th>Space</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>hcpex_subcortical</code></td>
+<td>nifti</td>
+<td>66</td>
+<td>MNI152NLin2009cAsym</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="aicha-2015">AICHA 2015<a class="headerlink" href="#aicha-2015" title="Permanent link">&para;</a></h3>
+<p>Atlas of Intrinsic Connectivity of Homotopic Areas — 384 bilateral cortical regions derived from resting-state fMRI.</p>
+<blockquote>
+<p><strong>Citation:</strong> Joliot M et al. (2015). <em>AICHA: An atlas of intrinsic connectivity of homotopic areas</em>. Journal of Neuroscience Methods, 254:46–59.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Atlas ID</th>
+<th>Format</th>
+<th>Parcels</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>aicha384</code></td>
+<td>nifti</td>
+<td>384</td>
+<td>Full cortical atlas</td>
+</tr>
+<tr>
+<td><code>aicha384_subcortical</code></td>
+<td>nifti</td>
+<td>50</td>
+<td>Subcortical subset</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="aal-2002">AAL 2002<a class="headerlink" href="#aal-2002" title="Permanent link">&para;</a></h3>
+<p>The classic Automated Anatomical Labeling atlas.</p>
+<blockquote>
+<p><strong>Citation:</strong> Tzourio-Mazoyer N et al. (2002). <em>Automated Anatomical Labeling of Activations in SPM Using a Macroscopic Anatomical Parcellation of the MNI MRI Single-Subject Brain</em>. NeuroImage, 15(1):273–289.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Atlas ID</th>
+<th>Format</th>
+<th>Parcels</th>
+<th>Space</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>aal116</code></td>
+<td>nifti</td>
+<td>116</td>
+<td>MNI152NLin2009cAsym</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Region naming example:</strong> <code>Precentral_L</code>, <code>Hippocampus_R</code></p>
 <hr />
 <h2 id="choosing-the-right-atlas">Choosing the Right Atlas<a class="headerlink" href="#choosing-the-right-atlas" title="Permanent link">&para;</a></h2>
 <table>
