@@ -45,3 +45,4 @@ results/
 ~/.cache/fsatlas/
 *.tsv
 *.log
+site/

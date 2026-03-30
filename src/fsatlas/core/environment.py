@@ -32,12 +32,12 @@ class FreeSurferEnv:
         """
         fs_home = os.environ.get("FREESURFER_HOME")
         if not fs_home:
-            raise EnvironmentError(
+            raise OSError(
                 "FREESURFER_HOME is not set. Source FreeSurfer's setup script first."
             )
         fs_home_path = Path(fs_home)
         if not fs_home_path.is_dir():
-            raise EnvironmentError(f"FREESURFER_HOME points to non-existent directory: {fs_home}")
+            raise OSError(f"FREESURFER_HOME points to non-existent directory: {fs_home}")
 
         # Resolve subjects_dir
         if subjects_dir:
@@ -45,13 +45,13 @@ class FreeSurferEnv:
         else:
             sd_env = os.environ.get("SUBJECTS_DIR")
             if not sd_env:
-                raise EnvironmentError(
+                raise OSError(
                     "No --subjects-dir provided and $SUBJECTS_DIR is not set."
                 )
             sd = Path(sd_env)
 
         if not sd.is_dir():
-            raise EnvironmentError(f"Subjects directory does not exist: {sd}")
+            raise OSError(f"Subjects directory does not exist: {sd}")
 
         # Detect version
         version = _detect_version(fs_home_path)
@@ -139,8 +139,13 @@ class SubjectPaths:
 
     @property
     def talairach_xfm(self) -> Path:
-        """Path to talairach.xfm (MNI registration)."""
+        """Path to talairach.xfm (MNI linear registration)."""
         return self.mri_dir / "transforms" / "talairach.xfm"
+
+    @property
+    def talairach_m3z(self) -> Path:
+        """Path to talairach.m3z (MNI non-linear warp; required for mri_ca_label)."""
+        return self.mri_dir / "transforms" / "talairach.m3z"
 
     @property
     def sphere_reg(self) -> dict[str, Path]:

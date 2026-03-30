@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="fsatlas.png" alt="fsatlas logo" width="200"/>
+  <img src="docs/assets/logo.png" alt="fsatlas logo" width="200"/>
   <h1>fsatlas</h1>
   <p><strong>Automated atlas-based morphometry extraction for FreeSurfer-processed brain MRI</strong></p>
 
@@ -18,6 +18,7 @@ FreeSurfer's `recon-all` produces cortical statistics for its built-in atlases (
 ```
 mri_surf2surf → mris_anatomical_stats → parse output
 mri_vol2vol   → mri_segstats         → parse output
+mri_ca_label  → mri_segstats         → parse output
 ```
 
 **fsatlas** automates this entire workflow into a single command — for any atlas, for any number of subjects.
@@ -26,13 +27,13 @@ mri_vol2vol   → mri_segstats         → parse output
 
 ## Features
 
-- **22 built-in atlases** — Schaefer 2018 (100–1000 parcels × 7/17 networks), Tian 2020 subcortical (Scales I–IV), HCP-MMP1, DKT, Desikan, Destrieux. Auto-downloads on first use.
-- **Custom atlas support** — Point at any `.annot` (surface) or `.nii.gz` (volumetric, MNI space) file.
-- **Surface pipeline** — Transfers annotations from `fsaverage` → subject via `mri_surf2surf`, extracts 9 cortical measures via `mris_anatomical_stats`.
-- **Volumetric pipeline** — Registers MNI-space NIfTI → native space via `mri_vol2vol` + `talairach.xfm`, extracts 7 subcortical measures via `mri_segstats`.
-- **Tidy TSV output** — Long-format output: `subject_id | atlas | hemisphere | region | measure | value`.
+- **31 built-in atlases** — Schaefer 2018 (100–1000 parcels × 7/17 networks), Tian 2020 subcortical (Scales I–IV), HCP-MMP1, Brainnetome, AICHA, Gordon333, AAL116, DKT, Desikan, Destrieux, aseg.
+- **Four atlas formats** — `.annot` (FreeSurfer surface), `.nii`/`.nii.gz` (volumetric MNI), `.dlabel.gii` (CIFTI), `.gca` (FreeSurfer GCA).
+- **Custom atlas support** — Point at any supported file; provide a LUT TSV for the output schema.
+- **LUT-based wide output** — Each row is one region from the atlas LUT; measures are columns. Schema: `subject_id | index | label | hemisphere | measure1 | … | tiv_mm3`.
+- **LUT generation** — `fsatlas generate-lut` extracts the embedded colour table from `.annot` files into a reusable TSV.
 - **Batch processing** — Process all subjects in `$SUBJECTS_DIR` or a specified list.
-- **Failure resilience** — Pipeline continues on per-subject errors; all failures logged to a separate TSV.
+- **Failure resilience** — Pipeline continues on per-subject errors; failures logged to a separate TSV.
 - **Docker image** — Run without a local FreeSurfer installation.
 
 ---
@@ -46,7 +47,7 @@ mri_vol2vol   → mri_segstats         → parse output
 | `FREESURFER_HOME` | must be set |
 | `SUBJECTS_DIR` | must be set |
 
-Subjects must have completed `recon-all`.
+Subjects must have completed `recon-all`. CIFTI (`.dlabel.gii`) atlases additionally require FreeSurfer ≥ 7.4 for `mris_convert --dlabel-to-annot`.
 
 ---
 
@@ -98,17 +99,39 @@ fsatlas extract --atlas schaefer400-17 --subjects-file subjects.txt -o ./results
 fsatlas extract --atlas tian-s2 -o ./results
 ```
 
-### Use a custom surface atlas
+### Use a custom surface atlas (with LUT)
 
 ```bash
-# Provide one hemisphere; the other is auto-detected
-fsatlas extract --atlas /path/to/lh.myatlas.annot -o ./results
+# Generate LUT from the .annot colour table
+fsatlas generate-lut \
+    --lh-annot /path/to/lh.myatlas.annot \
+    --rh-annot /path/to/rh.myatlas.annot \
+    --output myatlas_lut.tsv
+
+# Extract — provide one hemisphere; the other is auto-detected
+fsatlas extract \
+    --atlas /path/to/lh.myatlas.annot \
+    --lut myatlas_lut.tsv \
+    -o ./results
 ```
 
 ### Use a custom volumetric atlas (MNI space)
 
 ```bash
-fsatlas extract --atlas /path/to/subcortical_atlas.nii.gz -o ./results
+fsatlas extract \
+    --atlas /path/to/subcortical_atlas.nii.gz \
+    --lut /path/to/lut.tsv \
+    -o ./results
+```
+
+### Use a CIFTI atlas
+
+```bash
+fsatlas extract \
+    --atlas /path/to/lh.myatlas.dlabel.gii \
+    --format dlabel_gii \
+    --lut /path/to/lut.tsv \
+    -o ./results
 ```
 
 ### Pre-download an atlas
@@ -121,57 +144,64 @@ fsatlas download schaefer400-7
 
 ## Built-in Atlas Catalog
 
-| ID | Family | Type | Parcels | Space |
-|----|--------|------|---------|-------|
-| `schaefer100-7` | Schaefer 2018 | Surface | 100 | fsaverage |
-| `schaefer200-7` | Schaefer 2018 | Surface | 200 | fsaverage |
-| `schaefer300-7` | Schaefer 2018 | Surface | 300 | fsaverage |
-| `schaefer400-7` | Schaefer 2018 | Surface | 400 | fsaverage |
-| `schaefer500-7` | Schaefer 2018 | Surface | 500 | fsaverage |
-| `schaefer600-7` | Schaefer 2018 | Surface | 600 | fsaverage |
-| `schaefer700-7` | Schaefer 2018 | Surface | 700 | fsaverage |
-| `schaefer800-7` | Schaefer 2018 | Surface | 800 | fsaverage |
-| `schaefer900-7` | Schaefer 2018 | Surface | 900 | fsaverage |
-| `schaefer1000-7` | Schaefer 2018 | Surface | 1000 | fsaverage |
-| `schaefer100-17` | Schaefer 2018 | Surface | 100 | fsaverage |
-| `schaefer200-17` | Schaefer 2018 | Surface | 200 | fsaverage |
-| `schaefer300-17` | Schaefer 2018 | Surface | 300 | fsaverage |
-| `schaefer400-17` | Schaefer 2018 | Surface | 400 | fsaverage |
-| `tian-s1` | Tian 2020 | Volumetric | 16 | MNI152NLin6Asym |
-| `tian-s2` | Tian 2020 | Volumetric | 32 | MNI152NLin6Asym |
-| `tian-s3` | Tian 2020 | Volumetric | 50 | MNI152NLin6Asym |
-| `tian-s4` | Tian 2020 | Volumetric | 54 | MNI152NLin6Asym |
-| `hcp-mmp` | HCP-MMP 1.0 | Surface | 360 | fsaverage |
-| `desikan` | FreeSurfer | Surface | 68 | built-in |
-| `destrieux` | FreeSurfer | Surface | 148 | built-in |
-| `dkt` | FreeSurfer | Surface | 62 | built-in |
+| ID | Family | Format | Parcels | Space |
+|----|--------|--------|---------|-------|
+| `schaefer100-7` … `schaefer1000-7` | Schaefer 2018 | annot | 100–1000 | fsaverage |
+| `schaefer100-17` … `schaefer400-17` | Schaefer 2018 | annot | 100–400 | fsaverage |
+| `tian-s1` … `tian-s4` | Tian 2020 | nifti | 16–54 | MNI152NLin6Asym |
+| `hcp-mmp` | HCP-MMP 1.0 | annot | 360 | fsaverage |
+| `hcpex_subcortical` | HCP-MMP ext. | nifti | 66 | MNI152NLin2009cAsym |
+| `gordon333` | Gordon 2016 | annot | 333 | fsaverage |
+| `gordon333_subcortical` | Gordon 2016 | nifti | 52 | MNI152NLin2009cAsym |
+| `aicha384` | AICHA 2015 | nifti | 384 | MNI152NLin2009cAsym |
+| `aicha384_subcortical` | AICHA 2015 | nifti | 50 | MNI152NLin2009cAsym |
+| `aal116` | AAL 2002 | nifti | 116 | MNI152NLin2009cAsym |
+| `BN_Atlas` | Brainnetome | annot | 246 | fsaverage |
+| `BN_Atlas_subcotex` | Brainnetome | nifti | 36 | MNI152NLin2009cAsym |
+| `desikan` | FreeSurfer | annot | 68 | built-in |
+| `destrieux` | FreeSurfer | annot | 148 | built-in |
+| `dkt` | FreeSurfer | annot | 62 | built-in |
+| `aseg` | FreeSurfer | nifti | 49 | built-in |
 
 ---
 
 ## Output Format
 
-Results are written as long-format (tidy) TSV files to the specified output directory.
+Results are written as wide-format TSV files — one row per region per subject, measures as columns.
 
-**Cortical** (`{atlas}_cortical.tsv`):
+**File:** `{atlas}.tsv`
 
-| subject_id | atlas | hemisphere | region | measure | value |
-|---|---|---|---|---|---|
-| sub-01 | schaefer100-7 | lh | 7Networks_LH_Vis_1 | thickness_mean_mm | 2.341 |
-| sub-01 | schaefer100-7 | lh | 7Networks_LH_Vis_1 | surface_area_mm2 | 843.0 |
-| sub-01 | schaefer100-7 | lh | 7Networks_LH_Vis_1 | gray_matter_volume_mm3 | 2110.0 |
+```
+subject_id  index  label                hemisphere  thickness_mean_mm  surface_area_mm2  ...  tiv_mm3
+sub-01      1      7Networks_LH_Vis_1   lh          2.341              843.0             ...  1458203.0
+sub-01      2      7Networks_LH_Vis_2   lh          2.289              700.5             ...  1458203.0
+sub-02      1      7Networks_LH_Vis_1   lh          2.311              857.2             ...  1501044.0
+```
 
-**Cortical measures:** `thickness_mean_mm`, `surface_area_mm2`, `gray_matter_volume_mm3`, `mean_curvature`, `gauss_curvature`, `fold_index`, `curvature_index`, `integrated_rect_curvature`, `eTIV`
+**Cortical measures** (`.annot`, `.dlabel.gii`): `num_vertices`, `surface_area_mm2`, `gray_matter_volume_mm3`, `thickness_mean_mm`, `thickness_std_mm`, `mean_curvature`, `gaussian_curvature`, `folding_index`, `curvature_index`
 
-**Subcortical** (`{atlas}_subcortical.tsv`):
-
-| subject_id | atlas | hemisphere | region | measure | value |
-|---|---|---|---|---|---|
-| sub-01 | tian-s2 | lh | CAU-lh | volume_mm3 | 1248.0 |
-| sub-01 | tian-s2 | lh | CAU-lh | intensity_mean | 72.34 |
-
-**Subcortical measures:** `volume_mm3`, `intensity_mean`, `intensity_std`, `intensity_min`, `intensity_max`, `intensity_range`, `voxel_count`
+**Volumetric measures** (`.nii`, `.gca`): `num_voxels`, `volume_mm3`, `intensity_mean`, `intensity_std`, `intensity_min`, `intensity_max`, `intensity_range`
 
 **Failures** (`{atlas}_failures.tsv`) — subjects that could not be processed, with error messages.
+
+---
+
+## Reading the Output
+
+```python
+import pandas as pd
+
+df = pd.read_csv("results/schaefer100-7.tsv", sep="\t")
+
+# Select a specific measure
+lh_thickness = df[df["hemisphere"] == "lh"][["subject_id", "label", "thickness_mean_mm"]]
+
+# Subjects × regions matrix
+matrix = df.pivot_table(index="subject_id", columns="label", values="thickness_mean_mm")
+
+# eTIV normalization
+df["surface_area_norm"] = df["surface_area_mm2"] / df["tiv_mm3"]
+```
 
 ---
 
@@ -196,15 +226,19 @@ The Docker image is based on `freesurfer/freesurfer:8.0.0` and includes a self-c
 ```
 src/fsatlas/
 ├── cli/
-│   └── main.py           # Click CLI: extract, list-atlases, download
+│   └── main.py           # Click CLI: extract, list-atlases, download, generate-lut
 ├── atlases/
-│   ├── catalog.yaml      # Built-in atlas definitions (13 atlases)
-│   └── registry.py       # Atlas loading, downloading, custom atlas support
+│   ├── catalog.yaml      # Built-in atlas definitions (31 atlases)
+│   ├── *_labels.tsv      # Bundled LUT files for volumetric atlases
+│   └── registry.py       # Atlas loading, downloading, LUT generation
 └── core/
-    ├── environment.py    # FreeSurfer detection, subject discovery, path resolution
-    ├── pipeline.py       # Orchestrator: validate → transfer → extract → aggregate
-    ├── transfer.py       # mri_surf2surf / mri_vol2vol wrappers (600s timeout)
-    └── extract.py        # mris_anatomical_stats / mri_segstats + long-format parsing
+    ├── command.py        # Shared run_command() subprocess wrapper
+    ├── environment.py    # FreeSurfer detection, subject discovery
+    ├── formats.py        # Format handler registry (annot, nifti, dlabel_gii, gca)
+    ├── lut.py            # LookupTable: from_tsv, from_annot, to_ctab, merge_measures
+    ├── pipeline.py       # Orchestrator: LUT load → transfer → extract → merge → TSV
+    ├── transfer.py       # Thin dispatcher (delegates to format handlers)
+    └── extract.py        # FreeSurfer command runners + .stats file parsers
 ```
 
 **Data flow:**
@@ -212,15 +246,19 @@ src/fsatlas/
 ```
 CLI
  └─ resolve atlas + discover subjects
-     └─ Pipeline (per subject)
-         ├─ validate subject directory structure
-         ├─ transfer atlas → subject space (cached)
-         │   ├─ surface: mri_surf2surf (fsaverage → subject)
-         │   └─ volumetric: mri_vol2vol (MNI → native via talairach.xfm)
-         └─ extract stats
-             ├─ cortical: mris_anatomical_stats → 9 measures (long format)
-             └─ subcortical: mri_segstats → 7 measures (long format)
- └─ concatenate → {atlas}_cortical.tsv / {atlas}_subcortical.tsv
+     └─ load LUT (once)
+         └─ Pipeline (per subject)
+             ├─ validate subject directory structure
+             ├─ format handler: transfer atlas → subject space (cached)
+             │   ├─ annot:       mri_surf2surf (fsaverage → subject)
+             │   ├─ nifti:       mri_vol2vol (MNI → native via talairach.xfm)
+             │   ├─ dlabel_gii:  mris_convert → mri_surf2surf
+             │   └─ gca:         mri_ca_label (via talairach.m3z)
+             └─ format handler: extract stats → raw DataFrame
+                 ├─ cortical:   mris_anatomical_stats → 9 measures
+                 └─ volumetric: mri_segstats → 7 measures
+             └─ LUT.merge_measures → wide-format DataFrame
+ └─ concatenate all subjects → {atlas}.tsv
 ```
 
 ---

@@ -27,15 +27,19 @@ fsatlas extract [OPTIONS]
 
 ### Options
 
-| Option | Type | Required | Description |
-|--------|------|----------|-------------|
-| `--atlas`, `-a` | TEXT | **Yes** | Atlas ID (from catalog) or path to a `.annot` or `.nii.gz` file |
-| `--output-dir`, `-o` | PATH | **Yes** | Directory where TSV results are written |
-| `--subject`, `-s` | TEXT | No | Subject ID to process (repeatable; default: all subjects in `$SUBJECTS_DIR`) |
-| `--subjects-file` | PATH | No | Text file with one subject ID per line |
-| `--force`, `-f` | flag | No | Recalculate and overwrite existing transferred atlases and stats |
-| `--subjects-dir` | PATH | No | Override `$SUBJECTS_DIR` for this run |
-| `--verbose`, `-v` | flag | No | Increase logging verbosity |
+| Option | Short | Type | Required | Description |
+|--------|-------|------|----------|-------------|
+| `--atlas` | `-a` | TEXT | **Yes** | Atlas ID from catalog, or path to an atlas file |
+| `--output-dir` | `-o` | PATH | No | Output directory (default: `fsatlas_output`) |
+| `--format` | `-F` | CHOICE | No | Atlas file format: `annot`, `nifti`, `dlabel_gii`, `gca`, `auto` (default: `auto`) |
+| `--lut` | `-l` | PATH | No | Path to a custom LUT TSV (`index`, `label`, `hemisphere`). Required for custom atlases without embedded labels. |
+| `--subjects` | `-s` | TEXT | No | Subject IDs to process (repeatable; default: all in `$SUBJECTS_DIR`) |
+| `--subjects-file` | | PATH | No | Text file with one subject ID per line |
+| `--force` | `-f` | flag | No | Recompute even if cached outputs exist |
+| `--subjects-dir` | `-d` | PATH | No | Override `$SUBJECTS_DIR` for this run |
+| `--verbose` | `-v` | flag | No | Increase logging verbosity |
+
+`--atlas-type` is accepted for backward compatibility but is deprecated — use `--format` instead.
 
 ### Examples
 
@@ -49,11 +53,24 @@ fsatlas extract --atlas schaefer100-7 -s sub-01 -s sub-02 -o ./results
 # From subjects file
 fsatlas extract --atlas tian-s2 --subjects-file cohort.txt -o ./results
 
-# Custom surface atlas
-fsatlas extract --atlas /data/atlases/lh.myatlas.annot -o ./results
+# Custom surface atlas with LUT
+fsatlas extract \
+    --atlas /data/atlases/lh.myatlas.annot \
+    --lut /data/atlases/myatlas_lut.tsv \
+    -o ./results
 
-# Custom volumetric atlas
-fsatlas extract --atlas /data/atlases/my_atlas.nii.gz -o ./results
+# Custom volumetric atlas with LUT
+fsatlas extract \
+    --atlas /data/atlases/my_atlas.nii.gz \
+    --lut /data/atlases/my_atlas_lut.tsv \
+    -o ./results
+
+# CIFTI atlas
+fsatlas extract \
+    --atlas /data/atlases/lh.myatlas.dlabel.gii \
+    --format dlabel_gii \
+    --lut /data/atlases/lut.tsv \
+    -o ./results
 
 # Override SUBJECTS_DIR
 fsatlas extract --atlas desikan --subjects-dir /data/fs_subjects -o ./results
@@ -68,8 +85,7 @@ Written to `--output-dir`:
 
 | File | Description |
 |------|-------------|
-| `{atlas}_cortical.tsv` | Long-format cortical morphometry (surface atlases) |
-| `{atlas}_subcortical.tsv` | Long-format subcortical morphometry (volumetric atlases) |
+| `{atlas}.tsv` | Wide-format morphometry (one row per region per subject) |
 | `{atlas}_failures.tsv` | Per-subject error log |
 
 ### Exit Codes
@@ -93,57 +109,56 @@ fsatlas list-atlases
 
 | Column | Description |
 |--------|-------------|
-| ID | Atlas identifier for use with `--atlas` |
+| Name | Atlas identifier for use with `--atlas` |
+| Format | File format: `annot`, `nifti`, `dlabel_gii`, or `gca` |
 | Family | Atlas family / publication |
-| Type | `surface` or `volumetric` |
-| Parcels | Number of regions |
-| Space | Reference space |
-| Downloaded | Whether the atlas is already in the local cache |
-| Citation | Short citation key |
+| Description | Short description |
+| Cached | Whether the atlas is already in the local cache (✓ or —) |
 
 ### Example output
 
 ```
-┌─────────────────┬──────────────┬─────────────┬─────────┬────────────┬────────────┐
-│ ID              │ Family       │ Type        │ Parcels │ Downloaded │ Space      │
-├─────────────────┼──────────────┼─────────────┼─────────┼────────────┼────────────┤
-│ schaefer100-7   │ Schaefer2018 │ surface     │ 100     │ ✓          │ fsaverage  │
-│ schaefer200-7   │ Schaefer2018 │ surface     │ 200     │            │ fsaverage  │
-│ tian-s1         │ Tian2020     │ volumetric  │ 16      │            │ MNI152     │
-│ desikan         │ FreeSurfer   │ surface     │ 68      │ built-in   │ fsaverage  │
-└─────────────────┴──────────────┴─────────────┴─────────┴────────────┴────────────┘
+┌─────────────────┬────────┬──────────────┬───────────────────────────┬────────┐
+│ Name            │ Format │ Family       │ Description               │ Cached │
+├─────────────────┼────────┼──────────────┼───────────────────────────┼────────┤
+│ schaefer100-7   │ annot  │ schaefer2018 │ Schaefer 2018, 100 parcels│   ✓    │
+│ schaefer200-7   │ annot  │ schaefer2018 │ Schaefer 2018, 200 parcels│   —    │
+│ tian-s1         │ nifti  │ tian2020     │ Tian 2020 Scale I (16 reg)│   —    │
+│ desikan         │ annot  │ freesurfer.. │ Desikan-Killiany (builtin)│   —    │
+└─────────────────┴────────┴──────────────┴───────────────────────────┴────────┘
 ```
 
 ---
 
 ## `fsatlas download`
 
-Pre-downloads one or more atlases to the local cache.
+Pre-downloads an atlas to the local cache and generates its LUT.
 
 ```bash
-fsatlas download [OPTIONS] ATLAS_ID [ATLAS_ID ...]
+fsatlas download [OPTIONS] ATLAS_NAME
 ```
 
 ### Arguments
 
 | Argument | Description |
 |----------|-------------|
-| `ATLAS_ID` | One or more atlas IDs to download (from the catalog) |
+| `ATLAS_NAME` | Atlas ID to download (from the catalog) |
 
 ### Options
 
 | Option | Description |
 |--------|-------------|
 | `--force` | Re-download even if already cached |
+| `--subjects-dir`, `-d` | FreeSurfer SUBJECTS_DIR (needed to generate LUTs for built-in surface atlases) |
 
 ### Examples
 
 ```bash
-# Download a single atlas
+# Download and cache atlas + LUT
 fsatlas download schaefer400-7
 
-# Download multiple atlases
-fsatlas download schaefer100-7 schaefer400-17 tian-s2 hcp-mmp
+# Built-in atlas LUT generation (requires FREESURFER_HOME)
+fsatlas download desikan
 
 # Force re-download
 fsatlas download --force schaefer100-7
@@ -152,7 +167,60 @@ fsatlas download --force schaefer100-7
 ### Cache location
 
 ```
-~/.cache/fsatlas/atlases/{atlas_id}/
+~/.cache/fsatlas/atlases/{atlas_name}/
+    lh.annot          # surface atlases
+    rh.annot
+    labels.tsv        # LUT (auto-generated or downloaded)
+    atlas.nii.gz      # volumetric atlases
+```
+
+---
+
+## `fsatlas generate-lut`
+
+Generate a LUT TSV from a `.annot` file pair or a catalog atlas.
+
+```bash
+fsatlas generate-lut [OPTIONS]
+```
+
+### Options
+
+| Option | Short | Type | Required | Description |
+|--------|-------|------|----------|-------------|
+| `--atlas` | `-a` | TEXT | * | Catalog atlas name (e.g. `desikan`) |
+| `--lh-annot` | | PATH | * | Left-hemisphere `.annot` file |
+| `--rh-annot` | | PATH | * | Right-hemisphere `.annot` file |
+| `--output` | `-o` | PATH | **Yes** | Output TSV path |
+| `--subjects-dir` | `-d` | PATH | No | FreeSurfer SUBJECTS_DIR (required for built-in atlases) |
+
+\* Provide either `--atlas` OR both `--lh-annot` and `--rh-annot`.
+
+### Examples
+
+```bash
+# From .annot files
+fsatlas generate-lut \
+    --lh-annot /data/lh.myatlas.annot \
+    --rh-annot /data/rh.myatlas.annot \
+    --output myatlas_lut.tsv
+
+# From a downloaded catalog atlas
+fsatlas download schaefer100-7
+fsatlas generate-lut --atlas schaefer100-7 --output schaefer100-7_lut.tsv
+
+# From a FreeSurfer built-in (reads from fsaverage)
+fsatlas generate-lut --atlas desikan --output desikan_lut.tsv
+```
+
+### Output format
+
+```
+index   label                   hemisphere
+1       7Networks_LH_Vis_1      lh
+2       7Networks_LH_Vis_2      lh
+...
+51      7Networks_RH_Vis_1      rh
 ```
 
 ---
