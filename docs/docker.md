@@ -1,42 +1,125 @@
-# Docker
+# Containers
 
-fsatlas provides a Docker image based on `freesurfer/freesurfer:8.0.0`. Use it to run fsatlas without installing FreeSurfer locally.
+fsatlas ships as a pre-built container image based on `freesurfer/freesurfer:8.0.0`. Use it to run fsatlas without installing FreeSurfer locally.
+
+**Apptainer is recommended** for HPC and cluster environments. Docker works well on local workstations.
 
 ---
 
-## Build the Image
+## Apptainer / Singularity
 
-From the repository root:
+[Apptainer](https://apptainer.org/) (formerly Singularity) is the standard container runtime on most HPC clusters. It runs containers as an unprivileged user, mounts the host filesystem automatically, and integrates well with SLURM and PBS schedulers.
+
+### Pull the image
+
+```bash
+apptainer pull fsatlas.sif docker://galkepler/fsatlas:latest
+```
+
+Or build from source (requires the repository):
+
+```bash
+apptainer build fsatlas.sif apptainer.def
+```
+
+### Basic usage
+
+```bash
+apptainer run \
+    --bind /path/to/SUBJECTS_DIR:/subjects \
+    --bind /path/to/license.txt:/license.txt:ro \
+    --env SUBJECTS_DIR=/subjects \
+    fsatlas.sif \
+    --freesurfer-license-file /license.txt \
+    extract --atlas schaefer100-7 -o /subjects/results
+```
+
+### License via environment variable
+
+```bash
+export FS_LICENSE=/path/to/license.txt
+
+apptainer run \
+    --bind /path/to/SUBJECTS_DIR:/subjects \
+    --env SUBJECTS_DIR=/subjects \
+    --env FS_LICENSE=/path/to/license.txt \
+    fsatlas.sif \
+    extract --atlas schaefer100-7 -o /subjects/results
+```
+
+### List available atlases
+
+```bash
+apptainer run \
+    --bind /path/to/license.txt:/license.txt:ro \
+    fsatlas.sif \
+    --freesurfer-license-file /license.txt \
+    list-atlases
+```
+
+### Persist the atlas cache
+
+Apptainer mounts `$HOME` automatically, so `~/.cache/fsatlas/` is accessible by default. If you prefer an explicit bind:
+
+```bash
+apptainer run \
+    --bind /path/to/SUBJECTS_DIR:/subjects \
+    --bind $HOME/.cache/fsatlas:/root/.cache/fsatlas \
+    --env SUBJECTS_DIR=/subjects \
+    fsatlas.sif \
+    --freesurfer-license-file /license.txt \
+    extract --atlas schaefer400-17 -o /subjects/results
+```
+
+### SLURM example
+
+```bash
+#!/bin/bash
+#SBATCH --job-name=fsatlas
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=16G
+#SBATCH --time=12:00:00
+
+apptainer run \
+    --bind $SUBJECTS_DIR:/subjects \
+    --bind $FS_LICENSE:/license.txt:ro \
+    --env SUBJECTS_DIR=/subjects \
+    /path/to/fsatlas.sif \
+    --freesurfer-license-file /license.txt \
+    extract \
+        --atlas schaefer400-17 \
+        --subjects-file subjects.txt \
+        -o /subjects/fsatlas_output
+```
+
+---
+
+## Docker
+
+### Pull the image
+
+```bash
+docker pull galkepler/fsatlas:latest
+```
+
+Or build from source:
 
 ```bash
 docker build -t fsatlas .
 ```
 
-The image uses a Python virtual environment at `/opt/fsatlas-venv`. The `fsatlas` command is the container entrypoint.
-
----
-
-## Run the Container
-
-### Basic Usage
+### Basic usage
 
 ```bash
 docker run --rm \
     -v /path/to/SUBJECTS_DIR:/subjects \
     -v /path/to/license.txt:/opt/freesurfer/license.txt \
     -e SUBJECTS_DIR=/subjects \
-    fsatlas extract --atlas schaefer100-7 -o /subjects/results
+    galkepler/fsatlas:latest \
+    extract --atlas schaefer100-7 -o /subjects/results
 ```
 
-### Key Mount Points
-
-| Host path | Container path | Purpose |
-|-----------|---------------|---------|
-| `/path/to/SUBJECTS_DIR` | `/subjects` | FreeSurfer subjects directory |
-| `/path/to/license.txt` | `/opt/freesurfer/license.txt` | FreeSurfer license (required) |
-| `/path/to/results` | `/results` | Output directory (optional separate mount) |
-
-### With a Separate Output Directory
+### With a separate output directory
 
 ```bash
 docker run --rm \
@@ -44,22 +127,22 @@ docker run --rm \
     -v /data/license.txt:/opt/freesurfer/license.txt \
     -v /data/results:/results \
     -e SUBJECTS_DIR=/subjects \
-    fsatlas extract --atlas tian-s2 -o /results
+    galkepler/fsatlas:latest \
+    extract --atlas tian-s2 -o /results
 ```
 
----
+### Examples
 
-## Examples
-
-### List available atlases
+#### List available atlases
 
 ```bash
 docker run --rm \
     -v /path/to/license.txt:/opt/freesurfer/license.txt \
-    fsatlas list-atlases
+    galkepler/fsatlas:latest \
+    list-atlases
 ```
 
-### Extract Schaefer 400 for specific subjects
+#### Extract Schaefer 400 for specific subjects
 
 ```bash
 docker run --rm \
@@ -67,20 +150,22 @@ docker run --rm \
     -v /data/license.txt:/opt/freesurfer/license.txt \
     -v /data/results:/results \
     -e SUBJECTS_DIR=/subjects \
-    fsatlas extract \
+    galkepler/fsatlas:latest \
+    extract \
         --atlas schaefer400-17 \
         -s sub-01 -s sub-02 -s sub-03 \
         -o /results
 ```
 
-### Pre-download an atlas (then run without network)
+#### Pre-download an atlas (then run offline)
 
 ```bash
 # Download to host cache
 docker run --rm \
     -v $HOME/.cache/fsatlas:/root/.cache/fsatlas \
     -v /path/to/license.txt:/opt/freesurfer/license.txt \
-    fsatlas download schaefer400-17
+    galkepler/fsatlas:latest \
+    download schaefer400-17
 
 # Run offline, reusing cache
 docker run --rm \
@@ -90,10 +175,11 @@ docker run --rm \
     -v /data/results:/results \
     -e SUBJECTS_DIR=/subjects \
     --network none \
-    fsatlas extract --atlas schaefer400-17 -o /results
+    galkepler/fsatlas:latest \
+    extract --atlas schaefer400-17 -o /results
 ```
 
-### Custom Atlas
+#### Custom atlas
 
 ```bash
 docker run --rm \
@@ -102,44 +188,39 @@ docker run --rm \
     -v /data/atlases:/atlases \
     -v /data/results:/results \
     -e SUBJECTS_DIR=/subjects \
-    fsatlas extract \
+    galkepler/fsatlas:latest \
+    extract \
         --atlas /atlases/lh.myatlas.annot \
+        --lut /atlases/myatlas_lut.tsv \
         -o /results
 ```
 
 ---
 
-## Dockerfile Overview
+## Key Mount Points
 
-```dockerfile
-FROM freesurfer/freesurfer:8.0.0
-
-# Install Python 3.12
-RUN apt-get update && apt-get install -y python3.12 python3.12-pip
-
-# Create isolated virtual environment
-RUN python3.12 -m venv /opt/fsatlas-venv
-ENV PATH="/opt/fsatlas-venv/bin:$PATH"
-
-# Install fsatlas
-COPY . /opt/fsatlas-src
-RUN pip install /opt/fsatlas-src
-
-ENTRYPOINT ["fsatlas"]
-```
+| Host path | Container path | Purpose |
+|-----------|---------------|---------|
+| `$SUBJECTS_DIR` | `/subjects` | FreeSurfer subjects directory |
+| `/path/to/license.txt` | `/opt/freesurfer/license.txt` (Docker) or via `--freesurfer-license-file` | FreeSurfer license (required) |
+| `~/.cache/fsatlas` | `/root/.cache/fsatlas` | Atlas download cache (optional) |
+| Output directory | `/results` | Results (optional separate mount) |
 
 ---
 
 ## Notes
 
 !!! warning "FreeSurfer License Required"
-    A valid FreeSurfer license (`license.txt`) must be mounted at `/opt/freesurfer/license.txt`. Licenses are free for academic use — register at the [FreeSurfer website](https://surfer.nmr.mgh.harvard.edu/registration.html).
+    A valid FreeSurfer license (`license.txt`) must be provided. Licenses are free for academic use — register at the [FreeSurfer website](https://surfer.nmr.mgh.harvard.edu/registration.html).
+
+    For Apptainer, pass it with `--freesurfer-license-file /path/to/license.txt` or set `FS_LICENSE`.
+    For Docker, mount it at `/opt/freesurfer/license.txt`.
 
 !!! tip "Atlas Cache Persistence"
-    To avoid re-downloading atlases on every container run, mount the host cache:
-    ```bash
-    -v $HOME/.cache/fsatlas:/root/.cache/fsatlas
-    ```
+    To avoid re-downloading atlases on every container run, persist the cache directory:
+
+    - **Apptainer**: `$HOME` is mounted automatically; `~/.cache/fsatlas/` is available by default.
+    - **Docker**: Add `-v $HOME/.cache/fsatlas:/root/.cache/fsatlas`.
 
 !!! tip "Memory"
-    Processing large cohorts or high-resolution atlases may require significant memory. If the container is killed unexpectedly, try increasing Docker's memory limit in Docker Desktop settings.
+    Processing large cohorts or high-resolution atlases may require significant memory. For Docker Desktop, increase the memory limit in settings. For SLURM, adjust `--mem`.

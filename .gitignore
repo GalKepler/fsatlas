@@ -46,3 +46,4 @@ results/
 *.tsv
 *.log
 site/
+*.sif

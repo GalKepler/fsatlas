@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import os
 import sys
 from pathlib import Path
 
@@ -32,8 +33,17 @@ def _setup_logging(verbose: bool) -> None:
 
 @click.group()
 @click.version_option()
-def cli() -> None:
+@click.option(
+    "--freesurfer-license-file",
+    type=click.Path(exists=True, dir_okay=False, path_type=Path),
+    default=None,
+    envvar="FS_LICENSE",
+    help="Path to a FreeSurfer license.txt file. Required when running inside a container.",
+)
+def cli(freesurfer_license_file: Path | None) -> None:
     """fsatlas — Extract morphometric measures from FreeSurfer subjects using arbitrary atlases."""
+    if freesurfer_license_file is not None:
+        os.environ["FS_LICENSE"] = str(freesurfer_license_file)
 
 
 @cli.command()
@@ -410,4 +420,44 @@ def _resolve_subjects(
     if not subject_list:
         subject_list = env.list_subjects()
         console.print(f"Auto-discovered {len(subject_list)} subjects in {env.subjects_dir}")
+    else:
+        subject_list = _expand_sessions(env, subject_list)
     return subject_list
+
+
+def _expand_sessions(env: FreeSurferEnv, subjects: list[str]) -> list[str]:
+    """Expand each subject code to include all matching sessions (<subject>_*).
+
+    If a directory named exactly ``subject_id`` exists it is kept.
+    Any directories matching ``<subject_id>_*`` are also included.
+    When no sessions are found the original ID is kept so the pipeline
+    can emit a clear error later.
+    """
+    expanded: list[str] = []
+    seen: set[str] = set()
+
+    for subject_id in subjects:
+        # Exact match
+        if (env.subjects_dir / subject_id).is_dir():
+            if subject_id not in seen:
+                expanded.append(subject_id)
+                seen.add(subject_id)
+
+        # Session matches: <subject_id>_*
+        sessions = sorted(
+            d.name
+            for d in env.subjects_dir.iterdir()
+            if d.is_dir() and d.name.startswith(f"{subject_id}_")
+        )
+        for session in sessions:
+            if session not in seen:
+                expanded.append(session)
+                seen.add(session)
+
+        if subject_id not in seen:
+            # Neither exact dir nor sessions found — keep original so the
+            # pipeline produces a clear "subject not found" error.
+            expanded.append(subject_id)
+            seen.add(subject_id)
+
+    return expanded

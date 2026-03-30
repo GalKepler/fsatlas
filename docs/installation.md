@@ -90,15 +90,29 @@ fsatlas download tian-s2
 
 ---
 
-## Docker (No Local FreeSurfer Required)
+## Containers (No Local FreeSurfer Required)
 
-If you don't have FreeSurfer installed locally, use the Docker image:
+If you don't have FreeSurfer installed locally, use a pre-built container image. **Apptainer is recommended** for HPC/cluster environments; Docker is convenient for local workstations.
+
+### Apptainer / Singularity (recommended for HPC)
 
 ```bash
-docker pull ghcr.io/GalKepler/fsatlas:latest
+apptainer pull fsatlas.sif docker://galkepler/fsatlas:latest
 ```
 
-See the [Docker guide](docker.md) for full usage instructions.
+Or build from the definition file in the repository:
+
+```bash
+apptainer build fsatlas.sif apptainer.def
+```
+
+### Docker
+
+```bash
+docker pull galkepler/fsatlas:latest
+```
+
+See the [Containers guide](docker.md) for full usage instructions and examples.
 
 ---
 

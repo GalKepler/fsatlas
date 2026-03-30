@@ -24,7 +24,7 @@
 schaefer100-7:
   name: schaefer100-7
   family: schaefer2018
-  bids_name: Schaefer100x7
+  bids_name: Schaefer2018N100n7
   description: "Schaefer 2018, 100 parcels, 7-network"
   type: surface
   format: annot
@@ -39,7 +39,7 @@ schaefer100-7:
 schaefer200-7:
   name: schaefer200-7
   family: schaefer2018
-  bids_name: Schaefer200x7
+  bids_name: Schaefer2018N200n7
   description: "Schaefer 2018, 200 parcels, 7-network"
   type: surface
   format: annot
@@ -54,7 +54,7 @@ schaefer200-7:
 schaefer300-7:
   name: schaefer300-7
   family: schaefer2018
-  bids_name: Schaefer300x7
+  bids_name: Schaefer2018N300n7
   description: "Schaefer 2018, 300 parcels, 7-network"
   type: surface
   format: annot
@@ -69,7 +69,7 @@ schaefer300-7:
 schaefer400-7:
   name: schaefer400-7
   family: schaefer2018
-  bids_name: Schaefer400x7
+  bids_name: Schaefer2018N400n7
   description: "Schaefer 2018, 400 parcels, 7-network"
   type: surface
   format: annot
@@ -84,7 +84,7 @@ schaefer400-7:
 schaefer500-7:
   name: schaefer500-7
   family: schaefer2018
-  bids_name: Schaefer500x7
+  bids_name: Schaefer2018N500n7
   description: "Schaefer 2018, 500 parcels, 7-network"
   type: surface
   format: annot
@@ -99,7 +99,7 @@ schaefer500-7:
 schaefer600-7:
   name: schaefer600-7
   family: schaefer2018
-  bids_name: Schaefer600x7
+  bids_name: Schaefer2018N600n7
   description: "Schaefer 2018, 600 parcels, 7-network"
   type: surface
   format: annot
@@ -114,7 +114,7 @@ schaefer600-7:
 schaefer700-7:
   name: schaefer700-7
   family: schaefer2018
-  bids_name: Schaefer700x7
+  bids_name: Schaefer2018N700n7
   description: "Schaefer 2018, 700 parcels, 7-network"
   type: surface
   format: annot
@@ -129,7 +129,7 @@ schaefer700-7:
 schaefer800-7:
   name: schaefer800-7
   family: schaefer2018
-  bids_name: Schaefer800x7
+  bids_name: Schaefer2018N800n7
   description: "Schaefer 2018, 800 parcels, 7-network"
   type: surface
   format: annot
@@ -144,7 +144,7 @@ schaefer800-7:
 schaefer900-7:
   name: schaefer900-7
   family: schaefer2018
-  bids_name: Schaefer900x7
+  bids_name: Schaefer2018N900n7
   description: "Schaefer 2018, 900 parcels, 7-network"
   type: surface
   format: annot
@@ -159,7 +159,7 @@ schaefer900-7:
 schaefer1000-7:
   name: schaefer1000-7
   family: schaefer2018
-  bids_name: Schaefer1000x7
+  bids_name: Schaefer2018N1000n7
   description: "Schaefer 2018, 1000 parcels, 7-network"
   type: surface
   format: annot
@@ -174,7 +174,7 @@ schaefer1000-7:
 schaefer100-17:
   name: schaefer100-17
   family: schaefer2018
-  bids_name: Schaefer100x17
+  bids_name: Schaefer2018N100n17
   description: "Schaefer 2018, 100 parcels, 17-network"
   type: surface
   format: annot
@@ -189,7 +189,7 @@ schaefer100-17:
 schaefer200-17:
   name: schaefer200-17
   family: schaefer2018
-  bids_name: Schaefer200x17
+  bids_name: Schaefer2018N200n17
   description: "Schaefer 2018, 200 parcels, 17-network"
   type: surface
   format: annot
@@ -204,7 +204,7 @@ schaefer200-17:
 schaefer300-17:
   name: schaefer300-17
   family: schaefer2018
-  bids_name: Schaefer300x17
+  bids_name: Schaefer2018N300n17
   description: "Schaefer 2018, 300 parcels, 17-network"
   type: surface
   format: annot
@@ -219,7 +219,7 @@ schaefer300-17:
 schaefer400-17:
   name: schaefer400-17
   family: schaefer2018
-  bids_name: Schaefer400x17
+  bids_name: Schaefer2018N400n17
   description: "Schaefer 2018, 400 parcels, 17-network"
   type: surface
   format: annot
@@ -238,7 +238,7 @@ schaefer400-17:
 tian-s1:
   name: tian-s1
   family: tian2020
-  bids_name: TianS1
+  bids_name: Tian2020S1
   description: "Tian 2020 Melbourne Subcortex Atlas, Scale I (16 regions)"
   type: volumetric
   format: nifti
@@ -252,7 +252,7 @@ tian-s1:
 tian-s2:
   name: tian-s2
   family: tian2020
-  bids_name: TianS2
+  bids_name: Tian2020S2
   description: "Tian 2020 Melbourne Subcortex Atlas, Scale II (32 regions)"
   type: volumetric
   format: nifti
@@ -266,7 +266,7 @@ tian-s2:
 tian-s3:
   name: tian-s3
   family: tian2020
-  bids_name: TianS3
+  bids_name: Tian2020S3
   description: "Tian 2020 Melbourne Subcortex Atlas, Scale III (50 regions)"
   type: volumetric
   format: nifti
@@ -280,7 +280,7 @@ tian-s3:
 tian-s4:
   name: tian-s4
   family: tian2020
-  bids_name: TianS4
+  bids_name: Tian2020S4
   description: "Tian 2020 Melbourne Subcortex Atlas, Scale IV (54 regions)"
   type: volumetric
   format: nifti
@@ -298,7 +298,7 @@ tian-s4:
 hcp-mmp:
   name: hcp-mmp
   family: glasser2016
-  bids_name: Glasser2016
+  bids_name: HCPex
   description: "HCP Multi-Modal Parcellation 1.0 (360 cortical areas)"
   type: surface
   format: annot
@@ -315,7 +315,7 @@ hcp-mmp:
 hcpex_subcortical:
   name: hcpex_subcortical
   family: glasser2016
-  bids_name: Glasser2016
+  bids_name: HCPex
   description: "HCPex subcortical component (66 parcels, indices 361–426)"
   type: volumetric
   format: nifti
@@ -333,7 +333,7 @@ hcpex_subcortical:
 gordon333:
   name: gordon333
   family: gordon2016
-  bids_name: Gordon333
+  bids_name: Gordon333Ext
   description: "Gordon 2016 Parcellation (333 cortical areas, dilated to fill fsaverage)"
   type: surface
   format: annot
@@ -349,7 +349,7 @@ gordon333:
 gordon333_subcortical:
   name: gordon333_subcortical
   family: gordon2016
-  bids_name: Gordon333
+  bids_name: Gordon333Ext
   description: "Gordon333Ext subcortical component (52 parcels, indices 1–52)"
   type: volumetric
   format: nifti
@@ -363,7 +363,7 @@ gordon333_subcortical:
 4s156_subcortical:
   name: 4s156_subcortical
   family: 4s
-  bids_name: 4S156
+  bids_name: 4S156Subcortex
   description: "4S-156 subcortical component (56 parcels, indices 101–156)"
   type: volumetric
   format: nifti
@@ -381,7 +381,7 @@ gordon333_subcortical:
 aicha384:
   name: aicha384
   family: aicha2015
-  bids_name: AICHA384
+  bids_name: AICHA384Ext
   description: "AICHA 2015 Atlas v2 (384 bilateral symmetric regions, indices 1–384)"
   type: volumetric
   format: nifti
@@ -395,7 +395,7 @@ aicha384:
 aicha384_subcortical:
   name: aicha384_subcortical
   family: aicha2015
-  bids_name: AICHA384
+  bids_name: AICHA384Ext
   description: "AICHA384 subcortical component (50 parcels, indices 345–395)"
   type: volumetric
   format: nifti
@@ -488,7 +488,7 @@ aseg:
 BN_Atlas:
   name: BN_Atlas
   family: brainnetome
-  bids_name: Brainnetome246
+  bids_name: Brainnetome246Ext
   description: "Brainnetome Atlas (BNA), 246 cortical parcels"
   type: surface
   format: annot
@@ -503,7 +503,7 @@ BN_Atlas:
 BN_Atlas_subcotex:
   name: BN_Atlas_subcotex
   family: brainnetome
-  bids_name: Brainnetome246
+  bids_name: Brainnetome246Ext
   description: "Brainnetome Atlas subcortical component (36 parcels, indices 211–246)"
   type: volumetric
   format: nifti

@@ -230,6 +230,61 @@ The TSV output is in wide format — one row per region per subject, measures as
 
 ---
 
+## 13. BIDS Output Layout
+
+By default, fsatlas writes a single `{atlas}.tsv` file (flat layout). To write per-subject files in a BIDS derivative structure:
+
+```bash
+fsatlas extract --atlas schaefer400-17 --output-layout bids -o ./derivatives/fsatlas
+```
+
+Output structure:
+
+```
+derivatives/fsatlas/
+└── sub-01/
+    └── anat/
+        └── atlas-schaefer400-17/
+            └── sub-01_atlas-schaefer400-17_structure-cortical.csv
+└── sub-02/
+    └── anat/
+        └── atlas-schaefer400-17/
+            └── sub-02_atlas-schaefer400-17_structure-cortical.csv
+```
+
+Sessions are automatically detected if your subject IDs follow BIDS format (`sub-{label}_ses-{label}`).
+
+---
+
+## 14. Running with Apptainer
+
+On HPC clusters, use the Apptainer image instead of a local installation:
+
+```bash
+# Pull the image
+apptainer pull fsatlas.sif docker://galkepler/fsatlas:latest
+
+# List atlases
+apptainer run \
+    --bind /path/to/license.txt:/license.txt:ro \
+    fsatlas.sif \
+    --freesurfer-license-file /license.txt \
+    list-atlases
+
+# Extract
+apptainer run \
+    --bind /data/subjects:/subjects \
+    --bind /path/to/license.txt:/license.txt:ro \
+    --env SUBJECTS_DIR=/subjects \
+    fsatlas.sif \
+    --freesurfer-license-file /license.txt \
+    extract --atlas schaefer100-7 -o /subjects/results
+```
+
+See the [Containers guide](../docker.md) for SLURM examples and advanced usage.
+
+---
+
 ## Failure Handling
 
 If a subject fails (missing files, FreeSurfer error), fsatlas logs the error and moves to the next subject. Review failures in:

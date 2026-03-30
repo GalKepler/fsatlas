@@ -12,6 +12,7 @@ fsatlas --help
 
 | Option | Description |
 |--------|-------------|
+| `--freesurfer-license-file` | Path to FreeSurfer `license.txt`. Overrides the `FS_LICENSE` environment variable. |
 | `--version` | Show fsatlas version and exit |
 | `--help` | Show help message and exit |
 
@@ -35,11 +36,21 @@ fsatlas extract [OPTIONS]
 | `--lut` | `-l` | PATH | No | Path to a custom LUT TSV (`index`, `label`, `hemisphere`). Required for custom atlases without embedded labels. |
 | `--subjects` | `-s` | TEXT | No | Subject IDs to process (repeatable; default: all in `$SUBJECTS_DIR`) |
 | `--subjects-file` | | PATH | No | Text file with one subject ID per line |
+| `--output-layout` | | CHOICE | No | Output directory layout: `flat` (default) or `bids` |
 | `--force` | `-f` | flag | No | Recompute even if cached outputs exist |
 | `--subjects-dir` | `-d` | PATH | No | Override `$SUBJECTS_DIR` for this run |
 | `--verbose` | `-v` | flag | No | Increase logging verbosity |
 
 `--atlas-type` is accepted for backward compatibility but is deprecated — use `--format` instead.
+
+#### `--output-layout` details
+
+| Layout | Output structure |
+|--------|-----------------|
+| `flat` (default) | `{output-dir}/{atlas}.tsv` — one file per atlas, all subjects |
+| `bids` | `{output-dir}/sub-{id}/[ses-{ses}/]anat/atlas-{name}/sub-{id}_atlas-{name}_structure-{structure}.csv` |
+
+BIDS layout is useful when integrating fsatlas output into an existing BIDS derivative dataset.
 
 ### Examples
 
@@ -231,5 +242,6 @@ index   label                   hemisphere
 |----------|----------|-------------|
 | `FREESURFER_HOME` | **Yes** | Path to FreeSurfer installation |
 | `SUBJECTS_DIR` | **Yes** | Path to FreeSurfer subjects directory |
+| `FS_LICENSE` | No | Path to FreeSurfer `license.txt` (alternative to `--freesurfer-license-file`) |
 
-These are typically set by FreeSurfer's `SetUpFreeSurfer.sh` script. They can be overridden per-run with `--subjects-dir`.
+These are typically set by FreeSurfer's `SetUpFreeSurfer.sh` script. `SUBJECTS_DIR` can be overridden per-run with `--subjects-dir`.

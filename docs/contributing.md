@@ -42,15 +42,19 @@ pytest
 
 ```
 src/fsatlas/
-├── cli/main.py           # CLI commands (Click)
+├── cli/main.py           # CLI commands (Click): extract, list-atlases, download, generate-lut
 ├── atlases/
-│   ├── catalog.yaml      # Built-in atlas definitions
-│   └── registry.py       # Atlas loading and downloading
+│   ├── catalog.yaml      # Built-in atlas definitions (31 atlases)
+│   ├── *_labels.tsv      # Bundled LUT files for volumetric atlases
+│   └── registry.py       # AtlasRegistry, AtlasSpec, CustomAtlasSpec
 └── core/
+    ├── bids.py           # BIDS output path construction
+    ├── command.py        # run_command() subprocess wrapper
     ├── environment.py    # FreeSurfer detection, subject paths
-    ├── pipeline.py       # Orchestrator
-    ├── transfer.py       # FreeSurfer command wrappers
-    └── extract.py        # Stats extraction and parsing
+    ├── extract.py        # FreeSurfer command runners + .stats parsers
+    ├── formats.py        # Format handlers: annot, nifti, dlabel_gii, gca
+    ├── lut.py            # LookupTable: from_tsv, from_annot, merge_measures
+    └── pipeline.py       # run_extraction() + FlatWriter/BidsWriter
 tests/
 ```
 
@@ -65,13 +69,15 @@ tests/
 - name: my-atlas-id
   family: MyAtlas
   description: "A short description of the atlas"
-  type: surface          # or "volumetric"
-  space: fsaverage       # or "MNI152NLin6Asym"
+  format: annot          # annot | nifti | dlabel_gii | gca
+  space: fsaverage       # or MNI152NLin6Asym / MNI152NLin2009cAsym
   source_url: "https://..."
   files:
-    lh_annot: lh.myatlas.annot          # surface atlas files
+    lh_annot: lh.myatlas.annot
     rh_annot: rh.myatlas.annot
+  labels_tsv: labels.tsv
   citation: "Author et al. Year, Journal"
+  bids_name: myatlas     # used for --output-layout bids
 ```
 
 For volumetric atlases:
@@ -79,12 +85,21 @@ For volumetric atlases:
 ```yaml
 - name: my-subcortical
   family: MyAtlas
-  type: volumetric
+  description: "Subcortical parcellation"
+  format: nifti
   space: MNI152NLin6Asym
   source_url: "https://..."
   files:
     nifti: my_subcortical_atlas.nii.gz
+  labels_tsv: labels.tsv
   citation: "Author et al. Year, Journal"
+  bids_name: mysubcortical
+```
+
+For atlases not available via HTTP, use `local_source_dir` instead of `source_url`:
+
+```yaml
+  local_source_dir: /path/to/local/atlas/directory
 ```
 
 3. Test with:

@@ -1,6 +1,6 @@
 # Atlas Catalog
 
-fsatlas ships with 31 built-in atlases across 8 families. All atlases are downloaded automatically on first use (including LUT generation) and cached to `~/.cache/fsatlas/atlases/`.
+fsatlas ships with **31 built-in atlases** across 8 families. All atlases are downloaded automatically on first use (including LUT generation) and cached to `~/.cache/fsatlas/atlases/`.
 
 Use `fsatlas list-atlases` to view the catalog in your terminal.
 
@@ -167,6 +167,16 @@ The classic Automated Anatomical Labeling atlas.
 | `aal116` | nifti | 116 | MNI152NLin2009cAsym |
 
 **Region naming example:** `Precentral_L`, `Hippocampus_R`
+
+---
+
+### 4S-156 Subcortical
+
+A subcortical atlas with 56 regions derived from the 4S parcellation framework.
+
+| Atlas ID | Format | Parcels | Space |
+|----------|--------|---------|-------|
+| `4s156_subcortical` | nifti | 56 | MNI152NLin2009cAsym |
 
 ---
 

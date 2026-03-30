@@ -27,14 +27,15 @@ mri_ca_label  → mri_segstats         → parse output
 
 ## Features
 
-- **31 built-in atlases** — Schaefer 2018 (100–1000 parcels × 7/17 networks), Tian 2020 subcortical (Scales I–IV), HCP-MMP1, Brainnetome, AICHA, Gordon333, AAL116, DKT, Desikan, Destrieux, aseg.
+- **31 built-in atlases** — Schaefer 2018 (100–1000 parcels × 7/17 networks), Tian 2020 subcortical (Scales I–IV), HCP-MMP1, Brainnetome, AICHA384, Gordon333, AAL116, 4S-156, DKT, Desikan, Destrieux, aseg.
 - **Four atlas formats** — `.annot` (FreeSurfer surface), `.nii`/`.nii.gz` (volumetric MNI), `.dlabel.gii` (CIFTI), `.gca` (FreeSurfer GCA).
 - **Custom atlas support** — Point at any supported file; provide a LUT TSV for the output schema.
 - **LUT-based wide output** — Each row is one region from the atlas LUT; measures are columns. Schema: `subject_id | index | label | hemisphere | measure1 | … | tiv_mm3`.
 - **LUT generation** — `fsatlas generate-lut` extracts the embedded colour table from `.annot` files into a reusable TSV.
 - **Batch processing** — Process all subjects in `$SUBJECTS_DIR` or a specified list.
+- **BIDS output layout** — Optionally write per-subject CSVs in a BIDS derivative directory tree.
 - **Failure resilience** — Pipeline continues on per-subject errors; failures logged to a separate TSV.
-- **Docker image** — Run without a local FreeSurfer installation.
+- **Apptainer and Docker images** — Run without a local FreeSurfer installation; Apptainer recommended for HPC.
 
 ---
 
@@ -140,6 +141,12 @@ fsatlas extract \
 fsatlas download schaefer400-7
 ```
 
+### Use BIDS output layout
+
+```bash
+fsatlas extract --atlas schaefer100-7 --output-layout bids -o ./derivatives/fsatlas
+```
+
 ---
 
 ## Built-in Atlas Catalog
@@ -158,6 +165,7 @@ fsatlas download schaefer400-7
 | `aal116` | AAL 2002 | nifti | 116 | MNI152NLin2009cAsym |
 | `BN_Atlas` | Brainnetome | annot | 246 | fsaverage |
 | `BN_Atlas_subcotex` | Brainnetome | nifti | 36 | MNI152NLin2009cAsym |
+| `4s156_subcortical` | 4S-156 | nifti | 56 | MNI152NLin2009cAsym |
 | `desikan` | FreeSurfer | annot | 68 | built-in |
 | `destrieux` | FreeSurfer | annot | 148 | built-in |
 | `dkt` | FreeSurfer | annot | 62 | built-in |
@@ -205,19 +213,36 @@ df["surface_area_norm"] = df["surface_area_mm2"] / df["tiv_mm3"]
 
 ---
 
-## Docker
+## Containers
+
+**Apptainer** (recommended for HPC/cluster):
 
 ```bash
-docker build -t fsatlas .
+apptainer pull fsatlas.sif docker://galkepler/fsatlas:latest
+
+apptainer run \
+    --bind /path/to/SUBJECTS_DIR:/subjects \
+    --bind /path/to/license.txt:/license.txt:ro \
+    --env SUBJECTS_DIR=/subjects \
+    fsatlas.sif \
+    --freesurfer-license-file /license.txt \
+    extract --atlas schaefer100-7 -o /subjects/results
+```
+
+**Docker**:
+
+```bash
+docker pull galkepler/fsatlas:latest
 
 docker run --rm \
     -v /path/to/SUBJECTS_DIR:/subjects \
     -v /path/to/license.txt:/opt/freesurfer/license.txt \
     -e SUBJECTS_DIR=/subjects \
-    fsatlas extract --atlas schaefer100-7 -o /subjects/results
+    galkepler/fsatlas:latest \
+    extract --atlas schaefer100-7 -o /subjects/results
 ```
 
-The Docker image is based on `freesurfer/freesurfer:8.0.0` and includes a self-contained Python environment at `/opt/fsatlas-venv`.
+Both images are based on `freesurfer/freesurfer:8.0.0` with a self-contained Python environment at `/opt/fsatlas-venv`.
 
 ---
 
@@ -232,13 +257,13 @@ src/fsatlas/
 │   ├── *_labels.tsv      # Bundled LUT files for volumetric atlases
 │   └── registry.py       # Atlas loading, downloading, LUT generation
 └── core/
-    ├── command.py        # Shared run_command() subprocess wrapper
+    ├── bids.py           # BIDS output path construction
+    ├── command.py        # run_command() subprocess wrapper
     ├── environment.py    # FreeSurfer detection, subject discovery
+    ├── extract.py        # FreeSurfer command runners + .stats file parsers
     ├── formats.py        # Format handler registry (annot, nifti, dlabel_gii, gca)
     ├── lut.py            # LookupTable: from_tsv, from_annot, to_ctab, merge_measures
-    ├── pipeline.py       # Orchestrator: LUT load → transfer → extract → merge → TSV
-    ├── transfer.py       # Thin dispatcher (delegates to format handlers)
-    └── extract.py        # FreeSurfer command runners + .stats file parsers
+    └── pipeline.py       # Orchestrator + FlatWriter/BidsWriter
 ```
 
 **Data flow:**
@@ -258,7 +283,7 @@ CLI
                  ├─ cortical:   mris_anatomical_stats → 9 measures
                  └─ volumetric: mri_segstats → 7 measures
              └─ LUT.merge_measures → wide-format DataFrame
- └─ concatenate all subjects → {atlas}.tsv
+             └─ OutputWriter (flat → {atlas}.tsv | bids → per-subject CSVs)
 ```
 
 ---

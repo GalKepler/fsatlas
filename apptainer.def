@@ -1,0 +1,85 @@
+# fsatlas Apptainer/Singularity definition file
+#
+# Build:
+#   apptainer build fsatlas.sif apptainer.def
+#   # or with Singularity:
+#   singularity build fsatlas.sif apptainer.def
+#
+# Run (license via CLI flag — recommended):
+#   apptainer run \
+#       --bind /path/to/SUBJECTS_DIR:/subjects \
+#       --bind /path/to/license.txt:/license.txt:ro \
+#       --env SUBJECTS_DIR=/subjects \
+#       fsatlas.sif --freesurfer-license-file /license.txt \
+#                   extract --atlas schaefer100-7 -o /subjects/fsatlas_output
+#
+# Run (license via FS_LICENSE env var):
+#   export FS_LICENSE=/path/to/license.txt
+#   apptainer run \
+#       --bind /path/to/SUBJECTS_DIR:/subjects \
+#       --env SUBJECTS_DIR=/subjects \
+#       fsatlas.sif extract --atlas schaefer100-7 -o /subjects/fsatlas_output
+
+Bootstrap: docker
+From: freesurfer/freesurfer:8.0.0
+
+%files
+    pyproject.toml /opt/fsatlas/pyproject.toml
+    README.md /opt/fsatlas/README.md
+    src /opt/fsatlas/src
+
+%post
+    export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH
+
+    # Install Python 3.11
+    if command -v dnf >/dev/null 2>&1; then
+        # Rocky Linux 8 standard repos include python3.11
+        dnf install -y python3.11 python3.11-pip python3.11-setuptools && dnf clean all
+        PYTHON_BIN=python3.11
+    elif command -v apt-get >/dev/null 2>&1; then
+        apt-get update && apt-get install -y --no-install-recommends \
+            python3.11 python3.11-venv \
+        && rm -rf /var/lib/apt/lists/*
+        PYTHON_BIN=python3.11
+    elif command -v yum >/dev/null 2>&1; then
+        yum install -y python3.11 python3.11-pip && yum clean all
+        PYTHON_BIN=python3.11
+    else
+        echo "ERROR: no supported package manager found" >&2; exit 1
+    fi
+
+    # Create the virtual environment using the explicit 3.11 binary
+    $PYTHON_BIN -m venv /opt/fsatlas-venv
+    export PATH="/opt/fsatlas-venv/bin:$PATH"
+
+    # Upgrade core build tools within the venv
+    pip install --no-cache-dir --upgrade pip setuptools wheel
+    
+    # Install your package
+    cd /opt/fsatlas && pip install --no-cache-dir .
+
+%environment
+    export PATH="/opt/fsatlas-venv/bin:$PATH"
+
+%runscript
+    exec fsatlas "$@"
+
+%labels
+    Maintainer fsatlas
+    Version 0.1.0
+    Description Extract morphometric measures from FreeSurfer subjects using arbitrary atlases
+
+%help
+    fsatlas — FreeSurfer atlas extraction tool
+
+    Requires a valid FreeSurfer license. Pass it via:
+      --freesurfer-license-file /path/to/license.txt
+    or set the FS_LICENSE environment variable.
+
+    Example:
+      apptainer run --bind /data/subjects:/subjects \
+                    --bind /path/to/license.txt:/license.txt:ro \
+                    --env SUBJECTS_DIR=/subjects \
+                    fsatlas.sif \
+                    --freesurfer-license-file /license.txt \
+                    extract --atlas schaefer100-7 -o /subjects/fsatlas_output

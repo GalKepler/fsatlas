@@ -76,7 +76,7 @@ nav:
   - Reference:
       - CLI Reference: reference/cli.md
       - Architecture: reference/architecture.md
-  - Docker: docker.md
+  - Containers: docker.md
   - Contributing: contributing.md
 
 extra:
