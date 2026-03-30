@@ -24,6 +24,7 @@
 schaefer100-7:
   name: schaefer100-7
   family: schaefer2018
+  bids_name: Schaefer100x7
   description: "Schaefer 2018, 100 parcels, 7-network"
   type: surface
   format: annot
@@ -38,6 +39,7 @@ schaefer100-7:
 schaefer200-7:
   name: schaefer200-7
   family: schaefer2018
+  bids_name: Schaefer200x7
   description: "Schaefer 2018, 200 parcels, 7-network"
   type: surface
   format: annot
@@ -52,6 +54,7 @@ schaefer200-7:
 schaefer300-7:
   name: schaefer300-7
   family: schaefer2018
+  bids_name: Schaefer300x7
   description: "Schaefer 2018, 300 parcels, 7-network"
   type: surface
   format: annot
@@ -66,6 +69,7 @@ schaefer300-7:
 schaefer400-7:
   name: schaefer400-7
   family: schaefer2018
+  bids_name: Schaefer400x7
   description: "Schaefer 2018, 400 parcels, 7-network"
   type: surface
   format: annot
@@ -80,6 +84,7 @@ schaefer400-7:
 schaefer500-7:
   name: schaefer500-7
   family: schaefer2018
+  bids_name: Schaefer500x7
   description: "Schaefer 2018, 500 parcels, 7-network"
   type: surface
   format: annot
@@ -94,6 +99,7 @@ schaefer500-7:
 schaefer600-7:
   name: schaefer600-7
   family: schaefer2018
+  bids_name: Schaefer600x7
   description: "Schaefer 2018, 600 parcels, 7-network"
   type: surface
   format: annot
@@ -108,6 +114,7 @@ schaefer600-7:
 schaefer700-7:
   name: schaefer700-7
   family: schaefer2018
+  bids_name: Schaefer700x7
   description: "Schaefer 2018, 700 parcels, 7-network"
   type: surface
   format: annot
@@ -122,6 +129,7 @@ schaefer700-7:
 schaefer800-7:
   name: schaefer800-7
   family: schaefer2018
+  bids_name: Schaefer800x7
   description: "Schaefer 2018, 800 parcels, 7-network"
   type: surface
   format: annot
@@ -136,6 +144,7 @@ schaefer800-7:
 schaefer900-7:
   name: schaefer900-7
   family: schaefer2018
+  bids_name: Schaefer900x7
   description: "Schaefer 2018, 900 parcels, 7-network"
   type: surface
   format: annot
@@ -150,6 +159,7 @@ schaefer900-7:
 schaefer1000-7:
   name: schaefer1000-7
   family: schaefer2018
+  bids_name: Schaefer1000x7
   description: "Schaefer 2018, 1000 parcels, 7-network"
   type: surface
   format: annot
@@ -164,6 +174,7 @@ schaefer1000-7:
 schaefer100-17:
   name: schaefer100-17
   family: schaefer2018
+  bids_name: Schaefer100x17
   description: "Schaefer 2018, 100 parcels, 17-network"
   type: surface
   format: annot
@@ -178,6 +189,7 @@ schaefer100-17:
 schaefer200-17:
   name: schaefer200-17
   family: schaefer2018
+  bids_name: Schaefer200x17
   description: "Schaefer 2018, 200 parcels, 17-network"
   type: surface
   format: annot
@@ -192,6 +204,7 @@ schaefer200-17:
 schaefer300-17:
   name: schaefer300-17
   family: schaefer2018
+  bids_name: Schaefer300x17
   description: "Schaefer 2018, 300 parcels, 17-network"
   type: surface
   format: annot
@@ -206,6 +219,7 @@ schaefer300-17:
 schaefer400-17:
   name: schaefer400-17
   family: schaefer2018
+  bids_name: Schaefer400x17
   description: "Schaefer 2018, 400 parcels, 17-network"
   type: surface
   format: annot
@@ -224,6 +238,7 @@ schaefer400-17:
 tian-s1:
   name: tian-s1
   family: tian2020
+  bids_name: TianS1
   description: "Tian 2020 Melbourne Subcortex Atlas, Scale I (16 regions)"
   type: volumetric
   format: nifti
@@ -237,6 +252,7 @@ tian-s1:
 tian-s2:
   name: tian-s2
   family: tian2020
+  bids_name: TianS2
   description: "Tian 2020 Melbourne Subcortex Atlas, Scale II (32 regions)"
   type: volumetric
   format: nifti
@@ -250,6 +266,7 @@ tian-s2:
 tian-s3:
   name: tian-s3
   family: tian2020
+  bids_name: TianS3
   description: "Tian 2020 Melbourne Subcortex Atlas, Scale III (50 regions)"
   type: volumetric
   format: nifti
@@ -263,6 +280,7 @@ tian-s3:
 tian-s4:
   name: tian-s4
   family: tian2020
+  bids_name: TianS4
   description: "Tian 2020 Melbourne Subcortex Atlas, Scale IV (54 regions)"
   type: volumetric
   format: nifti
@@ -280,6 +298,7 @@ tian-s4:
 hcp-mmp:
   name: hcp-mmp
   family: glasser2016
+  bids_name: Glasser2016
   description: "HCP Multi-Modal Parcellation 1.0 (360 cortical areas)"
   type: surface
   format: annot
@@ -296,14 +315,14 @@ hcp-mmp:
 hcpex_subcortical:
   name: hcpex_subcortical
   family: glasser2016
+  bids_name: Glasser2016
   description: "HCPex subcortical component (66 parcels, indices 361–426)"
   type: volumetric
   format: nifti
   space: MNI152NLin2009cAsym
-  local_source_dir: "/media/storage/yalab-dev/voxelops/snbb-atlas-pack/atlases/atlas-HCPex"
-  source_url: null
+  local_source_dir: "data"
   files:
-    atlas.nii.gz: "atlas-HCPex_space-MNI152NLin2009cAsym_res-01_dseg.nii.gz"
+    atlas.nii.gz: "atlas-HCPexSubcortex_space-MNI152NLin2009cAsym_res-01_dseg.nii.gz"
   labels_tsv: "hcpex_subcortical_labels.tsv"
   citation: "Huang et al., Cerebral Cortex, 2022"
 
@@ -314,31 +333,46 @@ hcpex_subcortical:
 gordon333:
   name: gordon333
   family: gordon2016
-  description: "Gordon 2016 Parcellation (333 cortical areas)"
+  bids_name: Gordon333
+  description: "Gordon 2016 Parcellation (333 cortical areas, dilated to fill fsaverage)"
   type: surface
   format: annot
   space: fsaverage
-  local_source_dir: null
-  source_url: null
+  # source_url: "https://raw.githubusercontent.com/ggsegverse/ggsegGordon/main//data-raw/fsaverage5/"
+  local_source_dir: "data"
   files:
-    lh.annot: "lh.Gordon333.annot"
-    rh.annot: "rh.Gordon333.annot"
+    lh.annot: "lh.gordon333.annot"
+    rh.annot: "rh.gordon333.annot"
   labels_tsv: "labels.tsv"
   citation: "Gordon et al., Cerebral Cortex, 2016"
 
 gordon333_subcortical:
   name: gordon333_subcortical
   family: gordon2016
-  description: "Gordon333Ext subcortical component (52 parcels, indices 335–386)"
+  bids_name: Gordon333
+  description: "Gordon333Ext subcortical component (52 parcels, indices 1–52)"
   type: volumetric
   format: nifti
   space: MNI152NLin2009cAsym
-  local_source_dir: "/media/storage/yalab-dev/voxelops/atlases/atlas-Gordon333Ext"
-  source_url: null
+  local_source_dir: "data"
   files:
-    atlas.nii.gz: "atlas-Gordon333Ext_space-MNI152NLin2009cAsym_res-01_dseg.nii.gz"
+    atlas.nii.gz: "atlas-Gordon333ExtSubcortex_space-MNI152NLin2009cAsym_res-01_dseg.nii.gz"
   labels_tsv: "gordon333_subcortical_labels.tsv"
   citation: "Gordon et al., Cerebral Cortex, 2016"
+
+4s156_subcortical:
+  name: 4s156_subcortical
+  family: 4s
+  bids_name: 4S156
+  description: "4S-156 subcortical component (56 parcels, indices 101–156)"
+  type: volumetric
+  format: nifti
+  space: MNI152NLin2009cAsym
+  local_source_dir: "data"
+  files:
+    atlas.nii.gz: "atlas-4S156ParcelsSubcortex_space-MNI152NLin2009cAsym_res-01_dseg.nii.gz"
+  labels_tsv: "4s156_subcortical_labels.tsv"
+  citation: "Ciric et al., Nature Methods, 2022"
 
 # =============================================================================
 # AICHA 2015 — AICHA 384-parcel Atlas (volumetric, MNI152NLin2009cAsym)
@@ -347,28 +381,28 @@ gordon333_subcortical:
 aicha384:
   name: aicha384
   family: aicha2015
-  description: "AICHA 2015 Atlas (384 bilateral symmetric regions, indices 1–384)"
+  bids_name: AICHA384
+  description: "AICHA 2015 Atlas v2 (384 bilateral symmetric regions, indices 1–384)"
   type: volumetric
   format: nifti
-  space: MNI152NLin2009cAsym
-  local_source_dir: "/media/storage/yalab-dev/voxelops/atlases/atlas-AICHA384Ext"
-  source_url: null
+  space: MNI152NLin6Asym
+  source_url: "https://raw.githubusercontent.com/loiclabache/ALANs_brainAtlas/main/Data/AICHA_v2"
   files:
-    atlas.nii.gz: "atlas-AICHA384Ext_space-MNI152NLin2009cAsym_res-01_dseg.nii.gz"
+    atlas.nii: "AICHA.nii"
   labels_tsv: "aicha384_labels.tsv"
   citation: "Joliot et al., Journal of Neuroscience Methods, 2015"
 
 aicha384_subcortical:
   name: aicha384_subcortical
   family: aicha2015
-  description: "AICHA384Ext subcortical component (50 parcels, indices 345–395)"
+  bids_name: AICHA384
+  description: "AICHA384 subcortical component (50 parcels, indices 345–395)"
   type: volumetric
   format: nifti
-  space: MNI152NLin2009cAsym
-  local_source_dir: "/media/storage/yalab-dev/voxelops/atlases/atlas-AICHA384Ext"
-  source_url: null
+  space: MNI152NLin6Asym
+  source_url: "https://raw.githubusercontent.com/loiclabache/ALANs_brainAtlas/main/Data/AICHA_v2"
   files:
-    atlas.nii.gz: "atlas-AICHA384Ext_space-MNI152NLin2009cAsym_res-01_dseg.nii.gz"
+    atlas.nii: "AICHA.nii"
   labels_tsv: "aicha384_subcortical_labels.tsv"
   citation: "Joliot et al., Journal of Neuroscience Methods, 2015"
 
@@ -379,14 +413,14 @@ aicha384_subcortical:
 aal116:
   name: aal116
   family: aal2002
+  bids_name: AAL116
   description: "Automated Anatomical Labeling 2002 (116 regions, MNI space)"
   type: volumetric
   format: nifti
-  space: MNI152NLin2009cAsym
-  local_source_dir: "/media/storage/yalab-dev/voxelops/atlases/atlas-AAL116"
-  source_url: null
+  space: MNI152NLin6Asym
+  source_url: "https://raw.githubusercontent.com/fieldtrip/fieldtrip/master/template/atlas/aal"
   files:
-    atlas.nii.gz: "atlas-AAL116_space-MNI152NLin2009cAsym_res-01_dseg.nii.gz"
+    atlas.nii: "ROI_MNI_V4.nii"
   labels_tsv: "aal116_labels.tsv"
   citation: "Tzourio-Mazoyer et al., NeuroImage, 2002"
 
@@ -399,6 +433,7 @@ aal116:
 dkt:
   name: dkt
   family: freesurfer-builtin
+  bids_name: DKT
   description: "Desikan-Killiany-Tourville Atlas (FreeSurfer built-in)"
   type: surface
   format: annot
@@ -411,6 +446,7 @@ dkt:
 desikan:
   name: desikan
   family: freesurfer-builtin
+  bids_name: DesikanKilliany
   description: "Desikan-Killiany Atlas (FreeSurfer built-in)"
   type: surface
   format: annot
@@ -423,6 +459,7 @@ desikan:
 destrieux:
   name: destrieux
   family: freesurfer-builtin
+  bids_name: Destrieux
   description: "Destrieux Atlas (FreeSurfer built-in)"
   type: surface
   format: annot
@@ -435,6 +472,7 @@ destrieux:
 aseg:
   name: aseg
   family: freesurfer-builtin
+  bids_name: Aseg
   description: "FreeSurfer automatic subcortical segmentation (aseg)"
   type: volumetric
   format: nifti
@@ -450,12 +488,12 @@ aseg:
 BN_Atlas:
   name: BN_Atlas
   family: brainnetome
+  bids_name: Brainnetome246
   description: "Brainnetome Atlas (BNA), 246 cortical parcels"
   type: surface
   format: annot
   space: fsaverage
-  local_source_dir: "/media/storage/yalab-dev/voxelops/snbb-atlas-pack/sourcedata/Brainnetome/BN_Atlas_freesurfer/BN_Atlas_freesurfer/fsaverage/label"
-  source_url: null
+  local_source_dir: "data"
   files:
     lh.annot: "lh.BN_Atlas.annot"
     rh.annot: "rh.BN_Atlas.annot"
@@ -465,13 +503,13 @@ BN_Atlas:
 BN_Atlas_subcotex:
   name: BN_Atlas_subcotex
   family: brainnetome
+  bids_name: Brainnetome246
   description: "Brainnetome Atlas subcortical component (36 parcels, indices 211–246)"
   type: volumetric
   format: nifti
   space: MNI152NLin2009cAsym
-  local_source_dir: "/media/storage/yalab-dev/voxelops/atlases/atlas-Brainnetome246Ext"
-  source_url: null
+  local_source_dir: "data"
   files:
-    atlas.nii.gz: "atlas-Brainnetome246Ext_space-MNI152NLin2009cAsym_res-01_dseg.nii.gz"
-  labels_tsv: "BN_Atlas_subcotex_labels.tsv"
+    atlas.nii.gz: "atlas-Brainnetome246Subcortex_space-MNI152NLin2009cAsym_res-01_dseg.nii.gz"
+  labels_tsv: "atlas-Brainnetome246Subcortex_dseg.tsv"
   citation: "Fan et al., Cerebral Cortex, 2016"

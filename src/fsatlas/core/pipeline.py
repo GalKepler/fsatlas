@@ -3,12 +3,14 @@
 from __future__ import annotations
 
 import logging
+from abc import ABC, abstractmethod
 from pathlib import Path
 
 import pandas as pd
 from rich.progress import BarColumn, Progress, SpinnerColumn, TextColumn
 
 from ..atlases.registry import AnyAtlasSpec, AtlasRegistry, AtlasSpec
+from .bids import build_bids_path, parse_bids_entities
 from .environment import FreeSurferEnv
 from .formats import get_handler
 from .lut import LookupTable
@@ -32,19 +34,97 @@ def _load_lut(atlas: AnyAtlasSpec, env: FreeSurferEnv | None = None) -> LookupTa
     return LookupTable.from_tsv(lut_path)
 
 
+# ---------------------------------------------------------------------------
+# Output writer strategy
+# ---------------------------------------------------------------------------
+
+class OutputWriter(ABC):
+    """Strategy for writing extraction results to disk."""
+
+    @abstractmethod
+    def write_subject(
+        self, df: pd.DataFrame, subject_id: str, atlas: AnyAtlasSpec
+    ) -> Path | None:
+        """Write one subject's result. Returns the path written, or None on no-op."""
+
+    @abstractmethod
+    def finalize(self) -> dict[str, Path]:
+        """Flush any buffered data and return a dict of {kind: path} for the output."""
+
+
+class FlatWriter(OutputWriter):
+    """Accumulate all subjects into memory, then write a single TSV per atlas."""
+
+    def __init__(self, output_dir: Path, atlas: AnyAtlasSpec) -> None:
+        self._output_dir = output_dir
+        self._atlas = atlas
+        self._frames: list[pd.DataFrame] = []
+
+    def write_subject(self, df: pd.DataFrame, subject_id: str, atlas: AnyAtlasSpec) -> None:
+        self._frames.append(df)
+        return None
+
+    def finalize(self) -> dict[str, Path]:
+        if not self._frames:
+            return {}
+        out_df = pd.concat(self._frames, ignore_index=True)
+        out_path = self._output_dir / f"{self._atlas.name}.tsv"
+        out_df.to_csv(out_path, sep="\t", index=False)
+        logger.info(f"Output written to {out_path} ({len(out_df)} rows)")
+        return {"output": out_path}
+
+
+class BidsWriter(OutputWriter):
+    """Write one CSV per subject in a BIDS-like directory tree."""
+
+    def __init__(self, output_dir: Path) -> None:
+        self._output_dir = output_dir
+        self._written: list[Path] = []
+
+    def write_subject(
+        self, df: pd.DataFrame, subject_id: str, atlas: AnyAtlasSpec
+    ) -> Path:
+        entities = parse_bids_entities(subject_id)
+        path = build_bids_path(
+            self._output_dir,
+            entities,
+            atlas.bids_atlas_name,
+            atlas.structure,
+        )
+        path.parent.mkdir(parents=True, exist_ok=True)
+        df.to_csv(path, index=False)
+        logger.info(f"Written {path}")
+        self._written.append(path)
+        return path
+
+    def finalize(self) -> dict[str, Path]:
+        if not self._written:
+            return {}
+        # Return the first written path as "output" for summary display;
+        # callers can inspect the directory for all files.
+        return {"output": self._written[0]}
+
+
+# ---------------------------------------------------------------------------
+# Main extraction entry point
+# ---------------------------------------------------------------------------
+
 def run_extraction(
     atlas: AnyAtlasSpec,
     subjects: list[str],
     env: FreeSurferEnv,
     output_dir: Path,
     force: bool = False,
+    output_layout: str = "flat",
 ) -> dict[str, Path]:
     """Run the full extraction pipeline for one atlas across subjects.
 
     Steps:
       1. Load the atlas LUT (once).
       2. For each subject: validate → transfer → extract → merge with LUT.
-      3. Concatenate all subjects → write a single ``{atlas_name}.tsv``.
+      3. Write results according to *output_layout*:
+         - ``"flat"``  (default) – all subjects concatenated into a single TSV.
+         - ``"bids"``  – per-subject CSV files in a BIDS-like directory tree.
 
     Returns a dict with keys ``"output"`` and/or ``"failures"`` mapping to Paths.
     """
@@ -56,7 +136,12 @@ def run_extraction(
     # Get handler for the atlas format
     handler = get_handler(atlas.format)
 
-    frames: list[pd.DataFrame] = []
+    # Choose writer strategy
+    if output_layout == "bids":
+        writer: OutputWriter = BidsWriter(output_dir)
+    else:
+        writer = FlatWriter(output_dir, atlas)
+
     failed_subjects: list[tuple[str, str]] = []
 
     with Progress(
@@ -111,7 +196,7 @@ def run_extraction(
                     measure_map=handler.measure_map,
                     join_on=handler.join_on,
                 )
-                frames.append(result_df)
+                writer.write_subject(result_df, subject_id, atlas)
 
             except Exception as e:
                 logger.error(f"Failed for {subject_id}: {e}")
@@ -119,22 +204,16 @@ def run_extraction(
 
             progress.advance(task)
 
-    output_paths: dict[str, Path] = {}
-
-    if frames:
-        out_df = pd.concat(frames, ignore_index=True)
-        out_path = output_dir / f"{atlas.name}.tsv"
-        out_df.to_csv(out_path, sep="\t", index=False)
-        logger.info(f"Output written to {out_path} ({len(out_df)} rows)")
-        output_paths["output"] = out_path
+    output_paths: dict[str, Path] = writer.finalize()
 
     if failed_subjects:
         logger.warning(f"{len(failed_subjects)} subject(s) failed:")
         for sid, reason in failed_subjects:
             logger.warning(f"  {sid}: {reason}")
-        fail_path = output_dir / f"{atlas.name}_failures.tsv"
+        fail_name = f"{atlas.bids_atlas_name}_failures.csv"
+        fail_path = output_dir / fail_name
         pd.DataFrame(failed_subjects, columns=["subject_id", "reason"]).to_csv(
-            fail_path, sep="\t", index=False
+            fail_path, index=False
         )
         output_paths["failures"] = fail_path
 

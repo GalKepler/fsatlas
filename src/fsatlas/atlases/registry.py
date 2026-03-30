@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import re
 import shutil
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -51,6 +52,19 @@ class AtlasSpec:
     builtin: bool = False
     annot_name: str = ""                 # For FreeSurfer built-in surface atlases
     local_source_dir: str = ""           # Local dir to copy from (priority over URL)
+    bids_name: str = ""                  # BIDS atlas entity value (e.g. "Glasser2016")
+
+    @property
+    def structure(self) -> str:
+        """BIDS structure entity: 'cortex' for surface atlases, 'subcortex' for volumetric."""
+        return "cortex" if self.type == "surface" else "subcortex"
+
+    @property
+    def bids_atlas_name(self) -> str:
+        """BIDS-compatible atlas entity value. Returns bids_name if set, else sanitized name."""
+        if self.bids_name:
+            return self.bids_name
+        return re.sub(r"[^a-zA-Z0-9]", "", self.name)
 
     @property
     def cache_dir(self) -> Path:
@@ -108,6 +122,16 @@ class CustomAtlasSpec:
         return self.name
 
     @property
+    def structure(self) -> str:
+        """BIDS structure entity: 'cortex' for surface atlases, 'subcortex' for volumetric."""
+        return "cortex" if self.type == "surface" else "subcortex"
+
+    @property
+    def bids_atlas_name(self) -> str:
+        """BIDS-compatible atlas entity value (sanitized name)."""
+        return re.sub(r"[^a-zA-Z0-9]", "", self.name)
+
+    @property
     def labels_tsv_path(self) -> Path | None:
         return self.labels_tsv
 
@@ -158,6 +182,7 @@ class AtlasRegistry:
                 annot_name=entry.get("annot_name", ""),
                 citation=entry.get("citation", ""),
                 local_source_dir=entry.get("local_source_dir", "") or "",
+                bids_name=entry.get("bids_name", "") or "",
             )
 
     def list_atlases(self) -> list[AtlasSpec]:
@@ -199,7 +224,12 @@ class AtlasRegistry:
         # Download/copy atlas files
         for local_name, remote_filename in atlas.files.items():
             dest = atlas.cache_dir / local_name
-            local_dir = Path(atlas.local_source_dir) if atlas.local_source_dir else None
+            if atlas.local_source_dir:
+                local_dir: Path | None = Path(atlas.local_source_dir)
+                if not local_dir.is_absolute():
+                    local_dir = CATALOG_PATH.parent / local_dir
+            else:
+                local_dir = None
             if local_dir and (local_dir / remote_filename).exists():
                 logger.info(f"Copying {local_dir / remote_filename} -> {dest}")
                 shutil.copy2(local_dir / remote_filename, dest)

@@ -406,12 +406,24 @@ class GcaHandler(AtlasFormatHandler):
             return TransferResult(paths={"volume": out_path}, format_id=self.format_id)
 
         gca_file = atlas.get_file(f"{atlas.name}.gca")
-        m3z = subject.talairach_m3z
+        if subject.talairach_m3z.exists():
+            transform = subject.talairach_m3z
+        elif subject.talairach_xfm.exists():
+            logger.warning(
+                f"  talairach.m3z not found for {subject.subject_id}; "
+                "falling back to talairach.xfm (linear only — accuracy may be reduced)"
+            )
+            transform = subject.talairach_xfm
+        else:
+            raise FileNotFoundError(
+                f"No Talairach transform found for {subject.subject_id}: "
+                f"neither {subject.talairach_m3z} nor {subject.talairach_xfm} exist"
+            )
         logger.info(f"  mri_ca_label {gca_file} -> {out_path}")
         cmd = [
             "mri_ca_label",
             str(subject.norm_mgz),
-            str(m3z),
+            str(transform),
             str(gca_file),
             str(out_path),
         ]

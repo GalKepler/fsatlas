@@ -45,8 +45,8 @@ def cli() -> None:
 )
 @click.option(
     "--atlas", "-a",
-    required=True,
-    help="Atlas name from catalog (e.g. schaefer100-7) or path to atlas file.",
+    multiple=True,
+    help="Atlas name from catalog (e.g. schaefer100-7) or path to atlas file. Repeat to process multiple atlases.",
 )
 @click.option(
     "--format", "-F", "atlas_format",
@@ -86,10 +86,20 @@ def cli() -> None:
     help="Output directory for TSV files.",
 )
 @click.option("--force", "-f", is_flag=True, help="Recompute even if outputs already exist.")
+@click.option(
+    "--output-layout",
+    type=click.Choice(["flat", "bids"]),
+    default="flat",
+    show_default=True,
+    help=(
+        "Output layout: 'flat' writes one TSV per atlas with all subjects concatenated; "
+        "'bids' writes per-subject CSVs in a sub-/ses-/anat/ directory tree."
+    ),
+)
 @click.option("--verbose", "-v", is_flag=True, help="Verbose logging.")
 def extract(
     subjects_dir: Path | None,
-    atlas: str,
+    atlas: tuple[str, ...],
     atlas_format: str,
     atlas_type: str | None,
     lut: Path | None,
@@ -97,16 +107,26 @@ def extract(
     subjects_file: Path | None,
     output_dir: Path,
     force: bool,
+    output_layout: str,
     verbose: bool,
 ) -> None:
-    """Extract morphometric measures for one atlas across subjects."""
+    """Extract morphometric measures for one or more atlases across subjects."""
     _setup_logging(verbose)
+
+    if not atlas:
+        console.print("[red]At least one --atlas / -a argument is required.[/red]")
+        sys.exit(1)
 
     if atlas_type is not None and atlas_format == "auto":
         console.print(
             "[yellow]--atlas-type is deprecated; use --format instead.[/yellow]"
         )
         atlas_format = {"surface": "annot", "volumetric": "nifti"}.get(atlas_type, "auto")
+
+    if lut is not None and len(atlas) > 1:
+        console.print(
+            "[yellow]Warning: --lut will be applied to all specified atlases.[/yellow]"
+        )
 
     try:
         env = FreeSurferEnv.detect(subjects_dir)
@@ -116,40 +136,50 @@ def extract(
 
     console.print(f"FreeSurfer {env.version} | SUBJECTS_DIR: {env.subjects_dir}")
 
-    registry = AtlasRegistry()
-    atlas_spec = _resolve_atlas(registry, atlas, atlas_format, lut)
-
-    # Download catalog atlas if needed
-    if hasattr(atlas_spec, "is_downloaded") and not atlas_spec.builtin:
-        if not atlas_spec.is_downloaded():
-            console.print(f"Downloading atlas [bold]{atlas_spec.name}[/bold]...")
-            registry.download(atlas_spec.name, env=env)
-    elif getattr(atlas_spec, "builtin", False):
-        # Ensure builtin LUT is cached
-        if not atlas_spec.is_downloaded():
-            registry.download(atlas_spec.name, env=env)
-
     subject_list = _resolve_subjects(env, subjects, subjects_file)
     if not subject_list:
         console.print("[red]No subjects found.[/red]")
         sys.exit(1)
 
-    console.print(
-        f"Atlas: [bold]{atlas_spec.name}[/bold] (format={atlas_spec.format}) | "
-        f"Subjects: {len(subject_list)}"
-    )
+    registry = AtlasRegistry()
+    all_output_paths: dict[str, Path] = {}
 
-    output_paths = run_extraction(
-        atlas=atlas_spec,
-        subjects=subject_list,
-        env=env,
-        output_dir=output_dir,
-        force=force,
-    )
+    for atlas_arg in atlas:
+        atlas_spec = _resolve_atlas(registry, atlas_arg, atlas_format, lut)
 
-    console.print("\n[green]Done![/green] Output files:")
-    for kind, path in output_paths.items():
-        console.print(f"  {kind}: {path}")
+        # Download catalog atlas if needed
+        if hasattr(atlas_spec, "is_downloaded") and not atlas_spec.builtin:
+            if not atlas_spec.is_downloaded():
+                console.print(f"Downloading atlas [bold]{atlas_spec.name}[/bold]...")
+                registry.download(atlas_spec.name, env=env)
+        elif getattr(atlas_spec, "builtin", False):
+            # Ensure builtin LUT is cached
+            if not atlas_spec.is_downloaded():
+                registry.download(atlas_spec.name, env=env)
+
+        console.print(
+            f"Atlas: [bold]{atlas_spec.name}[/bold] (format={atlas_spec.format}) | "
+            f"Subjects: {len(subject_list)}"
+        )
+
+        output_paths = run_extraction(
+            atlas=atlas_spec,
+            subjects=subject_list,
+            env=env,
+            output_dir=output_dir,
+            force=force,
+            output_layout=output_layout,
+        )
+        for kind, path in output_paths.items():
+            all_output_paths[f"{atlas_spec.name}:{kind}"] = path
+
+    console.print("\n[green]Done![/green]")
+    if output_layout == "bids":
+        console.print(f"  BIDS output written to: {output_dir}")
+    else:
+        console.print("  Output files:")
+        for kind, path in all_output_paths.items():
+            console.print(f"    {kind}: {path}")
 
 
 @cli.command("list-atlases")

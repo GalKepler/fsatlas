@@ -44,9 +44,9 @@ def _infer_hemisphere(label: str) -> str:
         return "lh"
     if "_rh_" in n or "-rh-" in n:
         return "rh"
-    if n.endswith(("-lh", "_lh")):
+    if n.endswith(("-lh", "_lh", "-left", "_left", "-l", "_l")):
         return "lh"
-    if n.endswith(("-rh", "_rh")):
+    if n.endswith(("-rh", "_rh", "-right", "_right", "-r", "_r")):
         return "rh"
     return "bilateral"
 
@@ -153,9 +153,9 @@ class LookupTable:
                 else:
                     seen[label] = entry
                     rows.append(entry)
-
         df = pd.DataFrame(rows).drop_duplicates(subset=[_INDEX_COL, _LABEL_COL])
         df = df.sort_values(_INDEX_COL).reset_index(drop=True)
+        df["hemi"] = df[_LABEL_COL].map(_infer_hemisphere)
         return cls(df=df)
 
     # ------------------------------------------------------------------

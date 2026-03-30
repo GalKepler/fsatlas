@@ -1,7 +1,6 @@
 <div class="hero" markdown>
   ![fsatlas logo](assets/logo.png)
 
-  # fsatlas
 
   **Automated atlas-based morphometry extraction for FreeSurfer-processed brain MRI**
 
