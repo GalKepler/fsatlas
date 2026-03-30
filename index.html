@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="assets/logo.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
     
     
       
@@ -317,7 +317,7 @@
   
     
   
-  Docker
+  Containers
 
       </a>
     </li>
@@ -931,7 +931,7 @@
   <span class="md-ellipsis">
     
   
-    Docker
+    Containers
   
 
     
@@ -1074,7 +1074,6 @@
 
 <div class="hero">
 <p><img alt="fsatlas logo" src="assets/logo.png" /></p>
-<p># fsatlas</p>
 <p><strong>Automated atlas-based morphometry extraction for FreeSurfer-processed brain MRI</strong></p>
 <div class="badges">
 <p><a href="https://pypi.org/project/fsatlas/"><img alt="PyPI" src="https://img.shields.io/pypi/v/fsatlas.svg" /></a>
@@ -1096,24 +1095,24 @@
 <h2 id="features">Features<a class="headerlink" href="#features" title="Permanent link">&para;</a></h2>
 <div class="feature-grid">
 <div class="feature-card">
-<p><strong>22 Built-in Atlases</strong></p>
-<p>Ships with Schaefer 2018 (100–1000 parcels), Tian 2020 subcortical (Scales I–IV), HCP-MMP1, and all FreeSurfer built-ins. Auto-downloaded on first use.</p>
+<p><strong>31 Built-in Atlases</strong></p>
+<p>Ships with Schaefer 2018 (100–1000 parcels), Tian 2020 subcortical (Scales I–IV), HCP-MMP1, Brainnetome, Gordon333, AICHA384, AAL116, 4S-156, and all FreeSurfer built-ins. Auto-downloaded on first use.</p>
 </div>
 <div class="feature-card">
 <p><strong>Custom Atlas Support</strong></p>
-<p>Point at any <code>.annot</code> (surface) or <code>.nii.gz</code> (volumetric, MNI space) file. fsatlas handles the rest.</p>
+<p>Point at any <code>.annot</code>, <code>.nii.gz</code>, <code>.dlabel.gii</code>, or <code>.gca</code> file. fsatlas auto-detects the format and handles the rest.</p>
 </div>
 <div class="feature-card">
 <p><strong>Surface Pipeline</strong></p>
-<p>Transfers <code>.annot</code> from <code>fsaverage</code> → subject via <code>mri_surf2surf</code>, then extracts 9 cortical measures via <code>mris_anatomical_stats</code>.</p>
+<p>Transfers <code>.annot</code> / <code>.dlabel.gii</code> from <code>fsaverage</code> → subject via <code>mri_surf2surf</code>, then extracts 9 cortical measures via <code>mris_anatomical_stats</code>.</p>
 </div>
 <div class="feature-card">
 <p><strong>Volumetric Pipeline</strong></p>
-<p>Registers MNI-space NIfTI → subject native space via <code>mri_vol2vol</code> + <code>talairach.xfm</code>, extracts 7 measures via <code>mri_segstats</code>.</p>
+<p>Registers MNI-space NIfTI → subject native space via <code>mri_vol2vol</code> + <code>talairach.xfm</code>, or applies a GCA via <code>mri_ca_label</code>. Extracts 7 measures via <code>mri_segstats</code>.</p>
 </div>
 <div class="feature-card">
-<p><strong>Tidy TSV Output</strong></p>
-<p>Long-format output — one row per measure — compatible with pandas, R tidyverse, and any statistical analysis tool.</p>
+<p><strong>Wide-Format TSV Output</strong></p>
+<p>One row per region per subject — measures as columns, driven by the atlas LUT. Compatible with pandas, R tidyverse, and any statistical analysis tool.</p>
 </div>
 <div class="feature-card">
 <p><strong>Failure Resilience</strong></p>
@@ -1132,19 +1131,18 @@
 </span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>fsatlas<span class="w"> </span>extract<span class="w"> </span>--atlas<span class="w"> </span>schaefer100-7<span class="w"> </span>--output-dir<span class="w"> </span>./results
 </span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>
 </span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="c1"># Results:</span>
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="c1"># ./results/schaefer100-7_cortical.tsv</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="c1"># ./results/schaefer100-7.tsv</span>
 </span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="c1"># ./results/schaefer100-7_failures.tsv</span>
 </span></code></pre></div>
 <hr />
 <h2 id="output-at-a-glance">Output at a Glance<a class="headerlink" href="#output-at-a-glance" title="Permanent link">&para;</a></h2>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>subject_id  atlas          hemisphere  region               measure           value
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>----------  -------------  ----------  -------------------  ----------------  ------
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>sub-01      schaefer100-7  lh          7Networks_LH_Vis_1   thickness_mean_mm  2.341
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>sub-01      schaefer100-7  lh          7Networks_LH_Vis_1   surface_area_mm2   843.0
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>sub-01      schaefer100-7  rh          7Networks_RH_Vis_1   thickness_mean_mm  2.289
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>sub-02      schaefer100-7  lh          7Networks_LH_Vis_1   thickness_mean_mm  2.501
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>subject_id  index  label                hemisphere  thickness_mean_mm  surface_area_mm2  ...  tiv_mm3
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>----------  -----  -------------------  ----------  -----------------  ----------------  ---  --------
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>sub-01      1      7Networks_LH_Vis_1   lh          2.341              843.0             ...  1458203.0
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>sub-01      2      7Networks_LH_Vis_2   lh          2.289              700.5             ...  1458203.0
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>sub-02      1      7Networks_LH_Vis_1   lh          2.501              857.2             ...  1501044.0
 </span></code></pre></div>
-<p>Long-format (tidy) data — easy to filter, pivot, or merge in any analysis environment.</p>
+<p>Wide-format data — one row per region per subject, every measure as a column. Easy to filter, pivot, or merge in any analysis environment.</p>
 <hr />
 <h2 id="next-steps">Next Steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
 <div class="feature-grid">
@@ -1158,7 +1156,7 @@
 </div>
 <div class="feature-card">
 <p><strong><a href="user-guide/atlases/">Atlas Catalog</a></strong></p>
-<p>Browse all 22 built-in atlases with descriptions, citations, and parcel counts.</p>
+<p>Browse all 31 built-in atlases with descriptions, citations, and parcel counts.</p>
 </div>
 <div class="feature-card">
 <p><strong><a href="reference/cli/">CLI Reference</a></strong></p>

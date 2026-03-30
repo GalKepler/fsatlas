@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../assets/logo.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
     
     
       
@@ -319,7 +319,7 @@
   
     
   
-  Docker
+  Containers
 
       </a>
     </li>
@@ -624,13 +624,41 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#docker-no-local-freesurfer-required" class="md-nav__link">
+  <a href="#containers-no-local-freesurfer-required" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Docker (No Local FreeSurfer Required)
+        Containers (No Local FreeSurfer Required)
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Containers (No Local FreeSurfer Required)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#apptainer-singularity-recommended-for-hpc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Apptainer / Singularity (recommended for HPC)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Docker
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -979,7 +1007,7 @@
   <span class="md-ellipsis">
     
   
-    Docker
+    Containers
   
 
     
@@ -1118,13 +1146,41 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#docker-no-local-freesurfer-required" class="md-nav__link">
+  <a href="#containers-no-local-freesurfer-required" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Docker (No Local FreeSurfer Required)
+        Containers (No Local FreeSurfer Required)
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Containers (No Local FreeSurfer Required)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#apptainer-singularity-recommended-for-hpc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Apptainer / Singularity (recommended for HPC)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Docker
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1236,29 +1292,36 @@
 </span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>fsatlas<span class="w"> </span>download<span class="w"> </span>tian-s2
 </span></code></pre></div>
 <hr />
-<h2 id="docker-no-local-freesurfer-required">Docker (No Local FreeSurfer Required)<a class="headerlink" href="#docker-no-local-freesurfer-required" title="Permanent link">&para;</a></h2>
-<p>If you don't have FreeSurfer installed locally, use the Docker image:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>docker<span class="w"> </span>pull<span class="w"> </span>ghcr.io/GalKepler/fsatlas:latest
+<h2 id="containers-no-local-freesurfer-required">Containers (No Local FreeSurfer Required)<a class="headerlink" href="#containers-no-local-freesurfer-required" title="Permanent link">&para;</a></h2>
+<p>If you don't have FreeSurfer installed locally, use a pre-built container image. <strong>Apptainer is recommended</strong> for HPC/cluster environments; Docker is convenient for local workstations.</p>
+<h3 id="apptainer-singularity-recommended-for-hpc">Apptainer / Singularity (recommended for HPC)<a class="headerlink" href="#apptainer-singularity-recommended-for-hpc" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>apptainer<span class="w"> </span>pull<span class="w"> </span>fsatlas.sif<span class="w"> </span>docker://galkepler/fsatlas:latest
 </span></code></pre></div>
-<p>See the <a href="../docker/">Docker guide</a> for full usage instructions.</p>
+<p>Or build from the definition file in the repository:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>apptainer<span class="w"> </span>build<span class="w"> </span>fsatlas.sif<span class="w"> </span>apptainer.def
+</span></code></pre></div>
+<h3 id="docker">Docker<a class="headerlink" href="#docker" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>docker<span class="w"> </span>pull<span class="w"> </span>galkepler/fsatlas:latest
+</span></code></pre></div>
+<p>See the <a href="../docker/">Containers guide</a> for full usage instructions and examples.</p>
 <hr />
 <h2 id="development-setup">Development Setup<a class="headerlink" href="#development-setup" title="Permanent link">&para;</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/GalKepler/fsatlas.git
-</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="nb">cd</span><span class="w"> </span>fsatlas
-</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[dev]&quot;</span>
-</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>
-</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="c1"># Verify code quality tools</span>
-</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>pytest<span class="w"> </span>--version
-</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>ruff<span class="w"> </span>--version
-</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>mypy<span class="w"> </span>--version
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/GalKepler/fsatlas.git
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="nb">cd</span><span class="w"> </span>fsatlas
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[dev]&quot;</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="c1"># Verify code quality tools</span>
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>pytest<span class="w"> </span>--version
+</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>ruff<span class="w"> </span>--version
+</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>mypy<span class="w"> </span>--version
 </span></code></pre></div>
 <p>Run the test suite:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>pytest
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>pytest
 </span></code></pre></div>
 <p>Lint and format:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>ruff<span class="w"> </span>check<span class="w"> </span>src/
-</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>ruff<span class="w"> </span>format<span class="w"> </span>src/
-</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>mypy
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>ruff<span class="w"> </span>check<span class="w"> </span>src/
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>ruff<span class="w"> </span>format<span class="w"> </span>src/
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>mypy
 </span></code></pre></div>
 
 

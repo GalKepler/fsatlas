@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../../assets/logo.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
     
     
       
@@ -319,7 +319,7 @@
   
     
   
-  Docker
+  Containers
 
       </a>
     </li>
@@ -934,10 +934,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#corepipelinepy-pipeline-orchestrator" class="md-nav__link">
+  <a href="#corelutpy-lookup-table" class="md-nav__link">
     <span class="md-ellipsis">
       
-        core/pipeline.py — Pipeline Orchestrator
+        core/lut.py — Lookup Table
       
     </span>
   </a>
@@ -945,10 +945,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#coretransferpy-atlas-transfer" class="md-nav__link">
+  <a href="#coreformatspy-format-handlers" class="md-nav__link">
     <span class="md-ellipsis">
       
-        core/transfer.py — Atlas Transfer
+        core/formats.py — Format Handlers
       
     </span>
   </a>
@@ -956,10 +956,43 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#coreextractpy-stats-extraction-and-parsing" class="md-nav__link">
+  <a href="#coreextractpy-stats-extraction" class="md-nav__link">
     <span class="md-ellipsis">
       
-        core/extract.py — Stats Extraction and Parsing
+        core/extract.py — Stats Extraction
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#corecommandpy-subprocess-wrapper" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        core/command.py — Subprocess Wrapper
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#corepipelinepy-orchestrator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        core/pipeline.py — Orchestrator
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#corebidspy-bids-path-construction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        core/bids.py — BIDS Path Construction
       
     </span>
   </a>
@@ -1023,7 +1056,7 @@
   <span class="md-ellipsis">
     
   
-    Docker
+    Containers
   
 
     
@@ -1168,10 +1201,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#corepipelinepy-pipeline-orchestrator" class="md-nav__link">
+  <a href="#corelutpy-lookup-table" class="md-nav__link">
     <span class="md-ellipsis">
       
-        core/pipeline.py — Pipeline Orchestrator
+        core/lut.py — Lookup Table
       
     </span>
   </a>
@@ -1179,10 +1212,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#coretransferpy-atlas-transfer" class="md-nav__link">
+  <a href="#coreformatspy-format-handlers" class="md-nav__link">
     <span class="md-ellipsis">
       
-        core/transfer.py — Atlas Transfer
+        core/formats.py — Format Handlers
       
     </span>
   </a>
@@ -1190,10 +1223,43 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#coreextractpy-stats-extraction-and-parsing" class="md-nav__link">
+  <a href="#coreextractpy-stats-extraction" class="md-nav__link">
     <span class="md-ellipsis">
       
-        core/extract.py — Stats Extraction and Parsing
+        core/extract.py — Stats Extraction
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#corecommandpy-subprocess-wrapper" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        core/command.py — Subprocess Wrapper
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#corepipelinepy-orchestrator" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        core/pipeline.py — Orchestrator
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#corebidspy-bids-path-construction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        core/bids.py — BIDS Path Construction
       
     </span>
   </a>
@@ -1252,20 +1318,24 @@
 <hr />
 <h2 id="project-layout">Project Layout<a class="headerlink" href="#project-layout" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>src/fsatlas/
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>├── __init__.py              # Package version (0.1.0)
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>├── __init__.py              # Package version
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>├── cli/
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>│   ├── __init__.py
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>│   └── main.py              # Click CLI entry point
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>│   └── main.py              # Click CLI: extract, list-atlases, download, generate-lut
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>├── atlases/
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>│   ├── __init__.py
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>│   ├── catalog.yaml         # Built-in atlas definitions
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>│   └── registry.py          # AtlasRegistry, AtlasSpec, CustomAtlasSpec
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>└── core/
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    ├── __init__.py
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    ├── environment.py       # FreeSurferEnv, SubjectPaths
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>    ├── pipeline.py          # run_extraction() orchestrator
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>    ├── transfer.py          # mri_surf2surf / mri_vol2vol wrappers
-</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>    └── extract.py           # mris_anatomical_stats / mri_segstats + parsing
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>│   ├── catalog.yaml         # Built-in atlas definitions (31 atlases)
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>│   ├── *_labels.tsv         # Bundled LUT files for volumetric atlases
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>│   └── registry.py          # AtlasRegistry, AtlasSpec, CustomAtlasSpec
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>└── core/
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    ├── __init__.py
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>    ├── bids.py              # BIDS path construction for bids output layout
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>    ├── command.py           # run_command() subprocess wrapper (10 min timeout)
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>    ├── environment.py       # FreeSurferEnv, SubjectPaths
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>    ├── extract.py           # FreeSurfer command runners + .stats file parsers
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>    ├── formats.py           # Format handler registry (annot, nifti, dlabel_gii, gca)
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>    ├── lut.py               # LookupTable: from_tsv, from_annot, merge_measures
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>    └── pipeline.py          # run_extraction() orchestrator + FlatWriter/BidsWriter
 </span></code></pre></div>
 <hr />
 <h2 id="data-flow">Data Flow<a class="headerlink" href="#data-flow" title="Permanent link">&para;</a></h2>
@@ -1274,27 +1344,28 @@
     A --&gt; C[Discover subjects\nFreeSurferEnv]
     B --&gt; D[Pipeline: run_extraction]
     C --&gt; D
-    D --&gt; E{Per subject}
-    E --&gt; F[Validate subject\nSubjectPaths]
-    F --&gt; G{Atlas type}
-    G --&gt;|surface| H[mri_surf2surf\nfsaverage → subject]
-    G --&gt;|volumetric| I[mri_vol2vol\nMNI → native]
-    H --&gt; J[mris_anatomical_stats\nextract cortical stats]
-    I --&gt; K[mri_segstats\nextract subcortical stats]
-    J --&gt; L[Parse → long format\n9 cortical measures]
-    K --&gt; M[Parse → long format\n7 subcortical measures]
-    L --&gt; N[Concatenate all subjects]
-    M --&gt; N
-    N --&gt; O[Write TSVs to output-dir]</code></pre>
+    D --&gt; E[Load LUT once\nLookupTable]
+    E --&gt; F{Per subject}
+    F --&gt; G[Validate subject\nSubjectPaths]
+    G --&gt; H[Get format handler\nFORMAT_HANDLERS]
+    H --&gt; I[handler.transfer\natlas → subject space]
+    I --&gt; J[handler.extract\nrun FreeSurfer stats]
+    J --&gt; K[LUT.merge_measures\nwide-format DataFrame]
+    K --&gt; L{OutputWriter}
+    L --&gt;|flat| M[Accumulate → atlas.tsv]
+    L --&gt;|bids| N[Per-subject CSV\nBIDS tree]</code></pre>
 <hr />
 <h2 id="module-descriptions">Module Descriptions<a class="headerlink" href="#module-descriptions" title="Permanent link">&para;</a></h2>
 <h3 id="climainpy-command-line-interface"><code>cli/main.py</code> — Command-Line Interface<a class="headerlink" href="#climainpy-command-line-interface" title="Permanent link">&para;</a></h3>
-<p>Built with <a href="https://click.palletsprojects.com/">Click</a>. Provides three user-facing commands:</p>
+<p>Built with <a href="https://click.palletsprojects.com/">Click</a>. Provides four user-facing commands:</p>
 <ul>
 <li><strong><code>extract</code></strong> — Main command; orchestrates the full pipeline.</li>
 <li><strong><code>list-atlases</code></strong> — Displays atlas catalog in a Rich table.</li>
 <li><strong><code>download</code></strong> — Pre-downloads atlases to the cache.</li>
+<li><strong><code>generate-lut</code></strong> — Extracts the embedded colour table from <code>.annot</code> files into a reusable LUT TSV.</li>
 </ul>
+<p>Global options:
+- <code>--freesurfer-license-file</code> — Path to FreeSurfer <code>license.txt</code> (also accepts <code>FS_LICENSE</code> env var).</p>
 <p>Responsibilities:
 - Calls <code>FreeSurferEnv.detect()</code> to find and validate the FreeSurfer installation.
 - Calls <code>AtlasRegistry</code> to resolve the atlas (catalog lookup or custom file path).
@@ -1303,19 +1374,22 @@
 <hr />
 <h3 id="atlasesregistrypy-atlas-registry"><code>atlases/registry.py</code> — Atlas Registry<a class="headerlink" href="#atlasesregistrypy-atlas-registry" title="Permanent link">&para;</a></h3>
 <p>Three classes:</p>
-<p><strong><code>AtlasSpec</code></strong> — A catalog atlas entry loaded from <code>catalog.yaml</code>. Properties:
+<p><strong><code>AtlasSpec</code></strong> — A catalog atlas entry loaded from <code>catalog.yaml</code>. Key properties:
 - <code>cache_dir</code> — <code>~/.cache/fsatlas/atlases/{name}/</code>
 - <code>is_downloaded</code> — checks if files are present in cache
 - <code>get_file(key)</code> — returns path to a named file in cache
-- <code>download(force=False)</code> — downloads all atlas files via HTTP</p>
-<p><strong><code>CustomAtlasSpec</code></strong> — A user-provided atlas. Stores paths to:
-- Surface: <code>lh_annot</code>, <code>rh_annot</code>
-- Volumetric: <code>nifti_path</code></p>
-<p><strong><code>AtlasRegistry</code></strong> — Loads <code>catalog.yaml</code> and manages the catalog. Methods:
+- <code>labels_tsv_path</code> — path to the LUT TSV in cache
+- <code>download(force=False, env=None)</code> — downloads all atlas files + LUT</p>
+<p><strong><code>CustomAtlasSpec</code></strong> — A user-provided atlas. Stores paths; auto-detects format from extension.</p>
+<p><strong><code>AtlasRegistry</code></strong> — Loads <code>catalog.yaml</code> and manages the catalog:
 - <code>get(name)</code> — looks up an <code>AtlasSpec</code> by ID
 - <code>list_atlases()</code> — returns all <code>AtlasSpec</code> entries
-- <code>from_custom_surface(lh, rh)</code> — creates a <code>CustomAtlasSpec</code> for surface files
-- <code>from_custom_volumetric(path)</code> — creates a <code>CustomAtlasSpec</code> for a NIfTI file</p>
+- <code>download(name, force, env)</code> — downloads and caches atlas + LUT
+- Static factory methods for custom atlases:
+  - <code>from_custom_surface(lh_annot, rh_annot, labels_tsv=None)</code>
+  - <code>from_custom_volumetric(nifti_path, labels_tsv=None)</code>
+  - <code>from_custom_dlabel_gii(lh_dlabel, rh_dlabel, labels_tsv=None)</code>
+  - <code>from_custom_gca(gca_path, labels_tsv=None)</code></p>
 <p><strong>Type alias:</strong>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">AnyAtlasSpec</span> <span class="o">=</span> <span class="n">AtlasSpec</span> <span class="o">|</span> <span class="n">CustomAtlasSpec</span>
 </span></code></pre></div></p>
@@ -1325,86 +1399,155 @@
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">schaefer100-7</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">family</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Schaefer2018</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;100-parcel</span><span class="nv"> </span><span class="s">7-network</span><span class="nv"> </span><span class="s">Schaefer</span><span class="nv"> </span><span class="s">2018</span><span class="nv"> </span><span class="s">atlas&quot;</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">surface</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">  </span><span class="nt">format</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">annot</span>
 </span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">  </span><span class="nt">space</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fsaverage</span>
 </span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">  </span><span class="nt">source_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;https://...&quot;</span>
 </span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">  </span><span class="nt">files</span><span class="p">:</span>
 </span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">    </span><span class="nt">lh_annot</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lh.Schaefer2018_100Parcels_7Networks_order.annot</span>
 </span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">    </span><span class="nt">rh_annot</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rh.Schaefer2018_100Parcels_7Networks_order.annot</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">  </span><span class="nt">citation</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Schaefer</span><span class="nv"> </span><span class="s">et</span><span class="nv"> </span><span class="s">al.</span><span class="nv"> </span><span class="s">2018&quot;</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">  </span><span class="nt">labels_tsv</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">labels.tsv</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">  </span><span class="nt">citation</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Schaefer</span><span class="nv"> </span><span class="s">et</span><span class="nv"> </span><span class="s">al.</span><span class="nv"> </span><span class="s">2018&quot;</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">  </span><span class="nt">bids_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">schaefer100x7</span>
 </span></code></pre></div>
-<p>For FreeSurfer built-ins:
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">desikan</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">surface</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span><span class="nt">annot_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aparc</span><span class="w">          </span><span class="c1"># no download; looked up in subject label/</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">...</span>
-</span></code></pre></div></p>
+<p>For FreeSurfer built-ins (<code>desikan</code>, <code>destrieux</code>, <code>dkt</code>, <code>aseg</code>): no <code>source_url</code>; atlas files are read directly from the subject's <code>label/</code> directory.</p>
+<p>For atlases not publicly downloadable (e.g. Brainnetome): <code>local_source_dir</code> is used instead of <code>source_url</code>.</p>
 <hr />
 <h3 id="coreenvironmentpy-freesurfer-environment"><code>core/environment.py</code> — FreeSurfer Environment<a class="headerlink" href="#coreenvironmentpy-freesurfer-environment" title="Permanent link">&para;</a></h3>
 <p><strong><code>FreeSurferEnv</code></strong>:
-- <code>detect()</code> — static factory; reads <code>FREESURFER_HOME</code> and validates it, detects FS version
+- <code>detect(subjects_dir=None)</code> — class method; reads <code>FREESURFER_HOME</code>, validates installation, detects FS version
 - <code>subjects_dir</code> — resolves <code>SUBJECTS_DIR</code>
-- <code>list_subjects()</code> — returns all valid subject directories
-- <code>fsaverage_dir</code> — path to <code>fsaverage</code> in the FS installation</p>
+- <code>list_subjects()</code> — returns valid subject directories (must have <code>lh.white</code> + <code>aseg.mgz</code>)
+- <code>fsaverage_dir</code> — path to <code>fsaverage</code> in the FS installation
+- <code>find_subject(subject_id)</code> — returns <code>SubjectPaths</code> for a given subject</p>
 <p><strong><code>SubjectPaths</code></strong>:
 - Wraps a single subject directory
 - Properties: <code>surf_dir</code>, <code>label_dir</code>, <code>mri_dir</code>, <code>stats_dir</code>
-- <code>annotation_path(hemi, atlas_name)</code> — path to <code>{hemi}.{atlas_name}.annot</code>
-- <code>orig_mgz</code>, <code>aseg_mgz</code>, <code>norm_mgz</code>, <code>talairach_xfm</code> — key file paths
-- <code>validate()</code> — checks that all essential files exist; raises <code>ValueError</code> on failure</p>
+- <code>annot_path(hemi, annot_name)</code> — path to <code>{hemi}.{annot_name}.annot</code>
+- <code>aseg_mgz</code>, <code>norm_mgz</code>, <code>talairach_xfm</code>, <code>talairach_m3z</code>, <code>sphere_reg</code> — key file paths
+- <code>validate()</code> — checks 8 essential files exist; returns list of missing files</p>
 <hr />
-<h3 id="corepipelinepy-pipeline-orchestrator"><code>core/pipeline.py</code> — Pipeline Orchestrator<a class="headerlink" href="#corepipelinepy-pipeline-orchestrator" title="Permanent link">&para;</a></h3>
-<p>Single public function:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">run_extraction</span><span class="p">(</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="n">atlas</span><span class="p">:</span> <span class="n">AnyAtlasSpec</span><span class="p">,</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    <span class="n">subjects</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>    <span class="n">fs_env</span><span class="p">:</span> <span class="n">FreeSurferEnv</span><span class="p">,</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>    <span class="n">output_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>    <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]:</span>
+<h3 id="corelutpy-lookup-table"><code>core/lut.py</code> — Lookup Table<a class="headerlink" href="#corelutpy-lookup-table" title="Permanent link">&para;</a></h3>
+<p><strong><code>LookupTable</code></strong> — canonical mapping from integer region index to label + hemisphere. Every atlas requires a LUT; it drives the output schema.</p>
+<p>Constructors:
+- <code>from_tsv(path)</code> — loads TSV; auto-detects 3 formats (header row, two-column headerless, name-only); auto-infers hemisphere from region name
+- <code>from_annot(lh_annot, rh_annot)</code> — extracts embedded colour table from <code>.annot</code> files via nibabel</p>
+<p>Key methods:
+- <code>to_tsv(path)</code> — write LUT to TSV
+- <code>to_ctab()</code> — generate FreeSurfer colour table (<code>.ctab</code>) for <code>mri_segstats</code>
+- <code>merge_measures(raw_stats, subject_id, tiv, measure_map, join_on)</code> — joins raw extracted stats onto the LUT; returns wide-format DataFrame</p>
+<p><strong>Output schema</strong> (one row per region per subject):
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>subject_id | index | label | hemisphere | [extra LUT columns] | measure1 | ... | tiv_mm3
+</span></code></pre></div></p>
+<hr />
+<h3 id="coreformatspy-format-handlers"><code>core/formats.py</code> — Format Handlers<a class="headerlink" href="#coreformatspy-format-handlers" title="Permanent link">&para;</a></h3>
+<p><strong>Pattern:</strong> Abstract base <code>AtlasFormatHandler</code> with four concrete implementations.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">AtlasFormatHandler</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="n">format_id</span><span class="p">:</span> <span class="nb">str</span>          <span class="c1"># &quot;annot&quot;, &quot;nifti&quot;, &quot;dlabel_gii&quot;, &quot;gca&quot;</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    <span class="n">measure_map</span><span class="p">:</span> <span class="nb">dict</span>       <span class="c1"># raw column → output column names</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>    <span class="n">join_on</span><span class="p">:</span> <span class="nb">str</span>            <span class="c1"># &quot;label&quot; or &quot;index&quot;</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>    <span class="nd">@abstractmethod</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">transfer</span><span class="p">(</span><span class="n">atlas</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TransferResult</span><span class="p">:</span> <span class="o">...</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>    <span class="nd">@abstractmethod</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">extract</span><span class="p">(</span><span class="n">atlas</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">transfer_result</span><span class="p">,</span> <span class="n">force</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">tiv</span><span class="p">):</span> <span class="o">...</span>
 </span></code></pre></div>
-<p>For each subject:
-1. Creates <code>SubjectPaths</code> and calls <code>validate()</code>.
-2. Calls <code>transfer_atlas()</code> (skips if cached and not overwriting).
-3. Calls <code>extract_cortical_stats()</code> or <code>extract_volumetric_stats()</code>.
-4. Appends the resulting DataFrame to a list.</p>
-<p>After all subjects:
-5. Concatenates per-subject DataFrames.
-6. Writes cortical/subcortical/failures TSVs to <code>output_dir</code>.</p>
-<p>Uses <strong>Rich</strong> progress bars for interactive display.</p>
-<p>Returns a <code>dict</code> mapping <code>"cortical"</code>, <code>"subcortical"</code>, and <code>"failures"</code> to output file paths.</p>
+<p><strong><code>TransferResult</code></strong> carries the paths to transferred atlas files:
+- Surface: <code>{lh: Path, rh: Path}</code>
+- Volumetric: <code>{volume: Path}</code></p>
+<p><strong>Concrete handlers:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Handler</th>
+<th>Format</th>
+<th>Transfer command</th>
+<th>Extract command</th>
+<th>Measures</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AnnotHandler</code></td>
+<td><code>.annot</code></td>
+<td><code>mri_surf2surf</code></td>
+<td><code>mris_anatomical_stats</code></td>
+<td>9 cortical</td>
+</tr>
+<tr>
+<td><code>NiftiHandler</code></td>
+<td><code>.nii/.nii.gz</code></td>
+<td><code>mri_vol2vol</code></td>
+<td><code>mri_segstats</code></td>
+<td>7 volumetric</td>
+</tr>
+<tr>
+<td><code>DlabelGiiHandler</code></td>
+<td><code>.dlabel.gii</code></td>
+<td><code>mris_convert</code> + <code>mri_surf2surf</code></td>
+<td>via AnnotHandler</td>
+<td>9 cortical</td>
+</tr>
+<tr>
+<td><code>GcaHandler</code></td>
+<td><code>.gca</code></td>
+<td><code>mri_ca_label</code></td>
+<td><code>mri_segstats</code></td>
+<td>7 volumetric</td>
+</tr>
+</tbody>
+</table>
+<p>Handler registry:
+<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">FORMAT_HANDLERS</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    <span class="s2">&quot;annot&quot;</span><span class="p">:</span> <span class="n">AnnotHandler</span><span class="p">(),</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>    <span class="s2">&quot;nifti&quot;</span><span class="p">:</span> <span class="n">NiftiHandler</span><span class="p">(),</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>    <span class="s2">&quot;dlabel_gii&quot;</span><span class="p">:</span> <span class="n">DlabelGiiHandler</span><span class="p">(),</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>    <span class="s2">&quot;gca&quot;</span><span class="p">:</span> <span class="n">GcaHandler</span><span class="p">(),</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="p">}</span>
+</span></code></pre></div></p>
 <hr />
-<h3 id="coretransferpy-atlas-transfer"><code>core/transfer.py</code> — Atlas Transfer<a class="headerlink" href="#coretransferpy-atlas-transfer" title="Permanent link">&para;</a></h3>
-<p>Wraps FreeSurfer CLI commands with a 600-second timeout.</p>
-<p><strong><code>transfer_surface_atlas(atlas, subject_paths, hemi, overwrite)</code></strong>:
-- For FreeSurfer built-ins: returns existing annotation path (no transfer needed).
-- For all others: calls <code>mri_surf2surf</code> to resample from <code>fsaverage</code> to subject.
-- Output cached in <code>{subject}/label/{hemi}.{atlas_name}.annot</code>.</p>
-<p><strong><code>transfer_volumetric_atlas(atlas, subject_paths, overwrite)</code></strong>:
-- Calls <code>mri_vol2vol</code> with <code>--inv</code> (inverse talairach transform) and <code>--nearest</code>.
-- Output cached in <code>{subject}/mri/atlas/{atlas_name}.mgz</code>.</p>
-<p><strong><code>transfer_atlas(atlas, subject_paths, overwrite)</code></strong>:
-- Dispatcher: routes to surface or volumetric based on <code>atlas.type</code>.</p>
-<p><strong><code>_run_fs_command(cmd, env)</code></strong>:
-- Runs a FreeSurfer CLI command as a subprocess.
-- Sets <code>FREESURFER_HOME</code>, <code>SUBJECTS_DIR</code>, and <code>PATH</code> in the subprocess environment.
-- Captures and returns <code>stdout</code>/<code>stderr</code>.
-- Raises <code>RuntimeError</code> on non-zero exit.</p>
+<h3 id="coreextractpy-stats-extraction"><code>core/extract.py</code> — Stats Extraction<a class="headerlink" href="#coreextractpy-stats-extraction" title="Permanent link">&para;</a></h3>
+<p>Low-level runners called by the format handlers:</p>
+<ul>
+<li><code>_run_anatomical_stats(subject, hemi, atlas_name, annot_path, env)</code> → <code>.stats</code> path</li>
+<li><code>_run_segstats(subject, atlas_name, vol_path, ctab_path, env)</code> → <code>.stats</code> path</li>
+</ul>
+<p>Parsers:
+- <code>_parse_cortical_stats_file(path)</code> → DataFrame (StructName + 9 measure columns)
+- <code>_parse_segstats_file(path)</code> → DataFrame (10 columns from <code>mri_segstats</code> output)
+- <code>_parse_etiv_from_header(path)</code> → eTIV float</p>
 <hr />
-<h3 id="coreextractpy-stats-extraction-and-parsing"><code>core/extract.py</code> — Stats Extraction and Parsing<a class="headerlink" href="#coreextractpy-stats-extraction-and-parsing" title="Permanent link">&para;</a></h3>
-<p><strong><code>extract_cortical_stats(atlas, subject_paths)</code></strong>:
-- Runs <code>mris_anatomical_stats</code> for <code>lh</code> and <code>rh</code>.
-- Returns a long-format DataFrame with 9 measures per parcel.</p>
-<p><strong><code>extract_volumetric_stats(atlas, subject_paths)</code></strong>:
-- Runs <code>mri_segstats</code> on the transferred atlas volume.
-- Returns a long-format DataFrame with 7 measures per region.</p>
-<p><strong>Parsing:</strong>
-- <code>_parse_cortical_stats_file(path)</code> — reads whitespace-delimited <code>mris_anatomical_stats</code> output.
-- <code>_parse_segstats_file(path)</code> — reads whitespace-delimited <code>mri_segstats</code> output.</p>
-<p><strong>Long-format conversion:</strong>
-- <code>_cortical_to_long_format(df, subject_id, atlas, hemi)</code> — pivots wide → long.
-- <code>_volumetric_to_long_format(df, subject_id, atlas)</code> — pivots + infers hemisphere.
-- <code>_infer_hemisphere(region_name)</code> — detects <code>lh</code>/<code>rh</code> from region name prefix/suffix patterns.</p>
+<h3 id="corecommandpy-subprocess-wrapper"><code>core/command.py</code> — Subprocess Wrapper<a class="headerlink" href="#corecommandpy-subprocess-wrapper" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">env</span><span class="p">:</span> <span class="n">FreeSurferEnv</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CompletedProcess</span>
+</span></code></pre></div>
+<p>Sets <code>FREESURFER_HOME</code> and <code>SUBJECTS_DIR</code> in the subprocess environment. Runs with a 10-minute timeout. Raises <code>RuntimeError</code> on non-zero exit with captured stderr.</p>
+<hr />
+<h3 id="corepipelinepy-orchestrator"><code>core/pipeline.py</code> — Orchestrator<a class="headerlink" href="#corepipelinepy-orchestrator" title="Permanent link">&para;</a></h3>
+<p>Single public function:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">run_extraction</span><span class="p">(</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>    <span class="n">atlas</span><span class="p">:</span> <span class="n">AnyAtlasSpec</span><span class="p">,</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>    <span class="n">subjects</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>    <span class="n">env</span><span class="p">:</span> <span class="n">FreeSurferEnv</span><span class="p">,</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>    <span class="n">output_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>    <span class="n">force</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>    <span class="n">output_layout</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;flat&quot;</span><span class="p">,</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]</span>
+</span></code></pre></div>
+<p>For each atlas run:
+1. Loads the LUT once (shared across all subjects).
+2. Initialises an <code>OutputWriter</code> (<code>FlatWriter</code> or <code>BidsWriter</code>).
+3. For each subject: validate → transfer → extract → merge with LUT → write.
+4. Catches per-subject errors; logs to <code>{atlas}_failures.csv</code>.</p>
+<p><strong><code>FlatWriter</code></strong> — accumulates all subjects in memory; writes a single <code>{atlas}.tsv</code> at the end.</p>
+<p><strong><code>BidsWriter</code></strong> — writes a per-subject CSV for each structure (cortical/subcortical) inside a BIDS-like directory tree.</p>
+<hr />
+<h3 id="corebidspy-bids-path-construction"><code>core/bids.py</code> — BIDS Path Construction<a class="headerlink" href="#corebidspy-bids-path-construction" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>parse_bids_entities(subject_id)</code> — extracts <code>sub</code>/<code>ses</code> labels from BIDS-formatted subject IDs; falls back to sanitising non-BIDS IDs.</li>
+<li><code>build_bids_path(output_dir, entities, atlas_bids_name, structure)</code> — builds the full output path:</li>
+</ul>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>{output_dir}/sub-{sub}/[ses-{ses}/]anat/atlas-{atlas}/sub-{sub}[_ses-{ses}]_atlas-{atlas}_structure-{structure}.csv
+</span></code></pre></div>
 <hr />
 <h2 id="caching-strategy">Caching Strategy<a class="headerlink" href="#caching-strategy" title="Permanent link">&para;</a></h2>
 <table>
@@ -1418,31 +1561,33 @@
 <tbody>
 <tr>
 <td><code>~/.cache/fsatlas/atlases/</code></td>
-<td>Downloaded atlas files</td>
+<td>Downloaded atlas files + LUT TSVs</td>
 <td><code>fsatlas download --force</code></td>
 </tr>
 <tr>
 <td><code>{subject}/label/{hemi}.{atlas}.annot</code></td>
 <td>Transferred surface atlas</td>
-<td><code>--overwrite</code> flag</td>
+<td><code>--force</code> flag</td>
 </tr>
 <tr>
-<td><code>{subject}/mri/atlas/{atlas}.mgz</code></td>
+<td><code>{subject}/mri/atlas/{atlas}.nii.gz</code></td>
 <td>Transferred volumetric atlas</td>
-<td><code>--overwrite</code> flag</td>
+<td><code>--force</code> flag</td>
 </tr>
 </tbody>
 </table>
 <hr />
 <h2 id="design-decisions">Design Decisions<a class="headerlink" href="#design-decisions" title="Permanent link">&para;</a></h2>
-<p><strong>Why long format?</strong>
-Long-format (tidy) data is easier to filter, join, and reshape. Wide format can be recovered with a pivot. Tidy output is directly compatible with pandas, R, SPSS, and JASP.</p>
+<p><strong>Why wide format?</strong>
+Wide-format output (one row per region per subject, measures as columns) is immediately usable for common analysis patterns — filtering by region, pivoting to a subjects × regions matrix, or computing ratios. The LUT drives the schema, ensuring every region appears as a row even if the FreeSurfer command returned no data (those cells are <code>NaN</code>).</p>
+<p><strong>Why the format-handler pattern?</strong>
+Each atlas format (<code>.annot</code>, <code>.nii</code>, <code>.dlabel.gii</code>, <code>.gca</code>) requires different FreeSurfer commands for transfer and extraction. Encapsulating this in a handler class keeps <code>pipeline.py</code> format-agnostic and makes adding new formats straightforward.</p>
 <p><strong>Why FreeSurfer CLI wrappers instead of Python bindings?</strong>
-FreeSurfer's Python bindings are incomplete and version-specific. Wrapping the CLI commands (<code>mri_surf2surf</code>, <code>mri_segstats</code>, etc.) ensures compatibility with any FreeSurfer 8.x installation and makes command invocations transparent and debuggable.</p>
-<p><strong>Why <code>--nearest</code> interpolation?</strong>
-Atlas labels are integers. Trilinear or sinc interpolation would produce fractional values that map to no valid label. Nearest-neighbor interpolation preserves label integrity.</p>
-<p><strong>Why affine (talairach) registration?</strong>
-FreeSurfer's <code>recon-all</code> computes the <code>talairach.xfm</code> affine transform for every subject as part of the standard workflow. Using it requires no extra processing. For atlases that require non-linear registration, users should perform registration externally and pass the result as a custom volumetric atlas.</p>
+FreeSurfer's Python bindings are incomplete and version-specific. Wrapping the CLI commands ensures compatibility with any FreeSurfer 8.x installation and makes invocations transparent and debuggable.</p>
+<p><strong>Why nearest-neighbor interpolation for volumetric atlases?</strong>
+Atlas labels are integers. Trilinear or sinc interpolation would produce fractional values that map to no valid label. Nearest-neighbor preserves label integrity.</p>
+<p><strong>Why affine (talairach) registration for NIfTI atlases?</strong>
+FreeSurfer's <code>recon-all</code> computes <code>talairach.xfm</code> for every subject as part of the standard workflow. Using it requires no extra processing. For atlases requiring non-linear registration, register externally and pass the native-space result as a custom volumetric atlas. The GCA handler uses <code>talairach.m3z</code> (non-linear).</p>
 
 
 

@@ -23,11 +23,11 @@
       
       
       <link rel="icon" href="../assets/logo.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
     
     
       
-        <title>Docker - fsatlas</title>
+        <title>Containers - fsatlas</title>
       
     
     
@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#docker" class="md-skip">
+        <a href="#containers" class="md-skip">
           Skip to content
         </a>
       
@@ -119,7 +119,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Docker
+              Containers
             
           </span>
         </div>
@@ -319,7 +319,7 @@
   
     
   
-  Docker
+  Containers
 
       </a>
     </li>
@@ -844,7 +844,7 @@
   <span class="md-ellipsis">
     
   
-    Docker
+    Containers
   
 
     
@@ -862,7 +862,7 @@
   <span class="md-ellipsis">
     
   
-    Docker
+    Containers
   
 
     
@@ -888,33 +888,33 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#build-the-image" class="md-nav__link">
+  <a href="#apptainer-singularity" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Build the Image
+        Apptainer / Singularity
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Apptainer / Singularity">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pull-the-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pull the image
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#run-the-container" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Run the Container
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Run the Container">
-      <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#basic-usage" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Basic Usage
+        Basic usage
       
     </span>
   </a>
@@ -922,10 +922,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#key-mount-points" class="md-nav__link">
+  <a href="#license-via-environment-variable" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Key Mount Points
+        License via environment variable
       
     </span>
   </a>
@@ -933,10 +933,32 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#with-a-separate-output-directory" class="md-nav__link">
+  <a href="#list-available-atlases" class="md-nav__link">
     <span class="md-ellipsis">
       
-        With a Separate Output Directory
+        List available atlases
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#persist-the-atlas-cache" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Persist the atlas cache
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#slurm-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SLURM example
       
     </span>
   </a>
@@ -949,6 +971,51 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Docker
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Docker">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pull-the-image_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pull the image
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#basic-usage_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic usage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#with-a-separate-output-directory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        With a separate output directory
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#examples" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -961,7 +1028,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#list-available-atlases" class="md-nav__link">
+  <a href="#list-available-atlases_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         List available atlases
@@ -983,10 +1050,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#pre-download-an-atlas-then-run-without-network" class="md-nav__link">
+  <a href="#pre-download-an-atlas-then-run-offline" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Pre-download an atlas (then run without network)
+        Pre-download an atlas (then run offline)
       
     </span>
   </a>
@@ -997,7 +1064,7 @@
   <a href="#custom-atlas" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Custom Atlas
+        Custom atlas
       
     </span>
   </a>
@@ -1008,12 +1075,17 @@
     </nav>
   
 </li>
+        
+      </ul>
+    </nav>
+  
+</li>
       
         <li class="md-nav__item">
-  <a href="#dockerfile-overview" class="md-nav__link">
+  <a href="#key-mount-points" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Dockerfile Overview
+        Key Mount Points
       
     </span>
   </a>
@@ -1093,33 +1165,33 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#build-the-image" class="md-nav__link">
+  <a href="#apptainer-singularity" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Build the Image
+        Apptainer / Singularity
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Apptainer / Singularity">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pull-the-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pull the image
       
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#run-the-container" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Run the Container
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Run the Container">
-      <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#basic-usage" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Basic Usage
+        Basic usage
       
     </span>
   </a>
@@ -1127,10 +1199,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#key-mount-points" class="md-nav__link">
+  <a href="#license-via-environment-variable" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Key Mount Points
+        License via environment variable
       
     </span>
   </a>
@@ -1138,10 +1210,32 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#with-a-separate-output-directory" class="md-nav__link">
+  <a href="#list-available-atlases" class="md-nav__link">
     <span class="md-ellipsis">
       
-        With a Separate Output Directory
+        List available atlases
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#persist-the-atlas-cache" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Persist the atlas cache
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#slurm-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SLURM example
       
     </span>
   </a>
@@ -1154,6 +1248,51 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Docker
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Docker">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pull-the-image_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pull the image
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#basic-usage_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic usage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#with-a-separate-output-directory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        With a separate output directory
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#examples" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1166,7 +1305,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#list-available-atlases" class="md-nav__link">
+  <a href="#list-available-atlases_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         List available atlases
@@ -1188,10 +1327,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#pre-download-an-atlas-then-run-without-network" class="md-nav__link">
+  <a href="#pre-download-an-atlas-then-run-offline" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Pre-download an atlas (then run without network)
+        Pre-download an atlas (then run offline)
       
     </span>
   </a>
@@ -1202,7 +1341,7 @@
   <a href="#custom-atlas" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Custom Atlas
+        Custom atlas
       
     </span>
   </a>
@@ -1213,12 +1352,17 @@
     </nav>
   
 </li>
+        
+      </ul>
+    </nav>
+  
+</li>
       
         <li class="md-nav__item">
-  <a href="#dockerfile-overview" class="md-nav__link">
+  <a href="#key-mount-points" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Dockerfile Overview
+        Key Mount Points
       
     </span>
   </a>
@@ -1256,24 +1400,150 @@
   
 
 
-<h1 id="docker">Docker<a class="headerlink" href="#docker" title="Permanent link">&para;</a></h1>
-<p>fsatlas provides a Docker image based on <code>freesurfer/freesurfer:8.0.0</code>. Use it to run fsatlas without installing FreeSurfer locally.</p>
+<h1 id="containers">Containers<a class="headerlink" href="#containers" title="Permanent link">&para;</a></h1>
+<p>fsatlas ships as a pre-built container image based on <code>freesurfer/freesurfer:8.0.0</code>. Use it to run fsatlas without installing FreeSurfer locally.</p>
+<p><strong>Apptainer is recommended</strong> for HPC and cluster environments. Docker works well on local workstations.</p>
 <hr />
-<h2 id="build-the-image">Build the Image<a class="headerlink" href="#build-the-image" title="Permanent link">&para;</a></h2>
-<p>From the repository root:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span>fsatlas<span class="w"> </span>.
+<h2 id="apptainer-singularity">Apptainer / Singularity<a class="headerlink" href="#apptainer-singularity" title="Permanent link">&para;</a></h2>
+<p><a href="https://apptainer.org/">Apptainer</a> (formerly Singularity) is the standard container runtime on most HPC clusters. It runs containers as an unprivileged user, mounts the host filesystem automatically, and integrates well with SLURM and PBS schedulers.</p>
+<h3 id="pull-the-image">Pull the image<a class="headerlink" href="#pull-the-image" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>apptainer<span class="w"> </span>pull<span class="w"> </span>fsatlas.sif<span class="w"> </span>docker://galkepler/fsatlas:latest
 </span></code></pre></div>
-<p>The image uses a Python virtual environment at <code>/opt/fsatlas-venv</code>. The <code>fsatlas</code> command is the container entrypoint.</p>
+<p>Or build from source (requires the repository):</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>apptainer<span class="w"> </span>build<span class="w"> </span>fsatlas.sif<span class="w"> </span>apptainer.def
+</span></code></pre></div>
+<h3 id="basic-usage">Basic usage<a class="headerlink" href="#basic-usage" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>apptainer<span class="w"> </span>run<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span>--bind<span class="w"> </span>/path/to/SUBJECTS_DIR:/subjects<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span>--bind<span class="w"> </span>/path/to/license.txt:/license.txt:ro<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span>--env<span class="w"> </span><span class="nv">SUBJECTS_DIR</span><span class="o">=</span>/subjects<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span>fsatlas.sif<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span>--freesurfer-license-file<span class="w"> </span>/license.txt<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">    </span>extract<span class="w"> </span>--atlas<span class="w"> </span>schaefer100-7<span class="w"> </span>-o<span class="w"> </span>/subjects/results
+</span></code></pre></div>
+<h3 id="license-via-environment-variable">License via environment variable<a class="headerlink" href="#license-via-environment-variable" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">FS_LICENSE</span><span class="o">=</span>/path/to/license.txt
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>apptainer<span class="w"> </span>run<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span>--bind<span class="w"> </span>/path/to/SUBJECTS_DIR:/subjects<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span>--env<span class="w"> </span><span class="nv">SUBJECTS_DIR</span><span class="o">=</span>/subjects<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">    </span>--env<span class="w"> </span><span class="nv">FS_LICENSE</span><span class="o">=</span>/path/to/license.txt<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">    </span>fsatlas.sif<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">    </span>extract<span class="w"> </span>--atlas<span class="w"> </span>schaefer100-7<span class="w"> </span>-o<span class="w"> </span>/subjects/results
+</span></code></pre></div>
+<h3 id="list-available-atlases">List available atlases<a class="headerlink" href="#list-available-atlases" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>apptainer<span class="w"> </span>run<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span>--bind<span class="w"> </span>/path/to/license.txt:/license.txt:ro<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span>fsatlas.sif<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span>--freesurfer-license-file<span class="w"> </span>/license.txt<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">    </span>list-atlases
+</span></code></pre></div>
+<h3 id="persist-the-atlas-cache">Persist the atlas cache<a class="headerlink" href="#persist-the-atlas-cache" title="Permanent link">&para;</a></h3>
+<p>Apptainer mounts <code>$HOME</code> automatically, so <code>~/.cache/fsatlas/</code> is accessible by default. If you prefer an explicit bind:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>apptainer<span class="w"> </span>run<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">    </span>--bind<span class="w"> </span>/path/to/SUBJECTS_DIR:/subjects<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span>--bind<span class="w"> </span><span class="nv">$HOME</span>/.cache/fsatlas:/root/.cache/fsatlas<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span>--env<span class="w"> </span><span class="nv">SUBJECTS_DIR</span><span class="o">=</span>/subjects<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">    </span>fsatlas.sif<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">    </span>--freesurfer-license-file<span class="w"> </span>/license.txt<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">    </span>extract<span class="w"> </span>--atlas<span class="w"> </span>schaefer400-17<span class="w"> </span>-o<span class="w"> </span>/subjects/results
+</span></code></pre></div>
+<h3 id="slurm-example">SLURM example<a class="headerlink" href="#slurm-example" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="ch">#!/bin/bash</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="c1">#SBATCH --job-name=fsatlas</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="c1">#SBATCH --cpus-per-task=4</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1">#SBATCH --mem=16G</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="c1">#SBATCH --time=12:00:00</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>apptainer<span class="w"> </span>run<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">    </span>--bind<span class="w"> </span><span class="nv">$SUBJECTS_DIR</span>:/subjects<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="w">    </span>--bind<span class="w"> </span><span class="nv">$FS_LICENSE</span>:/license.txt:ro<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="w">    </span>--env<span class="w"> </span><span class="nv">SUBJECTS_DIR</span><span class="o">=</span>/subjects<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="w">    </span>/path/to/fsatlas.sif<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="w">    </span>--freesurfer-license-file<span class="w"> </span>/license.txt<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="w">    </span>extract<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="w">        </span>--atlas<span class="w"> </span>schaefer400-17<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-15"><a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a><span class="w">        </span>--subjects-file<span class="w"> </span>subjects.txt<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-16"><a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a><span class="w">        </span>-o<span class="w"> </span>/subjects/fsatlas_output
+</span></code></pre></div>
 <hr />
-<h2 id="run-the-container">Run the Container<a class="headerlink" href="#run-the-container" title="Permanent link">&para;</a></h2>
-<h3 id="basic-usage">Basic Usage<a class="headerlink" href="#basic-usage" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span>-v<span class="w"> </span>/path/to/SUBJECTS_DIR:/subjects<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span>-v<span class="w"> </span>/path/to/license.txt:/opt/freesurfer/license.txt<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span>-e<span class="w"> </span><span class="nv">SUBJECTS_DIR</span><span class="o">=</span>/subjects<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span>fsatlas<span class="w"> </span>extract<span class="w"> </span>--atlas<span class="w"> </span>schaefer100-7<span class="w"> </span>-o<span class="w"> </span>/subjects/results
+<h2 id="docker">Docker<a class="headerlink" href="#docker" title="Permanent link">&para;</a></h2>
+<h3 id="pull-the-image_1">Pull the image<a class="headerlink" href="#pull-the-image_1" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>docker<span class="w"> </span>pull<span class="w"> </span>galkepler/fsatlas:latest
 </span></code></pre></div>
-<h3 id="key-mount-points">Key Mount Points<a class="headerlink" href="#key-mount-points" title="Permanent link">&para;</a></h3>
+<p>Or build from source:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span>fsatlas<span class="w"> </span>.
+</span></code></pre></div>
+<h3 id="basic-usage_1">Basic usage<a class="headerlink" href="#basic-usage_1" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">    </span>-v<span class="w"> </span>/path/to/SUBJECTS_DIR:/subjects<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">    </span>-v<span class="w"> </span>/path/to/license.txt:/opt/freesurfer/license.txt<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">    </span>-e<span class="w"> </span><span class="nv">SUBJECTS_DIR</span><span class="o">=</span>/subjects<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">    </span>galkepler/fsatlas:latest<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">    </span>extract<span class="w"> </span>--atlas<span class="w"> </span>schaefer100-7<span class="w"> </span>-o<span class="w"> </span>/subjects/results
+</span></code></pre></div>
+<h3 id="with-a-separate-output-directory">With a separate output directory<a class="headerlink" href="#with-a-separate-output-directory" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">    </span>-v<span class="w"> </span>/data/subjects:/subjects<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">    </span>-v<span class="w"> </span>/data/license.txt:/opt/freesurfer/license.txt<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">    </span>-v<span class="w"> </span>/data/results:/results<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">    </span>-e<span class="w"> </span><span class="nv">SUBJECTS_DIR</span><span class="o">=</span>/subjects<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">    </span>galkepler/fsatlas:latest<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="w">    </span>extract<span class="w"> </span>--atlas<span class="w"> </span>tian-s2<span class="w"> </span>-o<span class="w"> </span>/results
+</span></code></pre></div>
+<h3 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h3>
+<h4 id="list-available-atlases_1">List available atlases<a class="headerlink" href="#list-available-atlases_1" title="Permanent link">&para;</a></h4>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">    </span>-v<span class="w"> </span>/path/to/license.txt:/opt/freesurfer/license.txt<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w">    </span>galkepler/fsatlas:latest<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="w">    </span>list-atlases
+</span></code></pre></div>
+<h4 id="extract-schaefer-400-for-specific-subjects">Extract Schaefer 400 for specific subjects<a class="headerlink" href="#extract-schaefer-400-for-specific-subjects" title="Permanent link">&para;</a></h4>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="w">    </span>-v<span class="w"> </span>/data/subjects:/subjects<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="w">    </span>-v<span class="w"> </span>/data/license.txt:/opt/freesurfer/license.txt<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="w">    </span>-v<span class="w"> </span>/data/results:/results<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="w">    </span>-e<span class="w"> </span><span class="nv">SUBJECTS_DIR</span><span class="o">=</span>/subjects<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="w">    </span>galkepler/fsatlas:latest<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="w">    </span>extract<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="w">        </span>--atlas<span class="w"> </span>schaefer400-17<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-12-9"><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="w">        </span>-s<span class="w"> </span>sub-01<span class="w"> </span>-s<span class="w"> </span>sub-02<span class="w"> </span>-s<span class="w"> </span>sub-03<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-12-10"><a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a><span class="w">        </span>-o<span class="w"> </span>/results
+</span></code></pre></div>
+<h4 id="pre-download-an-atlas-then-run-offline">Pre-download an atlas (then run offline)<a class="headerlink" href="#pre-download-an-atlas-then-run-offline" title="Permanent link">&para;</a></h4>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1"># Download to host cache</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="w">    </span>-v<span class="w"> </span><span class="nv">$HOME</span>/.cache/fsatlas:/root/.cache/fsatlas<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="w">    </span>-v<span class="w"> </span>/path/to/license.txt:/opt/freesurfer/license.txt<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="w">    </span>galkepler/fsatlas:latest<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="w">    </span>download<span class="w"> </span>schaefer400-17
+</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>
+</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="c1"># Run offline, reusing cache</span>
+</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-10"><a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a><span class="w">    </span>-v<span class="w"> </span>/data/subjects:/subjects<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-11"><a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a><span class="w">    </span>-v<span class="w"> </span>/data/license.txt:/opt/freesurfer/license.txt<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-12"><a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a><span class="w">    </span>-v<span class="w"> </span><span class="nv">$HOME</span>/.cache/fsatlas:/root/.cache/fsatlas<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-13"><a id="__codelineno-13-13" name="__codelineno-13-13" href="#__codelineno-13-13"></a><span class="w">    </span>-v<span class="w"> </span>/data/results:/results<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-14"><a id="__codelineno-13-14" name="__codelineno-13-14" href="#__codelineno-13-14"></a><span class="w">    </span>-e<span class="w"> </span><span class="nv">SUBJECTS_DIR</span><span class="o">=</span>/subjects<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-15"><a id="__codelineno-13-15" name="__codelineno-13-15" href="#__codelineno-13-15"></a><span class="w">    </span>--network<span class="w"> </span>none<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-16"><a id="__codelineno-13-16" name="__codelineno-13-16" href="#__codelineno-13-16"></a><span class="w">    </span>galkepler/fsatlas:latest<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-13-17"><a id="__codelineno-13-17" name="__codelineno-13-17" href="#__codelineno-13-17"></a><span class="w">    </span>extract<span class="w"> </span>--atlas<span class="w"> </span>schaefer400-17<span class="w"> </span>-o<span class="w"> </span>/results
+</span></code></pre></div>
+<h4 id="custom-atlas">Custom atlas<a class="headerlink" href="#custom-atlas" title="Permanent link">&para;</a></h4>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="w">    </span>-v<span class="w"> </span>/data/subjects:/subjects<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="w">    </span>-v<span class="w"> </span>/data/license.txt:/opt/freesurfer/license.txt<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="w">    </span>-v<span class="w"> </span>/data/atlases:/atlases<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="w">    </span>-v<span class="w"> </span>/data/results:/results<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="w">    </span>-e<span class="w"> </span><span class="nv">SUBJECTS_DIR</span><span class="o">=</span>/subjects<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-14-7"><a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="w">    </span>galkepler/fsatlas:latest<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-14-8"><a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="w">    </span>extract<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-14-9"><a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a><span class="w">        </span>--atlas<span class="w"> </span>/atlases/lh.myatlas.annot<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-14-10"><a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a><span class="w">        </span>--lut<span class="w"> </span>/atlases/myatlas_lut.tsv<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-14-11"><a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a><span class="w">        </span>-o<span class="w"> </span>/results
+</span></code></pre></div>
+<hr />
+<h2 id="key-mount-points">Key Mount Points<a class="headerlink" href="#key-mount-points" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -1284,108 +1554,46 @@
 </thead>
 <tbody>
 <tr>
-<td><code>/path/to/SUBJECTS_DIR</code></td>
+<td><code>$SUBJECTS_DIR</code></td>
 <td><code>/subjects</code></td>
 <td>FreeSurfer subjects directory</td>
 </tr>
 <tr>
 <td><code>/path/to/license.txt</code></td>
-<td><code>/opt/freesurfer/license.txt</code></td>
+<td><code>/opt/freesurfer/license.txt</code> (Docker) or via <code>--freesurfer-license-file</code></td>
 <td>FreeSurfer license (required)</td>
 </tr>
 <tr>
-<td><code>/path/to/results</code></td>
+<td><code>~/.cache/fsatlas</code></td>
+<td><code>/root/.cache/fsatlas</code></td>
+<td>Atlas download cache (optional)</td>
+</tr>
+<tr>
+<td>Output directory</td>
 <td><code>/results</code></td>
-<td>Output directory (optional separate mount)</td>
+<td>Results (optional separate mount)</td>
 </tr>
 </tbody>
 </table>
-<h3 id="with-a-separate-output-directory">With a Separate Output Directory<a class="headerlink" href="#with-a-separate-output-directory" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span>-v<span class="w"> </span>/data/subjects:/subjects<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span>-v<span class="w"> </span>/data/license.txt:/opt/freesurfer/license.txt<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span>-v<span class="w"> </span>/data/results:/results<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span>-e<span class="w"> </span><span class="nv">SUBJECTS_DIR</span><span class="o">=</span>/subjects<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span>fsatlas<span class="w"> </span>extract<span class="w"> </span>--atlas<span class="w"> </span>tian-s2<span class="w"> </span>-o<span class="w"> </span>/results
-</span></code></pre></div>
-<hr />
-<h2 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h2>
-<h3 id="list-available-atlases">List available atlases<a class="headerlink" href="#list-available-atlases" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span>-v<span class="w"> </span>/path/to/license.txt:/opt/freesurfer/license.txt<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span>fsatlas<span class="w"> </span>list-atlases
-</span></code></pre></div>
-<h3 id="extract-schaefer-400-for-specific-subjects">Extract Schaefer 400 for specific subjects<a class="headerlink" href="#extract-schaefer-400-for-specific-subjects" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span>-v<span class="w"> </span>/data/subjects:/subjects<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span>-v<span class="w"> </span>/data/license.txt:/opt/freesurfer/license.txt<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span>-v<span class="w"> </span>/data/results:/results<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">    </span>-e<span class="w"> </span><span class="nv">SUBJECTS_DIR</span><span class="o">=</span>/subjects<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">    </span>fsatlas<span class="w"> </span>extract<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">        </span>--atlas<span class="w"> </span>schaefer400-17<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">        </span>-s<span class="w"> </span>sub-01<span class="w"> </span>-s<span class="w"> </span>sub-02<span class="w"> </span>-s<span class="w"> </span>sub-03<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">        </span>-o<span class="w"> </span>/results
-</span></code></pre></div>
-<h3 id="pre-download-an-atlas-then-run-without-network">Pre-download an atlas (then run without network)<a class="headerlink" href="#pre-download-an-atlas-then-run-without-network" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Download to host cache</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span>-v<span class="w"> </span><span class="nv">$HOME</span>/.cache/fsatlas:/root/.cache/fsatlas<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span>-v<span class="w"> </span>/path/to/license.txt:/opt/freesurfer/license.txt<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">    </span>fsatlas<span class="w"> </span>download<span class="w"> </span>schaefer400-17
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="c1"># Run offline, reusing cache</span>
-</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="w">    </span>-v<span class="w"> </span>/data/subjects:/subjects<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="w">    </span>-v<span class="w"> </span>/data/license.txt:/opt/freesurfer/license.txt<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="w">    </span>-v<span class="w"> </span><span class="nv">$HOME</span>/.cache/fsatlas:/root/.cache/fsatlas<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="w">    </span>-v<span class="w"> </span>/data/results:/results<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="w">    </span>-e<span class="w"> </span><span class="nv">SUBJECTS_DIR</span><span class="o">=</span>/subjects<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="w">    </span>--network<span class="w"> </span>none<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-5-15"><a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a><span class="w">    </span>fsatlas<span class="w"> </span>extract<span class="w"> </span>--atlas<span class="w"> </span>schaefer400-17<span class="w"> </span>-o<span class="w"> </span>/results
-</span></code></pre></div>
-<h3 id="custom-atlas">Custom Atlas<a class="headerlink" href="#custom-atlas" title="Permanent link">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>docker<span class="w"> </span>run<span class="w"> </span>--rm<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">    </span>-v<span class="w"> </span>/data/subjects:/subjects<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">    </span>-v<span class="w"> </span>/data/license.txt:/opt/freesurfer/license.txt<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">    </span>-v<span class="w"> </span>/data/atlases:/atlases<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">    </span>-v<span class="w"> </span>/data/results:/results<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">    </span>-e<span class="w"> </span><span class="nv">SUBJECTS_DIR</span><span class="o">=</span>/subjects<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">    </span>fsatlas<span class="w"> </span>extract<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">        </span>--atlas<span class="w"> </span>/atlases/lh.myatlas.annot<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="w">        </span>-o<span class="w"> </span>/results
-</span></code></pre></div>
-<hr />
-<h2 id="dockerfile-overview">Dockerfile Overview<a class="headerlink" href="#dockerfile-overview" title="Permanent link">&para;</a></h2>
-<div class="language-dockerfile highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">FROM</span><span class="w"> </span><span class="s">freesurfer/freesurfer:8.0.0</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="c"># Install Python 3.12</span>
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="k">RUN</span><span class="w"> </span>apt-get<span class="w"> </span>update<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>python3.12<span class="w"> </span>python3.12-pip
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>
-</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="c"># Create isolated virtual environment</span>
-</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="k">RUN</span><span class="w"> </span>python3.12<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>/opt/fsatlas-venv
-</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="k">ENV</span><span class="w"> </span><span class="nv">PATH</span><span class="o">=</span><span class="s2">&quot;/opt/fsatlas-venv/bin:</span><span class="nv">$PATH</span><span class="s2">&quot;</span>
-</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>
-</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="c"># Install fsatlas</span>
-</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="k">COPY</span><span class="w"> </span>.<span class="w"> </span>/opt/fsatlas-src
-</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="k">RUN</span><span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>/opt/fsatlas-src
-</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a>
-</span><span id="__span-7-14"><a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a><span class="k">ENTRYPOINT</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;fsatlas&quot;</span><span class="p">]</span>
-</span></code></pre></div>
 <hr />
 <h2 id="notes">Notes<a class="headerlink" href="#notes" title="Permanent link">&para;</a></h2>
 <div class="admonition warning">
 <p class="admonition-title">FreeSurfer License Required</p>
-<p>A valid FreeSurfer license (<code>license.txt</code>) must be mounted at <code>/opt/freesurfer/license.txt</code>. Licenses are free for academic use — register at the <a href="https://surfer.nmr.mgh.harvard.edu/registration.html">FreeSurfer website</a>.</p>
+<p>A valid FreeSurfer license (<code>license.txt</code>) must be provided. Licenses are free for academic use — register at the <a href="https://surfer.nmr.mgh.harvard.edu/registration.html">FreeSurfer website</a>.</p>
+<p>For Apptainer, pass it with <code>--freesurfer-license-file /path/to/license.txt</code> or set <code>FS_LICENSE</code>.
+For Docker, mount it at <code>/opt/freesurfer/license.txt</code>.</p>
 </div>
 <div class="admonition tip">
 <p class="admonition-title">Atlas Cache Persistence</p>
-<p>To avoid re-downloading atlases on every container run, mount the host cache:
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>-v<span class="w"> </span><span class="nv">$HOME</span>/.cache/fsatlas:/root/.cache/fsatlas
-</span></code></pre></div></p>
+<p>To avoid re-downloading atlases on every container run, persist the cache directory:</p>
+<ul>
+<li><strong>Apptainer</strong>: <code>$HOME</code> is mounted automatically; <code>~/.cache/fsatlas/</code> is available by default.</li>
+<li><strong>Docker</strong>: Add <code>-v $HOME/.cache/fsatlas:/root/.cache/fsatlas</code>.</li>
+</ul>
 </div>
 <div class="admonition tip">
 <p class="admonition-title">Memory</p>
-<p>Processing large cohorts or high-resolution atlases may require significant memory. If the container is killed unexpectedly, try increasing Docker's memory limit in Docker Desktop settings.</p>
+<p>Processing large cohorts or high-resolution atlases may require significant memory. For Docker Desktop, increase the memory limit in settings. For SLURM, adjust <code>--mem</code>.</p>
 </div>
 
 

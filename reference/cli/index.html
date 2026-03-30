@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../../assets/logo.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
     
     
       
@@ -319,7 +319,7 @@
   
     
   
-  Docker
+  Containers
 
       </a>
     </li>
@@ -859,6 +859,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Options">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#-output-layout-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        --output-layout details
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -1118,7 +1135,7 @@
   <span class="md-ellipsis">
     
   
-    Docker
+    Containers
   
 
     
@@ -1215,6 +1232,23 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Options">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#-output-layout-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        --output-layout details
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -1452,6 +1486,10 @@
 </thead>
 <tbody>
 <tr>
+<td><code>--freesurfer-license-file</code></td>
+<td>Path to FreeSurfer <code>license.txt</code>. Overrides the <code>FS_LICENSE</code> environment variable.</td>
+</tr>
+<tr>
 <td><code>--version</code></td>
 <td>Show fsatlas version and exit</td>
 </tr>
@@ -1521,6 +1559,13 @@
 <td>Text file with one subject ID per line</td>
 </tr>
 <tr>
+<td><code>--output-layout</code></td>
+<td></td>
+<td>CHOICE</td>
+<td>No</td>
+<td>Output directory layout: <code>flat</code> (default) or <code>bids</code></td>
+</tr>
+<tr>
 <td><code>--force</code></td>
 <td><code>-f</code></td>
 <td>flag</td>
@@ -1544,6 +1589,26 @@
 </tbody>
 </table>
 <p><code>--atlas-type</code> is accepted for backward compatibility but is deprecated — use <code>--format</code> instead.</p>
+<h4 id="-output-layout-details"><code>--output-layout</code> details<a class="headerlink" href="#-output-layout-details" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Layout</th>
+<th>Output structure</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>flat</code> (default)</td>
+<td><code>{output-dir}/{atlas}.tsv</code> — one file per atlas, all subjects</td>
+</tr>
+<tr>
+<td><code>bids</code></td>
+<td><code>{output-dir}/sub-{id}/[ses-{ses}/]anat/atlas-{name}/sub-{id}_atlas-{name}_structure-{structure}.csv</code></td>
+</tr>
+</tbody>
+</table>
+<p>BIDS layout is useful when integrating fsatlas output into an existing BIDS derivative dataset.</p>
 <h3 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># All subjects, catalog atlas</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>fsatlas<span class="w"> </span>extract<span class="w"> </span>--atlas<span class="w"> </span>schaefer100-7<span class="w"> </span>-o<span class="w"> </span>./results
@@ -1817,9 +1882,14 @@
 <td><strong>Yes</strong></td>
 <td>Path to FreeSurfer subjects directory</td>
 </tr>
+<tr>
+<td><code>FS_LICENSE</code></td>
+<td>No</td>
+<td>Path to FreeSurfer <code>license.txt</code> (alternative to <code>--freesurfer-license-file</code>)</td>
+</tr>
 </tbody>
 </table>
-<p>These are typically set by FreeSurfer's <code>SetUpFreeSurfer.sh</code> script. They can be overridden per-run with <code>--subjects-dir</code>.</p>
+<p>These are typically set by FreeSurfer's <code>SetUpFreeSurfer.sh</code> script. <code>SUBJECTS_DIR</code> can be overridden per-run with <code>--subjects-dir</code>.</p>
 
 
 

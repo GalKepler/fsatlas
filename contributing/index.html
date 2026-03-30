@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../assets/logo.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
     
     
       
@@ -315,7 +315,7 @@
   
     
   
-  Docker
+  Containers
 
       </a>
     </li>
@@ -833,7 +833,7 @@
   <span class="md-ellipsis">
     
   
-    Docker
+    Containers
   
 
     
@@ -1194,16 +1194,20 @@
 <hr />
 <h2 id="project-structure">Project Structure<a class="headerlink" href="#project-structure" title="Permanent link">&para;</a></h2>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>src/fsatlas/
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>├── cli/main.py           # CLI commands (Click)
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>├── cli/main.py           # CLI commands (Click): extract, list-atlases, download, generate-lut
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>├── atlases/
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>│   ├── catalog.yaml      # Built-in atlas definitions
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>│   └── registry.py       # Atlas loading and downloading
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>└── core/
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    ├── environment.py    # FreeSurfer detection, subject paths
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    ├── pipeline.py       # Orchestrator
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    ├── transfer.py       # FreeSurfer command wrappers
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>    └── extract.py        # Stats extraction and parsing
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>tests/
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>│   ├── catalog.yaml      # Built-in atlas definitions (31 atlases)
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>│   ├── *_labels.tsv      # Bundled LUT files for volumetric atlases
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>│   └── registry.py       # AtlasRegistry, AtlasSpec, CustomAtlasSpec
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>└── core/
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    ├── bids.py           # BIDS output path construction
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    ├── command.py        # run_command() subprocess wrapper
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>    ├── environment.py    # FreeSurfer detection, subject paths
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>    ├── extract.py        # FreeSurfer command runners + .stats parsers
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>    ├── formats.py        # Format handlers: annot, nifti, dlabel_gii, gca
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>    ├── lut.py            # LookupTable: from_tsv, from_annot, merge_measures
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>    └── pipeline.py       # run_extraction() + FlatWriter/BidsWriter
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>tests/
 </span></code></pre></div>
 <hr />
 <h2 id="adding-a-new-atlas-to-the-catalog">Adding a New Atlas to the Catalog<a class="headerlink" href="#adding-a-new-atlas-to-the-catalog" title="Permanent link">&para;</a></h2>
@@ -1214,30 +1218,38 @@
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-atlas-id</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">family</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MyAtlas</span>
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;A</span><span class="nv"> </span><span class="s">short</span><span class="nv"> </span><span class="s">description</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">atlas&quot;</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">surface</span><span class="w">          </span><span class="c1"># or &quot;volumetric&quot;</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">  </span><span class="nt">space</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fsaverage</span><span class="w">       </span><span class="c1"># or &quot;MNI152NLin6Asym&quot;</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span><span class="nt">format</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">annot</span><span class="w">          </span><span class="c1"># annot | nifti | dlabel_gii | gca</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">  </span><span class="nt">space</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fsaverage</span><span class="w">       </span><span class="c1"># or MNI152NLin6Asym / MNI152NLin2009cAsym</span>
 </span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">  </span><span class="nt">source_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;https://...&quot;</span>
 </span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">  </span><span class="nt">files</span><span class="p">:</span>
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">    </span><span class="nt">lh_annot</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lh.myatlas.annot</span><span class="w">          </span><span class="c1"># surface atlas files</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">    </span><span class="nt">lh_annot</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lh.myatlas.annot</span>
 </span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">    </span><span class="nt">rh_annot</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rh.myatlas.annot</span>
-</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">  </span><span class="nt">citation</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Author</span><span class="nv"> </span><span class="s">et</span><span class="nv"> </span><span class="s">al.</span><span class="nv"> </span><span class="s">Year,</span><span class="nv"> </span><span class="s">Journal&quot;</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">  </span><span class="nt">labels_tsv</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">labels.tsv</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">  </span><span class="nt">citation</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Author</span><span class="nv"> </span><span class="s">et</span><span class="nv"> </span><span class="s">al.</span><span class="nv"> </span><span class="s">Year,</span><span class="nv"> </span><span class="s">Journal&quot;</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="w">  </span><span class="nt">bids_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myatlas</span><span class="w">     </span><span class="c1"># used for --output-layout bids</span>
 </span></code></pre></div>
 <p>For volumetric atlases:</p>
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-subcortical</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="nt">family</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MyAtlas</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">volumetric</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">  </span><span class="nt">space</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MNI152NLin6Asym</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">  </span><span class="nt">source_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;https://...&quot;</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">  </span><span class="nt">files</span><span class="p">:</span>
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">    </span><span class="nt">nifti</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_subcortical_atlas.nii.gz</span>
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">  </span><span class="nt">citation</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Author</span><span class="nv"> </span><span class="s">et</span><span class="nv"> </span><span class="s">al.</span><span class="nv"> </span><span class="s">Year,</span><span class="nv"> </span><span class="s">Journal&quot;</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Subcortical</span><span class="nv"> </span><span class="s">parcellation&quot;</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">  </span><span class="nt">format</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nifti</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">  </span><span class="nt">space</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MNI152NLin6Asym</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">  </span><span class="nt">source_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;https://...&quot;</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">  </span><span class="nt">files</span><span class="p">:</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">    </span><span class="nt">nifti</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_subcortical_atlas.nii.gz</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">  </span><span class="nt">labels_tsv</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">labels.tsv</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">  </span><span class="nt">citation</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Author</span><span class="nv"> </span><span class="s">et</span><span class="nv"> </span><span class="s">al.</span><span class="nv"> </span><span class="s">Year,</span><span class="nv"> </span><span class="s">Journal&quot;</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">  </span><span class="nt">bids_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysubcortical</span>
+</span></code></pre></div>
+<p>For atlases not available via HTTP, use <code>local_source_dir</code> instead of <code>source_url</code>:</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="w">  </span><span class="nt">local_source_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/path/to/local/atlas/directory</span>
 </span></code></pre></div>
 <ol>
 <li>Test with:</li>
 </ol>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>fsatlas<span class="w"> </span>list-atlases<span class="w">          </span><span class="c1"># verify it appears</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>fsatlas<span class="w"> </span>download<span class="w"> </span>my-atlas-id<span class="w">  </span><span class="c1"># verify download works</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>fsatlas<span class="w"> </span>extract<span class="w"> </span>--atlas<span class="w"> </span>my-atlas-id<span class="w"> </span>-s<span class="w"> </span>sub-01<span class="w"> </span>-o<span class="w"> </span>/tmp/test
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>fsatlas<span class="w"> </span>list-atlases<span class="w">          </span><span class="c1"># verify it appears</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>fsatlas<span class="w"> </span>download<span class="w"> </span>my-atlas-id<span class="w">  </span><span class="c1"># verify download works</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>fsatlas<span class="w"> </span>extract<span class="w"> </span>--atlas<span class="w"> </span>my-atlas-id<span class="w"> </span>-s<span class="w"> </span>sub-01<span class="w"> </span>-o<span class="w"> </span>/tmp/test
 </span></code></pre></div>
 <hr />
 <h2 id="reporting-bugs">Reporting Bugs<a class="headerlink" href="#reporting-bugs" title="Permanent link">&para;</a></h2>
@@ -1266,15 +1278,15 @@
 <h2 id="documentation">Documentation<a class="headerlink" href="#documentation" title="Permanent link">&para;</a></h2>
 <p>The documentation site uses <a href="https://squidfunk.github.io/mkdocs-material/">MkDocs Material</a>.</p>
 <p>Install docs dependencies:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>pip<span class="w"> </span>install<span class="w"> </span>mkdocs-material<span class="w"> </span>mkdocstrings<span class="o">[</span>python<span class="o">]</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>pip<span class="w"> </span>install<span class="w"> </span>mkdocs-material<span class="w"> </span>mkdocstrings<span class="o">[</span>python<span class="o">]</span>
 </span></code></pre></div>
 <p>Serve locally:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>mkdocs<span class="w"> </span>serve
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="c1"># → http://127.0.0.1:8000</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>mkdocs<span class="w"> </span>serve
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="c1"># → http://127.0.0.1:8000</span>
 </span></code></pre></div>
 <p>Build static site:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>mkdocs<span class="w"> </span>build
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="c1"># → site/</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>mkdocs<span class="w"> </span>build
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="c1"># → site/</span>
 </span></code></pre></div>
 <hr />
 <h2 id="license">License<a class="headerlink" href="#license" title="Permanent link">&para;</a></h2>
