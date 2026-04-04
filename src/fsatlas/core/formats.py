@@ -78,10 +78,14 @@ class TransferResult:
     ``paths`` keys are handler-specific:
     - annot/dlabel_gii: ``{"lh": Path, "rh": Path}``
     - nifti/gca: ``{"volume": Path}``
+
+    ``commands_run`` accumulates every actual command invocation (transfer + extract)
+    so that the metadata sidecar can record exactly what was executed.
     """
 
     paths: dict[str, Path] = field(default_factory=dict)
     format_id: str = ""
+    commands_run: list[list[str]] = field(default_factory=list)
 
 
 # ---------------------------------------------------------------------------
@@ -98,6 +102,7 @@ class AtlasFormatHandler(ABC):
     format_id: str = ""
     measure_map: dict[str, str] = {}   # raw stats col -> output col name
     join_on: str = "label"             # "label" for cortical, "index" for volumetric
+    commands: list[str] = []           # FreeSurfer commands invoked by this handler
 
     @abstractmethod
     def transfer(
@@ -141,6 +146,7 @@ class AnnotHandler(AtlasFormatHandler):
     format_id = "annot"
     measure_map = CORTICAL_MEASURES
     join_on = "label"
+    commands = ["mri_surf2surf", "mris_anatomical_stats"]
 
     def transfer(
         self,
@@ -164,6 +170,7 @@ class AnnotHandler(AtlasFormatHandler):
 
         annot_name = _atlas_annot_name(atlas)
         paths = {}
+        commands_run: list[list[str]] = []
         for hemi in ("lh", "rh"):
             tgt = subject.label_dir / f"{hemi}.{annot_name}.annot"
             if tgt.exists() and not overwrite:
@@ -179,11 +186,13 @@ class AnnotHandler(AtlasFormatHandler):
                 "--hemi", hemi,
                 "--sval-annot", str(src),
                 "--tval", str(tgt),
+                "--sd", str(env.subjects_dir),
             ]
+            commands_run.append(cmd)
             run_command(cmd, env)
             paths[hemi] = tgt
 
-        return TransferResult(paths=paths, format_id=self.format_id)
+        return TransferResult(paths=paths, format_id=self.format_id, commands_run=commands_run)
 
     def extract(
         self,
@@ -204,6 +213,7 @@ class AnnotHandler(AtlasFormatHandler):
                 annot_path=annot_path,
                 atlas_name=atlas.name,
                 force=force,
+                command_log=transfer_result.commands_run,
             )
             if tiv is None:
                 tiv = _parse_etiv_from_header(stats_path)
@@ -231,6 +241,7 @@ class NiftiHandler(AtlasFormatHandler):
     format_id = "nifti"
     measure_map = VOLUMETRIC_MEASURES
     join_on = "index"
+    commands = ["mri_vol2vol", "mri_segstats"]
 
     def transfer(
         self,
@@ -270,7 +281,9 @@ class NiftiHandler(AtlasFormatHandler):
             "--no-save-reg",
         ]
         run_command(cmd, env)
-        return TransferResult(paths={"volume": out_path}, format_id=self.format_id)
+        return TransferResult(
+            paths={"volume": out_path}, format_id=self.format_id, commands_run=[cmd]
+        )
 
     def extract(
         self,
@@ -288,6 +301,7 @@ class NiftiHandler(AtlasFormatHandler):
             atlas_name=atlas.name,
             ctab_path=None,   # ctab built from LUT in pipeline before calling this
             force=force,
+            command_log=transfer_result.commands_run,
         )
         tiv = _parse_etiv_from_header(stats_path)
         df = _parse_segstats_file(stats_path)
@@ -309,6 +323,7 @@ class DlabelGiiHandler(AtlasFormatHandler):
     format_id = "dlabel_gii"
     measure_map = CORTICAL_MEASURES
     join_on = "label"
+    commands = ["mris_convert", "mri_surf2surf", "mris_anatomical_stats"]
 
     def transfer(
         self,
@@ -319,6 +334,7 @@ class DlabelGiiHandler(AtlasFormatHandler):
     ) -> TransferResult:
         annot_handler = AnnotHandler()
         annot_paths: dict[str, Path] = {}
+        convert_cmds: list[list[str]] = []
 
         for hemi in ("lh", "rh"):
             dlabel_key = f"{hemi}.dlabel.gii"
@@ -340,13 +356,16 @@ class DlabelGiiHandler(AtlasFormatHandler):
                     str(sphere),
                     str(converted_annot),
                 ]
+                convert_cmds.append(cmd)
                 run_command(cmd, env)
             annot_paths[hemi] = converted_annot
 
         # Reuse AnnotHandler transfer logic with the converted annot files
         # by building a lightweight proxy that exposes get_file
         proxy = _AnnotProxy(atlas, annot_paths)
-        return annot_handler.transfer(proxy, subject, env, overwrite)
+        result = annot_handler.transfer(proxy, subject, env, overwrite)
+        result.commands_run = convert_cmds + result.commands_run
+        return result
 
     def extract(
         self,
@@ -389,6 +408,7 @@ class GcaHandler(AtlasFormatHandler):
     format_id = "gca"
     measure_map = VOLUMETRIC_MEASURES
     join_on = "index"
+    commands = ["mri_ca_label", "mri_segstats"]
 
     def transfer(
         self,
@@ -428,7 +448,9 @@ class GcaHandler(AtlasFormatHandler):
             str(out_path),
         ]
         run_command(cmd, env)
-        return TransferResult(paths={"volume": out_path}, format_id=self.format_id)
+        return TransferResult(
+            paths={"volume": out_path}, format_id=self.format_id, commands_run=[cmd]
+        )
 
     def extract(
         self,
@@ -446,6 +468,7 @@ class GcaHandler(AtlasFormatHandler):
             atlas_name=atlas.name,
             ctab_path=None,
             force=force,
+            command_log=transfer_result.commands_run,
         )
         tiv = _parse_etiv_from_header(stats_path)
         df = _parse_segstats_file(stats_path)

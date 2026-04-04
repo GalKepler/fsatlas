@@ -11,7 +11,7 @@ src/fsatlas/
 ├── __init__.py              # Package version
 ├── cli/
 │   ├── __init__.py
-│   └── main.py              # Click CLI: extract, list-atlases, download, generate-lut
+│   └── main.py              # Click CLI: extract, aggregate, list-atlases, download, generate-lut
 ├── atlases/
 │   ├── __init__.py
 │   ├── catalog.yaml         # Built-in atlas definitions (31 atlases)
@@ -19,6 +19,7 @@ src/fsatlas/
 │   └── registry.py          # AtlasRegistry, AtlasSpec, CustomAtlasSpec
 └── core/
     ├── __init__.py
+    ├── aggregate.py         # BIDS CSV discovery + wide-format aggregation
     ├── bids.py              # BIDS path construction for bids output layout
     ├── command.py           # run_command() subprocess wrapper (10 min timeout)
     ├── environment.py       # FreeSurferEnv, SubjectPaths
@@ -56,9 +57,10 @@ flowchart TD
 
 ### `cli/main.py` — Command-Line Interface
 
-Built with [Click](https://click.palletsprojects.com/). Provides four user-facing commands:
+Built with [Click](https://click.palletsprojects.com/). Provides five user-facing commands:
 
 - **`extract`** — Main command; orchestrates the full pipeline.
+- **`aggregate`** — Combines BIDS-layout per-subject CSVs into one wide-format table.
 - **`list-atlases`** — Displays atlas catalog in a Rich table.
 - **`download`** — Pre-downloads atlases to the cache.
 - **`generate-lut`** — Extracts the embedded colour table from `.annot` files into a reusable LUT TSV.
@@ -257,6 +259,26 @@ For each atlas run:
 **`FlatWriter`** — accumulates all subjects in memory; writes a single `{atlas}.tsv` at the end.
 
 **`BidsWriter`** — writes a per-subject CSV for each structure (cortical/subcortical) inside a BIDS-like directory tree.
+
+---
+
+### `core/aggregate.py` — BIDS Aggregation
+
+Combines per-subject BIDS CSV outputs (from `BidsWriter`) into a single wide-format DataFrame without invoking FreeSurfer.
+
+Key functions:
+- `discover_atlases(bids_dir)` — scans for `atlas-*` directories under `sub-*/[ses-*/]anat/`; returns sorted atlas names
+- `discover_csv_files(bids_dir, atlas, structure, subjects)` — globs for CSV files matching the BIDS naming pattern; supports optional structure and subject filtering
+- `_parse_entities_from_path(csv_path)` — extracts `sub`, `ses`, `atlas`, `structure` from a BIDS filename
+- `_standardize_dataframe(df, structure, atlas, session)` — keeps universal ID columns + known measure columns + `tiv_mm3`; injects `session`, `atlas`, `structure` metadata; drops atlas-specific extras (e.g. `hemi`, `name`); renames `gray_matter_volume_mm3` → `volume_mm3`
+- `aggregate(bids_dir, atlas, structures, subjects)` — discovers, reads, standardises, and concatenates all matching CSVs
+
+**Output schema** (one row per subject × region):
+```
+subject_id | session | atlas | structure | index | label | hemisphere | measure1 | … | tiv_mm3
+```
+
+Cortical and subcortical rows are stacked; columns not applicable to a structure type are `NaN`.
 
 ---
 

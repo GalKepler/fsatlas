@@ -32,12 +32,13 @@ The project is currently a flat layout (all modules at root level), though `pypr
 
 ### Module Responsibilities
 
-- **main.py** — Click CLI with 4 commands: `extract`, `list-atlases`, `download`, `cli` (root group). Resolves atlases and subjects, sets up logging.
+- **main.py** — Click CLI with 5 commands: `extract`, `aggregate`, `list-atlases`, `download`, `generate-lut` (root group `cli`). Resolves atlases and subjects, sets up logging.
 - **pipeline.py** — Orchestrator: loops subjects → validate → transfer atlas → extract stats. Uses Rich progress bars. Outputs per-atlas TSVs and a failures log.
 - **environment.py** — `FreeSurferEnv` (detects FS installation/version) and `SubjectPaths` (validates subject directory structure, surfaces, transforms).
 - **registry.py** — `AtlasRegistry` loads `catalog.yaml`, manages downloads to `~/.cache/fsatlas/atlases/` (via `platformdirs`). `AtlasSpec` for catalog atlases, `CustomAtlasSpec` for user-provided files. Type union: `AnyAtlasSpec = AtlasSpec | CustomAtlasSpec`.
 - **transfer.py** — Wraps `mri_surf2surf` (surface) and `mri_vol2vol` (volumetric, MNI→native via talairach.xfm). Subprocess calls with 600s timeout.
 - **extract.py** — Runs `mris_anatomical_stats` / `mri_segstats`, parses whitespace-delimited output, converts to long-format (tidy) DataFrames. Cortical: 9 measures. Volumetric: 7 measures.
+- **aggregate.py** — `discover_atlases`, `discover_csv_files`, `_parse_entities_from_path`, `_standardize_dataframe`, `aggregate`. Scans a BIDS output directory and concatenates per-subject CSVs into a single wide-format DataFrame. Drops atlas-specific extra columns; renames `gray_matter_volume_mm3` → `volume_mm3` for consistency with subcortical naming. No FreeSurfer dependency.
 - **catalog.yaml** — Built-in atlas definitions (13 atlases across 6 families: Schaefer, Tian Melbourne, HCP-MMP, FreeSurfer builtins DKT/Desikan/Destrieux).
 
 ### Data Flow

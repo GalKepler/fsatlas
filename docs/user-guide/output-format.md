@@ -103,6 +103,46 @@ sub-55      Command failed (exit 1): mri_surf2surf ...
 
 ---
 
+## Aggregated Output (BIDS layout)
+
+When using `--output-layout bids`, per-subject CSVs are written to a BIDS directory tree. The `fsatlas aggregate` command combines these into a single file.
+
+```bash
+fsatlas aggregate --bids-dir ./derivatives/fsatlas --atlas HCPex
+```
+
+**File:** `{bids-dir}/atlas-{name}_aggregated.csv` (default)
+
+Cortical and subcortical rows are stacked. Columns not applicable to a structure type are `NaN`.
+
+| Column | Description |
+|--------|-------------|
+| `subject_id` | Subject ID (e.g. `sub-01`) |
+| `session` | Session label, or empty for cross-sectional data |
+| `atlas` | Atlas name |
+| `structure` | `cortex` or `subcortex` |
+| `index` | Integer region index |
+| `label` | Region name |
+| `hemisphere` | `lh`, `rh`, or `bilateral` |
+| *(cortical measures)* | `num_vertices`, `surface_area_mm2`, `volume_mm3`, `thickness_mean_mm`, `thickness_std_mm`, `mean_curvature`, `gaussian_curvature`, `folding_index`, `curvature_index` |
+| *(subcortical measures)* | `num_voxels`, `volume_mm3`, `intensity_mean`, `intensity_std`, `intensity_min`, `intensity_max`, `intensity_range` |
+| `tiv_mm3` | Total intracranial volume |
+
+!!! note
+    `gray_matter_volume_mm3` (cortical) is renamed to `volume_mm3` in the aggregated output so both structure types share the same column name for region volume.
+
+### Example
+
+```
+subject_id,session,atlas,structure,index,label,hemisphere,num_vertices,...,volume_mm3,...,tiv_mm3
+sub-01,,HCPex,cortex,1,V1_ROI_L,lh,843,...,2341.0,...,1458203.0
+sub-01,,HCPex,cortex,2,V1_ROI_R,rh,901,...,2487.0,...,1458203.0
+sub-01,,HCPex,subcortex,361,Thal_L,lh,,,,...,463.0,...,1458203.0
+sub-02,,HCPex,cortex,1,V1_ROI_L,lh,857,...,2301.0,...,1501044.0
+```
+
+---
+
 ## Working with the Output
 
 === "Python / pandas"

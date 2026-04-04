@@ -34,6 +34,7 @@ mri_ca_label  → mri_segstats         → parse output
 - **LUT generation** — `fsatlas generate-lut` extracts the embedded colour table from `.annot` files into a reusable TSV.
 - **Batch processing** — Process all subjects in `$SUBJECTS_DIR` or a specified list.
 - **BIDS output layout** — Optionally write per-subject CSVs in a BIDS derivative directory tree.
+- **BIDS aggregation** — `fsatlas aggregate` combines per-subject BIDS CSVs into a single wide-format table across all subjects and sessions, with cortical and subcortical rows stacked.
 - **Failure resilience** — Pipeline continues on per-subject errors; failures logged to a separate TSV.
 - **Apptainer and Docker images** — Run without a local FreeSurfer installation; Apptainer recommended for HPC.
 
@@ -147,6 +148,16 @@ fsatlas download schaefer400-7
 fsatlas extract --atlas schaefer100-7 --output-layout bids -o ./derivatives/fsatlas
 ```
 
+### Aggregate BIDS outputs into a single table
+
+```bash
+# List available atlases in the output directory
+fsatlas aggregate --bids-dir ./derivatives/fsatlas
+
+# Combine all subjects and structures
+fsatlas aggregate --bids-dir ./derivatives/fsatlas --atlas Brainnetome246Ext
+```
+
 ---
 
 ## Built-in Atlas Catalog
@@ -251,12 +262,13 @@ Both images are based on `freesurfer/freesurfer:8.0.0` with a self-contained Pyt
 ```
 src/fsatlas/
 ├── cli/
-│   └── main.py           # Click CLI: extract, list-atlases, download, generate-lut
+│   └── main.py           # Click CLI: extract, aggregate, list-atlases, download, generate-lut
 ├── atlases/
 │   ├── catalog.yaml      # Built-in atlas definitions (31 atlases)
 │   ├── *_labels.tsv      # Bundled LUT files for volumetric atlases
 │   └── registry.py       # Atlas loading, downloading, LUT generation
 └── core/
+    ├── aggregate.py      # BIDS CSV discovery + wide-format aggregation
     ├── bids.py           # BIDS output path construction
     ├── command.py        # run_command() subprocess wrapper
     ├── environment.py    # FreeSurfer detection, subject discovery
@@ -284,6 +296,8 @@ CLI
                  └─ volumetric: mri_segstats → 7 measures
              └─ LUT.merge_measures → wide-format DataFrame
              └─ OutputWriter (flat → {atlas}.tsv | bids → per-subject CSVs)
+                              ↓ (bids only)
+aggregate command → scan BIDS tree → concat all subjects → wide-format CSV
 ```
 
 ---

@@ -244,19 +244,48 @@ Output structure:
 derivatives/fsatlas/
 └── sub-01/
     └── anat/
-        └── atlas-schaefer400-17/
-            └── sub-01_atlas-schaefer400-17_structure-cortical.csv
+        └── atlas-Schaefer2018N400n7/
+            ├── sub-01_atlas-Schaefer2018N400n7_structure-cortex.csv
+            └── sub-01_atlas-Schaefer2018N400n7_structure-cortex.json
 └── sub-02/
     └── anat/
-        └── atlas-schaefer400-17/
-            └── sub-02_atlas-schaefer400-17_structure-cortical.csv
+        └── atlas-Schaefer2018N400n7/
+            ├── sub-02_atlas-Schaefer2018N400n7_structure-cortex.csv
+            └── sub-02_atlas-Schaefer2018N400n7_structure-cortex.json
 ```
 
 Sessions are automatically detected if your subject IDs follow BIDS format (`sub-{label}_ses-{label}`).
 
 ---
 
-## 14. Running with Apptainer
+## 14. Aggregate BIDS Outputs
+
+After extracting with BIDS layout, use `fsatlas aggregate` to combine all per-subject CSVs into a single wide-format table:
+
+```bash
+# List atlases available in the output directory
+fsatlas aggregate --bids-dir ./derivatives/fsatlas
+
+# Combine all subjects and structures for one atlas
+fsatlas aggregate --bids-dir ./derivatives/fsatlas --atlas Brainnetome246Ext
+
+# Cortex only, specific subjects
+fsatlas aggregate --bids-dir ./derivatives/fsatlas --atlas Brainnetome246Ext \
+    --structure cortex -s sub-01 -s sub-02 -o bn246_cortex.csv
+```
+
+The output is a single CSV with one row per subject × region. Cortical and subcortical rows are stacked:
+
+```
+subject_id,session,atlas,structure,index,label,hemisphere,...,volume_mm3,...,tiv_mm3
+sub-01,,Brainnetome246Ext,cortex,1,A8dl_L,lh,...,3247.0,...,1458203.0
+sub-01,,Brainnetome246Ext,subcortex,211,mAmyg_L,L,...,1411.0,...,1458203.0
+sub-02,,Brainnetome246Ext,cortex,1,A8dl_L,lh,...,3109.0,...,1501044.0
+```
+
+---
+
+## 15. Running with Apptainer
 
 On HPC clusters, use the Apptainer image instead of a local installation:
 

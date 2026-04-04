@@ -108,6 +108,73 @@ Written to `--output-dir`:
 
 ---
 
+## `fsatlas aggregate`
+
+Scans a BIDS-layout output directory and combines per-subject CSVs into a single wide-format table for a given atlas.
+
+```bash
+fsatlas aggregate [OPTIONS]
+```
+
+No FreeSurfer installation required — works entirely from previously extracted CSV files.
+
+### Options
+
+| Option | Short | Type | Required | Description |
+|--------|-------|------|----------|-------------|
+| `--bids-dir` | `-d` | PATH | **Yes** | BIDS output directory from `fsatlas extract --output-layout bids` |
+| `--atlas` | `-a` | TEXT | No | Atlas name to aggregate (e.g. `Brainnetome246Ext`). If omitted, lists available atlases and exits. |
+| `--structure` | | CHOICE | No | Structures to include: `cortex`, `subcortex`, or `both` (default: `both`) |
+| `--subjects` | `-s` | TEXT | No | Subject labels to include, without `sub-` prefix (repeatable; default: all) |
+| `--subjects-file` | | PATH | No | Text file with one subject label per line |
+| `--output` | `-o` | PATH | No | Output file path (default: `{bids-dir}/atlas-{name}_aggregated.csv`) |
+| `--format` | `-F` | CHOICE | No | Output file format: `csv` or `tsv` (default: `csv`) |
+| `--verbose` | `-v` | flag | No | Increase logging verbosity |
+
+### Examples
+
+```bash
+# List available atlases in a BIDS output directory
+fsatlas aggregate --bids-dir ./derivatives/fsatlas
+
+# Aggregate all subjects and structures for one atlas
+fsatlas aggregate --bids-dir ./derivatives/fsatlas --atlas Brainnetome246Ext
+
+# Cortex only, TSV output
+fsatlas aggregate --bids-dir ./derivatives/fsatlas --atlas HCPex \
+    --structure cortex --format tsv -o hcpex_cortex.tsv
+
+# Specific subjects
+fsatlas aggregate --bids-dir ./derivatives/fsatlas --atlas Brainnetome246Ext \
+    -s S001 -s S002
+
+# From a subjects file
+fsatlas aggregate --bids-dir ./derivatives/fsatlas --atlas Brainnetome246Ext \
+    --subjects-file cohort.txt
+```
+
+### Output
+
+A single wide-format file with one row per subject × region. Cortical and subcortical rows are stacked; columns not applicable to a structure type are `NaN`.
+
+| Column | Description |
+|--------|-------------|
+| `subject_id` | Subject ID (e.g. `sub-S001`) |
+| `session` | Session label, or empty for cross-sectional data |
+| `atlas` | Atlas name |
+| `structure` | `cortex` or `subcortex` |
+| `index` | Integer region index from the atlas LUT |
+| `label` | Region name |
+| `hemisphere` | `lh`, `rh`, or `bilateral` |
+| *(cortical measures)* | `num_vertices`, `surface_area_mm2`, `volume_mm3`, `thickness_mean_mm`, `thickness_std_mm`, `mean_curvature`, `gaussian_curvature`, `folding_index`, `curvature_index` |
+| *(subcortical measures)* | `num_voxels`, `volume_mm3`, `intensity_mean`, `intensity_std`, `intensity_min`, `intensity_max`, `intensity_range` |
+| `tiv_mm3` | Total intracranial volume |
+
+!!! note
+    The cortical `gray_matter_volume_mm3` column is renamed to `volume_mm3` in the aggregated output so that cortical and subcortical rows share the same column name for region volume.
+
+---
+
 ## `fsatlas list-atlases`
 
 Prints the built-in atlas catalog as a formatted table.

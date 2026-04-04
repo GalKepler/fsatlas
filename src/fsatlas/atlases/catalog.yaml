@@ -34,7 +34,7 @@ schaefer100-7:
     lh.annot: "lh.Schaefer2018_100Parcels_7Networks_order.annot"
     rh.annot: "rh.Schaefer2018_100Parcels_7Networks_order.annot"
   labels_tsv: "labels.tsv"
-  citation: "Schaefer et al., Cerebral Cortex, 2018"
+  citation: "Schaefer, A., Kong, R., Gordon, E. M., Laumann, T. O., Zuo, X. N., Holmes, A. J., ... & Yeo, B. T. (2018). Local-global parcellation of the human cerebral cortex from intrinsic functional connectivity MRI. Cerebral cortex, 28(9), 3095-3114."
 
 schaefer200-7:
   name: schaefer200-7
@@ -49,7 +49,7 @@ schaefer200-7:
     lh.annot: "lh.Schaefer2018_200Parcels_7Networks_order.annot"
     rh.annot: "rh.Schaefer2018_200Parcels_7Networks_order.annot"
   labels_tsv: "labels.tsv"
-  citation: "Schaefer et al., Cerebral Cortex, 2018"
+  citation: "Schaefer, A., Kong, R., Gordon, E. M., Laumann, T. O., Zuo, X. N., Holmes, A. J., ... & Yeo, B. T. (2018). Local-global parcellation of the human cerebral cortex from intrinsic functional connectivity MRI. Cerebral cortex, 28(9), 3095-3114."
 
 schaefer300-7:
   name: schaefer300-7
@@ -64,7 +64,7 @@ schaefer300-7:
     lh.annot: "lh.Schaefer2018_300Parcels_7Networks_order.annot"
     rh.annot: "rh.Schaefer2018_300Parcels_7Networks_order.annot"
   labels_tsv: "labels.tsv"
-  citation: "Schaefer et al., Cerebral Cortex, 2018"
+  citation: "Schaefer, A., Kong, R., Gordon, E. M., Laumann, T. O., Zuo, X. N., Holmes, A. J., ... & Yeo, B. T. (2018). Local-global parcellation of the human cerebral cortex from intrinsic functional connectivity MRI. Cerebral cortex, 28(9), 3095-3114."
 
 schaefer400-7:
   name: schaefer400-7
@@ -79,7 +79,7 @@ schaefer400-7:
     lh.annot: "lh.Schaefer2018_400Parcels_7Networks_order.annot"
     rh.annot: "rh.Schaefer2018_400Parcels_7Networks_order.annot"
   labels_tsv: "labels.tsv"
-  citation: "Schaefer et al., Cerebral Cortex, 2018"
+  citation: "Schaefer, A., Kong, R., Gordon, E. M., Laumann, T. O., Zuo, X. N., Holmes, A. J., ... & Yeo, B. T. (2018). Local-global parcellation of the human cerebral cortex from intrinsic functional connectivity MRI. Cerebral cortex, 28(9), 3095-3114."
 
 schaefer500-7:
   name: schaefer500-7
@@ -94,7 +94,7 @@ schaefer500-7:
     lh.annot: "lh.Schaefer2018_500Parcels_7Networks_order.annot"
     rh.annot: "rh.Schaefer2018_500Parcels_7Networks_order.annot"
   labels_tsv: "labels.tsv"
-  citation: "Schaefer et al., Cerebral Cortex, 2018"
+  citation: "Schaefer, A., Kong, R., Gordon, E. M., Laumann, T. O., Zuo, X. N., Holmes, A. J., ... & Yeo, B. T. (2018). Local-global parcellation of the human cerebral cortex from intrinsic functional connectivity MRI. Cerebral cortex, 28(9), 3095-3114."
 
 schaefer600-7:
   name: schaefer600-7
@@ -109,7 +109,7 @@ schaefer600-7:
     lh.annot: "lh.Schaefer2018_600Parcels_7Networks_order.annot"
     rh.annot: "rh.Schaefer2018_600Parcels_7Networks_order.annot"
   labels_tsv: "labels.tsv"
-  citation: "Schaefer et al., Cerebral Cortex, 2018"
+  citation: "Schaefer, A., Kong, R., Gordon, E. M., Laumann, T. O., Zuo, X. N., Holmes, A. J., ... & Yeo, B. T. (2018). Local-global parcellation of the human cerebral cortex from intrinsic functional connectivity MRI. Cerebral cortex, 28(9), 3095-3114."
 
 schaefer700-7:
   name: schaefer700-7
@@ -124,7 +124,7 @@ schaefer700-7:
     lh.annot: "lh.Schaefer2018_700Parcels_7Networks_order.annot"
     rh.annot: "rh.Schaefer2018_700Parcels_7Networks_order.annot"
   labels_tsv: "labels.tsv"
-  citation: "Schaefer et al., Cerebral Cortex, 2018"
+  citation: "Schaefer, A., Kong, R., Gordon, E. M., Laumann, T. O., Zuo, X. N., Holmes, A. J., ... & Yeo, B. T. (2018). Local-global parcellation of the human cerebral cortex from intrinsic functional connectivity MRI. Cerebral cortex, 28(9), 3095-3114."
 
 schaefer800-7:
   name: schaefer800-7
@@ -139,7 +139,7 @@ schaefer800-7:
     lh.annot: "lh.Schaefer2018_800Parcels_7Networks_order.annot"
     rh.annot: "rh.Schaefer2018_800Parcels_7Networks_order.annot"
   labels_tsv: "labels.tsv"
-  citation: "Schaefer et al., Cerebral Cortex, 2018"
+  citation: "Schaefer, A., Kong, R., Gordon, E. M., Laumann, T. O., Zuo, X. N., Holmes, A. J., ... & Yeo, B. T. (2018). Local-global parcellation of the human cerebral cortex from intrinsic functional connectivity MRI. Cerebral cortex, 28(9), 3095-3114."
 
 schaefer900-7:
   name: schaefer900-7
@@ -154,7 +154,7 @@ schaefer900-7:
     lh.annot: "lh.Schaefer2018_900Parcels_7Networks_order.annot"
     rh.annot: "rh.Schaefer2018_900Parcels_7Networks_order.annot"
   labels_tsv: "labels.tsv"
-  citation: "Schaefer et al., Cerebral Cortex, 2018"
+  citation: "Schaefer, A., Kong, R., Gordon, E. M., Laumann, T. O., Zuo, X. N., Holmes, A. J., ... & Yeo, B. T. (2018). Local-global parcellation of the human cerebral cortex from intrinsic functional connectivity MRI. Cerebral cortex, 28(9), 3095-3114."
 
 schaefer1000-7:
   name: schaefer1000-7
@@ -169,7 +169,7 @@ schaefer1000-7:
     lh.annot: "lh.Schaefer2018_1000Parcels_7Networks_order.annot"
     rh.annot: "rh.Schaefer2018_1000Parcels_7Networks_order.annot"
   labels_tsv: "labels.tsv"
-  citation: "Schaefer et al., Cerebral Cortex, 2018"
+  citation: "Schaefer, A., Kong, R., Gordon, E. M., Laumann, T. O., Zuo, X. N., Holmes, A. J., ... & Yeo, B. T. (2018). Local-global parcellation of the human cerebral cortex from intrinsic functional connectivity MRI. Cerebral cortex, 28(9), 3095-3114."
 
 schaefer100-17:
   name: schaefer100-17
@@ -184,7 +184,7 @@ schaefer100-17:
     lh.annot: "lh.Schaefer2018_100Parcels_17Networks_order.annot"
     rh.annot: "rh.Schaefer2018_100Parcels_17Networks_order.annot"
   labels_tsv: "labels.tsv"
-  citation: "Schaefer et al., Cerebral Cortex, 2018"
+  citation: "Schaefer, A., Kong, R., Gordon, E. M., Laumann, T. O., Zuo, X. N., Holmes, A. J., ... & Yeo, B. T. (2018). Local-global parcellation of the human cerebral cortex from intrinsic functional connectivity MRI. Cerebral cortex, 28(9), 3095-3114."
 
 schaefer200-17:
   name: schaefer200-17
@@ -199,7 +199,7 @@ schaefer200-17:
     lh.annot: "lh.Schaefer2018_200Parcels_17Networks_order.annot"
     rh.annot: "rh.Schaefer2018_200Parcels_17Networks_order.annot"
   labels_tsv: "labels.tsv"
-  citation: "Schaefer et al., Cerebral Cortex, 2018"
+  citation: "Schaefer, A., Kong, R., Gordon, E. M., Laumann, T. O., Zuo, X. N., Holmes, A. J., ... & Yeo, B. T. (2018). Local-global parcellation of the human cerebral cortex from intrinsic functional connectivity MRI. Cerebral cortex, 28(9), 3095-3114."
 
 schaefer300-17:
   name: schaefer300-17
@@ -214,7 +214,7 @@ schaefer300-17:
     lh.annot: "lh.Schaefer2018_300Parcels_17Networks_order.annot"
     rh.annot: "rh.Schaefer2018_300Parcels_17Networks_order.annot"
   labels_tsv: "labels.tsv"
-  citation: "Schaefer et al., Cerebral Cortex, 2018"
+  citation: "Schaefer, A., Kong, R., Gordon, E. M., Laumann, T. O., Zuo, X. N., Holmes, A. J., ... & Yeo, B. T. (2018). Local-global parcellation of the human cerebral cortex from intrinsic functional connectivity MRI. Cerebral cortex, 28(9), 3095-3114."
 
 schaefer400-17:
   name: schaefer400-17
@@ -229,7 +229,7 @@ schaefer400-17:
     lh.annot: "lh.Schaefer2018_400Parcels_17Networks_order.annot"
     rh.annot: "rh.Schaefer2018_400Parcels_17Networks_order.annot"
   labels_tsv: "labels.tsv"
-  citation: "Schaefer et al., Cerebral Cortex, 2018"
+  citation: "Schaefer, A., Kong, R., Gordon, E. M., Laumann, T. O., Zuo, X. N., Holmes, A. J., ... & Yeo, B. T. (2018). Local-global parcellation of the human cerebral cortex from intrinsic functional connectivity MRI. Cerebral cortex, 28(9), 3095-3114."
 
 # =============================================================================
 # Tian 2020 — Melbourne Subcortex Atlas (volumetric, MNI152NLin6Asym)
@@ -247,7 +247,7 @@ tian-s1:
   files:
     atlas.nii: "Tian_Subcortex_S1_3T.nii"
   labels_tsv: "Tian_Subcortex_S1_3T_label.txt"
-  citation: "Tian et al., Nature Neuroscience, 2020"
+  citation: "Tian, Y., Margulies, D. S., Breakspear, M., & Zalesky, A. (2020). Topographic organization of the human subcortex unveiled with functional connectivity gradients. Nature neuroscience, 23(11), 1421-1432."
 
 tian-s2:
   name: tian-s2
@@ -261,7 +261,7 @@ tian-s2:
   files:
     atlas.nii: "Tian_Subcortex_S2_3T.nii"
   labels_tsv: "Tian_Subcortex_S2_3T_label.txt"
-  citation: "Tian et al., Nature Neuroscience, 2020"
+  citation: "Tian, Y., Margulies, D. S., Breakspear, M., & Zalesky, A. (2020). Topographic organization of the human subcortex unveiled with functional connectivity gradients. Nature neuroscience, 23(11), 1421-1432."
 
 tian-s3:
   name: tian-s3
@@ -275,7 +275,7 @@ tian-s3:
   files:
     atlas.nii: "Tian_Subcortex_S3_3T.nii"
   labels_tsv: "Tian_Subcortex_S3_3T_label.txt"
-  citation: "Tian et al., Nature Neuroscience, 2020"
+  citation: "Tian, Y., Margulies, D. S., Breakspear, M., & Zalesky, A. (2020). Topographic organization of the human subcortex unveiled with functional connectivity gradients. Nature neuroscience, 23(11), 1421-1432."
 
 tian-s4:
   name: tian-s4
@@ -289,7 +289,7 @@ tian-s4:
   files:
     atlas.nii: "Tian_Subcortex_S4_3T.nii"
   labels_tsv: "Tian_Subcortex_S4_3T_label.txt"
-  citation: "Tian et al., Nature Neuroscience, 2020"
+  citation: "Tian, Y., Margulies, D. S., Breakspear, M., & Zalesky, A. (2020). Topographic organization of the human subcortex unveiled with functional connectivity gradients. Nature neuroscience, 23(11), 1421-1432."
 
 # =============================================================================
 # HCP-MMP 1.0 — Glasser Multi-Modal Parcellation (surface-based)

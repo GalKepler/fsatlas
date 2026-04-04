@@ -106,6 +106,13 @@ def cli(freesurfer_license_file: Path | None) -> None:
         "'bids' writes per-subject CSVs in a sub-/ses-/anat/ directory tree."
     ),
 )
+@click.option(
+    "--jobs", "-j",
+    type=click.IntRange(min=1),
+    default=1,
+    show_default=True,
+    help="Number of parallel worker threads for subject processing.",
+)
 @click.option("--verbose", "-v", is_flag=True, help="Verbose logging.")
 def extract(
     subjects_dir: Path | None,
@@ -118,6 +125,7 @@ def extract(
     output_dir: Path,
     force: bool,
     output_layout: str,
+    jobs: int,
     verbose: bool,
 ) -> None:
     """Extract morphometric measures for one or more atlases across subjects."""
@@ -179,6 +187,7 @@ def extract(
             output_dir=output_dir,
             force=force,
             output_layout=output_layout,
+            jobs=jobs,
         )
         for kind, path in output_paths.items():
             all_output_paths[f"{atlas_spec.name}:{kind}"] = path
@@ -190,6 +199,106 @@ def extract(
         console.print("  Output files:")
         for kind, path in all_output_paths.items():
             console.print(f"    {kind}: {path}")
+
+
+@cli.command()
+@click.option(
+    "--bids-dir", "-d",
+    type=click.Path(exists=True, file_okay=False, path_type=Path),
+    required=True,
+    help="BIDS output directory from 'fsatlas extract --output-layout bids'.",
+)
+@click.option(
+    "--atlas", "-a",
+    default=None,
+    help="Atlas name to aggregate (e.g. Brainnetome246Ext). "
+         "If omitted, lists available atlases and exits.",
+)
+@click.option(
+    "--structure",
+    type=click.Choice(["cortex", "subcortex", "both"]),
+    default="both",
+    show_default=True,
+    help="Which structures to include.",
+)
+@click.option(
+    "--subjects", "-s",
+    multiple=True,
+    help="Subject labels to include (without sub- prefix). Default: all.",
+)
+@click.option(
+    "--subjects-file",
+    type=click.Path(exists=True, path_type=Path),
+    default=None,
+    help="Text file with one subject label per line.",
+)
+@click.option(
+    "--output", "-o",
+    type=click.Path(path_type=Path),
+    default=None,
+    help="Output file path. Default: {bids_dir}/atlas-{name}_aggregated.csv",
+)
+@click.option(
+    "--format", "-F", "output_format",
+    type=click.Choice(["csv", "tsv"]),
+    default="csv",
+    show_default=True,
+    help="Output file format.",
+)
+@click.option("--verbose", "-v", is_flag=True, help="Verbose logging.")
+def aggregate(
+    bids_dir: Path,
+    atlas: str | None,
+    structure: str,
+    subjects: tuple[str, ...],
+    subjects_file: Path | None,
+    output: Path | None,
+    output_format: str,
+    verbose: bool,
+) -> None:
+    """Aggregate BIDS-layout per-subject CSVs into a single wide-format table."""
+    _setup_logging(verbose)
+
+    from ..core.aggregate import aggregate as run_aggregate, discover_atlases
+
+    if atlas is None:
+        available = discover_atlases(bids_dir)
+        if not available:
+            console.print(f"[yellow]No atlases found in {bids_dir}[/yellow]")
+            sys.exit(1)
+        console.print("Available atlases:")
+        for name in available:
+            console.print(f"  {name}")
+        return
+
+    # Build subject filter
+    subject_list = list(subjects)
+    if subjects_file:
+        lines = subjects_file.read_text().splitlines()
+        subject_list.extend(
+            line.strip() for line in lines if line.strip() and not line.startswith("#")
+        )
+    subject_filter = subject_list or None
+
+    structures = ["cortex", "subcortex"] if structure == "both" else [structure]
+    result = run_aggregate(bids_dir, atlas, structures=structures, subjects=subject_filter)
+
+    if result.empty:
+        console.print("[yellow]No data found for the specified atlas/subjects.[/yellow]")
+        sys.exit(1)
+
+    if output is None:
+        ext = ".tsv" if output_format == "tsv" else ".csv"
+        output = bids_dir / f"atlas-{atlas}_aggregated{ext}"
+
+    sep = "\t" if output_format == "tsv" else ","
+    result.to_csv(output, sep=sep, index=False)
+
+    n_subjects = result["subject_id"].nunique()
+    n_rows = len(result)
+    console.print(
+        f"[green]Aggregated {n_subjects} subject(s), {n_rows} rows → {output}[/green]"
+    )
 
 
 @cli.command("list-atlases")

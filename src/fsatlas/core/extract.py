@@ -84,6 +84,7 @@ def _run_anatomical_stats(
     annot_path: Path,
     atlas_name: str,
     force: bool = False,
+    command_log: list[list[str]] | None = None,
 ) -> Path:
     """Run mris_anatomical_stats and return the output .stats path."""
     stats_dir = subject.stats_dir
@@ -100,9 +101,12 @@ def _run_anatomical_stats(
         "-a", str(annot_path),
         "-f", str(stats_path),
         "-b",
+        "-sdir", str(env.subjects_dir),
         subject.subject_id,
         hemi,
     ]
+    if command_log is not None:
+        command_log.append(cmd)
     run_command(cmd, env)
     return stats_path
 
@@ -114,6 +118,7 @@ def _run_segstats(
     atlas_name: str,
     ctab_path: Path | None = None,
     force: bool = False,
+    command_log: list[list[str]] | None = None,
 ) -> Path:
     """Run mri_segstats and return the output .stats path."""
     stats_dir = subject.stats_dir
@@ -133,9 +138,12 @@ def _run_segstats(
         "--etiv",
         "--sum", str(stats_path),
         "--subject", subject.subject_id,
+        "--sd", str(env.subjects_dir),
     ]
     if ctab_path is not None:
         cmd += ["--ctab", str(ctab_path)]
+    if command_log is not None:
+        command_log.append(cmd)
     run_command(cmd, env)
     return stats_path
 
