@@ -47,3 +47,4 @@ results/
 *.log
 site/
 *.sif
+validation_test.ipynb

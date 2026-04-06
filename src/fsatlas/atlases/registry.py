@@ -354,7 +354,7 @@ class AtlasRegistry:
         nifti_path: Path,
         name: str | None = None,
         labels_tsv: Path | None = None,
-        space: str = "MNI152NLin6Asym",
+        space: str = "MNI152NLin2009cAsym",
     ) -> CustomAtlasSpec:
         """Create a CustomAtlasSpec from a user-provided NIfTI atlas."""
         nifti_path = Path(nifti_path)

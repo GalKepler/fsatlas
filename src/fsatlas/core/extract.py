@@ -133,7 +133,7 @@ def _run_segstats(
     cmd = [
         "mri_segstats",
         "--seg", str(seg_path),
-        "--in", str(subject.norm_mgz),
+        "--i", str(subject.norm_mgz),
         "--excludeid", "0",
         "--etiv",
         "--sum", str(stats_path),

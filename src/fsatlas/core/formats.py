@@ -228,20 +228,55 @@ class AnnotHandler(AtlasFormatHandler):
 
 
 # ---------------------------------------------------------------------------
+# mni152reg helper
+# ---------------------------------------------------------------------------
+
+def _ensure_mni152_reg(subject: SubjectPaths, env: FreeSurferEnv) -> list[list[str]]:
+    """Run ``mni152reg`` if ``reg.mni152.2mm.dat`` does not already exist.
+
+    ``mni152reg`` registers the MNI152 2mm template to the subject's native
+    space via ``fslregister``, producing ``mri/transforms/reg.mni152.2mm.dat``.
+    That file is required by ``mri_vol2vol --reg`` to correctly resample
+    MNI152 atlases into native space.
+
+    Returns the command list if mni152reg was run, empty list if it was skipped.
+    """
+    reg_dat = subject.mni152_reg_dat
+    if reg_dat.exists():
+        logger.info(f"  MNI152 registration already at {reg_dat}, skipping mni152reg")
+        return []
+
+    logger.info(f"  Running mni152reg for {subject.subject_id} → {reg_dat}")
+    cmd = [
+        "mni152reg",
+        "--s", subject.subject_id,
+    ]
+    run_command(cmd, env)
+    if not reg_dat.exists():
+        raise RuntimeError(
+            f"mni152reg completed but {reg_dat} was not created. "
+            "Check the mni152reg log in the subject's scripts/ directory."
+        )
+    return [cmd]
+
+
+# ---------------------------------------------------------------------------
 # NiftiHandler — NIfTI volumetric atlas
 # ---------------------------------------------------------------------------
 
 class NiftiHandler(AtlasFormatHandler):
     """Handler for NIfTI volumetric atlases.
 
-    Transfer: ``mri_vol2vol`` (MNI → native via talairach.xfm).
+    Transfer: ``mni152reg`` (once per subject) + ``mri_vol2vol`` with the
+              resulting ``reg.mni152.2mm.dat`` to resample MNI152 atlases into
+              native space.
     Extract:  ``mri_segstats`` → volumetric .stats file.
     """
 
     format_id = "nifti"
     measure_map = VOLUMETRIC_MEASURES
     join_on = "index"
-    commands = ["mri_vol2vol", "mri_segstats"]
+    commands = ["mni152reg", "mri_vol2vol", "mri_segstats"]
 
     def transfer(
         self,
@@ -269,20 +304,44 @@ class NiftiHandler(AtlasFormatHandler):
                 f"  Existing {out_path} has wrong dimensions (stale cache); re-running transfer."
             )
 
+        atlas_space = getattr(atlas, "space", "MNI152NLin2009cAsym")
         src = _get_nifti_file(atlas)
-        logger.info(f"  mri_vol2vol {src} -> {out_path}")
+        commands_run: list[list[str]] = []
+
+        if atlas_space in ("MNI152NLin6Asym", "MNI152NLin2009cAsym"):
+            # Ensure reg.mni152.2mm.dat exists (run mni152reg if needed).
+            # reg.mni152.2mm.dat was produced by fslregister with --mov $mni152
+            # --s $subject, so it maps MNI152 (movable) → native (target).
+            # mri_vol2vol --reg with this file and no --inv resamples the MNI152
+            # atlas into the norm.mgz geometry: for each native output voxel the
+            # tool looks up the atlas by applying inv(reg) = native→MNI152.
+            commands_run += _ensure_mni152_reg(subject, env)
+            reg_arg = ["--reg", str(subject.mni152_reg_dat)]
+        elif atlas_space == "MNI305":
+            # talairach.xfm maps native → MNI305 (correct direction for --xfm
+            # without --inv: the XFM is applied directly as the targ→mov lookup).
+            reg_arg = ["--xfm", str(subject.talairach_xfm)]
+        else:
+            raise ValueError(
+                f"Atlas '{atlas.name}' has unsupported space '{atlas_space}' for "
+                f"NIfTI volumetric transfer.  Supported: MNI152NLin6Asym, "
+                f"MNI152NLin2009cAsym, MNI305."
+            )
+
+        logger.info(f"  mri_vol2vol {src} → {out_path} (space: {atlas_space})")
         cmd = [
             "mri_vol2vol",
             "--mov", str(src),
             "--targ", str(subject.norm_mgz),
-            "--xfm", str(subject.talairach_xfm),
+            *reg_arg,
             "--interp", "nearest",
             "--o", str(out_path),
             "--no-save-reg",
         ]
         run_command(cmd, env)
+        commands_run.append(cmd)
         return TransferResult(
-            paths={"volume": out_path}, format_id=self.format_id, commands_run=[cmd]
+            paths={"volume": out_path}, format_id=self.format_id, commands_run=commands_run
         )
 
     def extract(

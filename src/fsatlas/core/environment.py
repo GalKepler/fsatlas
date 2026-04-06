@@ -148,6 +148,16 @@ class SubjectPaths:
         return self.mri_dir / "transforms" / "talairach.m3z"
 
     @property
+    def mni152_reg_dat(self) -> Path:
+        """Path to reg.mni152.2mm.dat produced by mni152reg.
+
+        This file registers the MNI152 2mm template to the subject's native
+        space and is required for resampling MNI152 volumetric atlases.
+        Generate it by running: ``mni152reg --s <subject_id>``
+        """
+        return self.mri_dir / "transforms" / "reg.mni152.2mm.dat"
+
+    @property
     def sphere_reg(self) -> dict[str, Path]:
         """Sphere registration files per hemisphere."""
         return {
