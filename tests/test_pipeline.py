@@ -197,8 +197,12 @@ class TestRunExtraction:
 
         atlas = MagicMock(spec=CustomAtlasSpec)
         atlas.name = "testatlas"
+        atlas.type = "surface"
         atlas.format = "annot"
         atlas.structure = "cortex"
+        atlas.space = "fsaverage"
+        atlas.description = "Custom annot atlas: testatlas"
+        atlas.citation = "User-provided"
         atlas.bids_atlas_name = "TestAtlas"
         atlas.labels_tsv_path = lut_file
 
@@ -243,8 +247,12 @@ class TestRunExtraction:
 
         atlas = MagicMock(spec=CustomAtlasSpec)
         atlas.name = "testatlas"
+        atlas.type = "surface"
         atlas.format = "annot"
         atlas.structure = "cortex"
+        atlas.space = "fsaverage"
+        atlas.description = "Custom annot atlas: testatlas"
+        atlas.citation = "User-provided"
         atlas.bids_atlas_name = "TestAtlas"
         atlas.labels_tsv_path = lut_file
 

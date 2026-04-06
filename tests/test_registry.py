@@ -358,7 +358,7 @@ class TestFromCustomVolumetric:
         nii = tmp_path / "atlas.nii.gz"
         nii.touch()
         spec = AtlasRegistry.from_custom_volumetric(nii)
-        assert spec.space == "MNI152NLin6Asym"
+        assert spec.space == "MNI152NLin2009cAsym"
 
     def test_labels_tsv_set(self, tmp_path):
         nii = tmp_path / "atlas.nii.gz"

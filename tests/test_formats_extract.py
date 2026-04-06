@@ -189,6 +189,7 @@ class TestNiftiHandlerTransferNonAseg:
         atlas = MagicMock()
         atlas.builtin = False
         atlas.name = "myvol"
+        atlas.space = "MNI152NLin2009cAsym"
 
         # Create atlas nifti and subject norm
         data = np.zeros((10, 10, 10))

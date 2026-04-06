@@ -111,8 +111,12 @@ class TestRunExtractionVolumetric:
 
         atlas = MagicMock(spec=CustomAtlasSpec)
         atlas.name = "testvol"
+        atlas.type = "volumetric"
         atlas.format = "nifti"
         atlas.structure = "subcortex"
+        atlas.space = "MNI152NLin2009cAsym"
+        atlas.description = "Custom nifti atlas: testvol"
+        atlas.citation = "User-provided"
         atlas.bids_atlas_name = "TestVol"
         atlas.labels_tsv_path = lut_file
 

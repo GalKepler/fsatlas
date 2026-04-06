@@ -40,6 +40,7 @@ class TestNiftiHandlerStaleCacheWarning:
         atlas = MagicMock()
         atlas.builtin = False
         atlas.name = "myvol"
+        atlas.space = "MNI152NLin2009cAsym"
 
         mri_dir = tmp_path / "mri"
         atlas_dir = mri_dir / "atlas"
