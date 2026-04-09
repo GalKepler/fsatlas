@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import os
 import re
 import shutil
 from dataclasses import dataclass, field
@@ -17,6 +18,12 @@ logger = logging.getLogger(__name__)
 
 CATALOG_PATH = Path(__file__).parent / "catalog.yaml"
 CACHE_DIR = Path(user_cache_dir("fsatlas")) / "atlases"
+
+
+def _get_bids_dir() -> Path | None:
+    """Return the BIDS atlas directory if ``FSATLAS_ATLASES_DIR`` is set, else None."""
+    v = os.environ.get("FSATLAS_ATLASES_DIR")
+    return Path(v) if v else None
 
 
 def _infer_format(atlas_type: str, files: dict[str, str]) -> str:
@@ -70,23 +77,67 @@ class AtlasSpec:
     def cache_dir(self) -> Path:
         return CACHE_DIR / self.name
 
+    def _bids_filename_for_key(self, key: str) -> str:
+        """Map a catalog file key to its BIDS-named filename."""
+        n = self.bids_atlas_name
+        s = self.space
+        if key == "lh.annot":
+            return f"atlas-{n}_hemi-L_space-{s}_dseg.annot"
+        elif key == "rh.annot":
+            return f"atlas-{n}_hemi-R_space-{s}_dseg.annot"
+        elif key == "lh.dlabel.gii":
+            return f"atlas-{n}_hemi-L_space-{s}_dseg.label.gii"
+        elif key == "rh.dlabel.gii":
+            return f"atlas-{n}_hemi-R_space-{s}_dseg.label.gii"
+        elif key.endswith(".nii.gz"):
+            return f"atlas-{n}_space-{s}_res-01_dseg.nii.gz"
+        elif key.endswith(".nii"):
+            return f"atlas-{n}_space-{s}_res-01_dseg.nii"
+        elif key.endswith(".gca"):
+            return f"atlas-{n}_dseg.gca"
+        return key  # fallback
+
+    @property
+    def _bids_labels_filename(self) -> str:
+        return f"atlas-{self.bids_atlas_name}_dseg.tsv"
+
     @property
     def labels_tsv_path(self) -> Path | None:
-        """Return the cached LUT path, or None if not yet generated/downloaded."""
+        """Return the LUT path, checking the BIDS dir first then the cache."""
+        bids_dir = _get_bids_dir()
+        if bids_dir:
+            p = bids_dir / self.name / self._bids_labels_filename
+            if p.exists():
+                return p
         p = self.cache_dir / "labels.tsv"
         return p if p.exists() else None
 
     def is_downloaded(self) -> bool:
-        """Check if all atlas files (and the LUT) are present in cache."""
+        """Check if all atlas files (and the LUT) are present in the BIDS dir or cache."""
+        bids_dir = _get_bids_dir()
+        if bids_dir:
+            atlas_dir = bids_dir / self.name
+            if self.builtin:
+                return (atlas_dir / self._bids_labels_filename).exists()
+            has_files = all(
+                (atlas_dir / self._bids_filename_for_key(k)).exists() for k in self.files
+            )
+            has_lut = (atlas_dir / self._bids_labels_filename).exists()
+            return has_files and has_lut
+        # Fall back to cache-based check
         if self.builtin:
-            # Builtins only need the LUT in cache (annot files come from FS itself)
             return self.labels_tsv_path is not None
         has_files = all((self.cache_dir / local_name).exists() for local_name in self.files)
         has_lut = self.labels_tsv_path is not None
         return has_files and has_lut
 
     def get_file(self, key: str) -> Path:
-        """Get the local path for a specific atlas file."""
+        """Get the local path for a specific atlas file, checking BIDS dir first."""
+        bids_dir = _get_bids_dir()
+        if bids_dir:
+            bids_path = bids_dir / self.name / self._bids_filename_for_key(key)
+            if bids_path.exists():
+                return bids_path
         if key not in self.files:
             raise KeyError(
                 f"Atlas '{self.name}' has no file '{key}'. Available: {list(self.files)}"

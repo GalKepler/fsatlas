@@ -47,5 +47,9 @@ COPY src/ ./src/
 RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
     pip install --no-cache-dir .
 
+# Copy the pre-built BIDS atlas directory so containers work without internet
+COPY bids_atlases/ /opt/fsatlas-atlases/
+ENV FSATLAS_ATLASES_DIR=/opt/fsatlas-atlases
+
 ENTRYPOINT ["fsatlas"]
 CMD ["--help"]

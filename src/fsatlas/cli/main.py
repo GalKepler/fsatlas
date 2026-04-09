@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 import os
+import shutil
 import sys
 from pathlib import Path
 
@@ -346,6 +347,115 @@ def download(atlas_name: str, force: bool, subjects_dir: Path | None) -> None:
         sys.exit(1)
     except Exception as e:
         console.print(f"[red]Download failed: {e}[/red]")
+        sys.exit(1)
+
+
+@cli.command("build-atlas-dir")
+@click.option(
+    "--output", "-o",
+    type=click.Path(path_type=Path),
+    required=True,
+    help="Destination directory for the BIDS-structured atlas files.",
+)
+@click.option("--force", "-f", is_flag=True, help="Re-download and overwrite existing files.")
+@click.option("--verbose", "-v", is_flag=True, help="Verbose logging.")
+def build_atlas_dir(output: Path, force: bool, verbose: bool) -> None:
+    """Populate a BIDS-structured atlas directory with all non-builtin catalog atlases.
+
+    Downloads (or copies from local source) every non-FreeSurfer-builtin atlas and
+    organises the files under OUTPUT using BIDS-style naming:
+
+    \b
+      OUTPUT/
+        dataset_description.json
+        <atlas-name>/
+          atlas-<BidsName>_hemi-L_space-<space>_dseg.annot   (surface)
+          atlas-<BidsName>_hemi-R_space-<space>_dseg.annot
+          atlas-<BidsName>_dseg.tsv
+          atlas-<BidsName>_space-<space>_res-01_dseg.nii[.gz] (volumetric)
+          atlas-<BidsName>_dseg.tsv
+
+    This directory can be committed to the repository and COPYed into the Docker
+    image so that containers work without any runtime downloads.
+    """
+    import json
+
+    _setup_logging(verbose)
+    output = Path(output)
+    output.mkdir(parents=True, exist_ok=True)
+
+    registry = AtlasRegistry()
+
+    # Write dataset_description.json
+    desc_path = output / "dataset_description.json"
+    if not desc_path.exists() or force:
+        desc = {
+            "Name": "fsatlas built-in atlas collection",
+            "BIDSVersion": "1.9.0",
+            "DatasetType": "atlas",
+            "GeneratedBy": [
+                {"Name": "fsatlas", "CodeURL": "https://github.com/GalKepler/fsatlas"}
+            ],
+        }
+        desc_path.write_text(json.dumps(desc, indent=2) + "\n")
+        console.print(f"Wrote {desc_path}")
+
+    atlases = [a for a in registry.list_atlases() if not a.builtin]
+    console.print(f"Building BIDS atlas directory for {len(atlases)} atlases → {output}")
+
+    ok = failed = 0
+    for spec in atlases:
+        atlas_dir = output / spec.name
+        atlas_dir.mkdir(parents=True, exist_ok=True)
+
+        # Check whether all BIDS files already exist
+        bids_files = {k: spec._bids_filename_for_key(k) for k in spec.files}
+        bids_lut = spec._bids_labels_filename
+        all_present = all((atlas_dir / fn).exists() for fn in bids_files.values()) and (
+            atlas_dir / bids_lut
+        ).exists()
+        if all_present and not force:
+            console.print(f"  [dim]{spec.name}[/dim] already present, skipping")
+            ok += 1
+            continue
+
+        try:
+            # Populate the local cache via the existing download mechanism, then BIDS-rename
+            downloaded = registry.download(spec.name, force=force)
+
+            for key, bids_filename in bids_files.items():
+                src = downloaded.cache_dir / key
+                dst = atlas_dir / bids_filename
+                if src.exists():
+                    if not dst.exists() or force:
+                        shutil.copy2(src, dst)
+                else:
+                    console.print(
+                        f"  [yellow]Warning:[/yellow] {spec.name}: {key} missing in cache"
+                    )
+
+            lut_src = downloaded.cache_dir / "labels.tsv"
+            lut_dst = atlas_dir / bids_lut
+            if lut_src.exists():
+                if not lut_dst.exists() or force:
+                    shutil.copy2(lut_src, lut_dst)
+            else:
+                console.print(
+                    f"  [yellow]Warning:[/yellow] {spec.name}: labels.tsv missing in cache"
+                )
+
+            console.print(f"  [green]✓[/green] {spec.name}")
+            ok += 1
+        except Exception as exc:
+            console.print(f"  [red]✗[/red] {spec.name}: {exc}")
+            failed += 1
+
+    console.print(
+        f"\n[green]{ok} atlas(es) written[/green]"
+        + (f", [red]{failed} failed[/red]" if failed else "")
+        + f" → {output}"
+    )
+    if failed:
         sys.exit(1)
 
 

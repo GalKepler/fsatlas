@@ -1,0 +1,11 @@
+{
+  "Name": "fsatlas built-in atlas collection",
+  "BIDSVersion": "1.9.0",
+  "DatasetType": "atlas",
+  "GeneratedBy": [
+    {
+      "Name": "fsatlas",
+      "CodeURL": "https://github.com/GalKepler/fsatlas"
+    }
+  ]
+}
