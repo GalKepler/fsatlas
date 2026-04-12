@@ -57,27 +57,13 @@ apptainer run \
     list-atlases
 ```
 
-### Persist the atlas cache
-
-Apptainer mounts `$HOME` automatically, so `~/.cache/fsatlas/` is accessible by default. If you prefer an explicit bind:
-
-```bash
-apptainer run \
-    --bind /path/to/SUBJECTS_DIR:/subjects \
-    --bind $HOME/.cache/fsatlas:/root/.cache/fsatlas \
-    --env SUBJECTS_DIR=/subjects \
-    fsatlas.sif \
-    --freesurfer-license-file /license.txt \
-    extract --atlas schaefer400-17 -o /subjects/results
-```
-
 ### SLURM example
 
 ```bash
 #!/bin/bash
 #SBATCH --job-name=fsatlas
-#SBATCH --cpus-per-task=4
-#SBATCH --mem=16G
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=32G
 #SBATCH --time=12:00:00
 
 apptainer run \
@@ -89,8 +75,11 @@ apptainer run \
     extract \
         --atlas schaefer400-17 \
         --subjects-file subjects.txt \
+        --jobs 8 \
         -o /subjects/fsatlas_output
 ```
+
+`--jobs` should match `--cpus-per-task`. Each worker thread runs an independent FreeSurfer subprocess; adjust `--mem` accordingly (roughly 4–8 GB per job for typical cohort sizes).
 
 ---
 
@@ -157,28 +146,6 @@ docker run --rm \
         -o /results
 ```
 
-#### Pre-download an atlas (then run offline)
-
-```bash
-# Download to host cache
-docker run --rm \
-    -v $HOME/.cache/fsatlas:/root/.cache/fsatlas \
-    -v /path/to/license.txt:/opt/freesurfer/license.txt \
-    galkepler/fsatlas:latest \
-    download schaefer400-17
-
-# Run offline, reusing cache
-docker run --rm \
-    -v /data/subjects:/subjects \
-    -v /data/license.txt:/opt/freesurfer/license.txt \
-    -v $HOME/.cache/fsatlas:/root/.cache/fsatlas \
-    -v /data/results:/results \
-    -e SUBJECTS_DIR=/subjects \
-    --network none \
-    galkepler/fsatlas:latest \
-    extract --atlas schaefer400-17 -o /results
-```
-
 #### Custom atlas
 
 ```bash
@@ -203,7 +170,6 @@ docker run --rm \
 |-----------|---------------|---------|
 | `$SUBJECTS_DIR` | `/subjects` | FreeSurfer subjects directory |
 | `/path/to/license.txt` | `/opt/freesurfer/license.txt` (Docker) or via `--freesurfer-license-file` | FreeSurfer license (required) |
-| `~/.cache/fsatlas` | `/root/.cache/fsatlas` | Atlas download cache (optional) |
 | Output directory | `/results` | Results (optional separate mount) |
 
 ---
@@ -216,11 +182,8 @@ docker run --rm \
     For Apptainer, pass it with `--freesurfer-license-file /path/to/license.txt` or set `FS_LICENSE`.
     For Docker, mount it at `/opt/freesurfer/license.txt`.
 
-!!! tip "Atlas Cache Persistence"
-    To avoid re-downloading atlases on every container run, persist the cache directory:
-
-    - **Apptainer**: `$HOME` is mounted automatically; `~/.cache/fsatlas/` is available by default.
-    - **Docker**: Add `-v $HOME/.cache/fsatlas:/root/.cache/fsatlas`.
+!!! tip "Atlases ship with the image"
+    All built-in atlases are pre-populated inside the image at `/opt/fsatlas/atlases/`. No network access is needed at runtime and no cache directory needs to be mounted.
 
 !!! tip "Memory"
     Processing large cohorts or high-resolution atlases may require significant memory. For Docker Desktop, increase the memory limit in settings. For SLURM, adjust `--mem`.

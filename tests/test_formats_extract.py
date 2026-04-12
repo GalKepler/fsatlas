@@ -182,6 +182,7 @@ class TestNiftiHandlerExtract:
 
 class TestNiftiHandlerTransferNonAseg:
     def test_transfer_runs_vol2vol(self, tmp_path):
+        """MNI305 atlases always use the linear mri_vol2vol path."""
         import numpy as np
         import nibabel as nib
 
@@ -189,7 +190,7 @@ class TestNiftiHandlerTransferNonAseg:
         atlas = MagicMock()
         atlas.builtin = False
         atlas.name = "myvol"
-        atlas.space = "MNI152NLin2009cAsym"
+        atlas.space = "MNI305"
 
         # Create atlas nifti and subject norm
         data = np.zeros((10, 10, 10))
@@ -219,6 +220,96 @@ class TestNiftiHandlerTransferNonAseg:
                 result = handler.transfer(atlas, subject, MagicMock(), overwrite=True)
 
         mock_cmd.assert_called_once()
+        assert "volume" in result.paths
+
+    def test_transfer_mni152_uses_easyreg_by_default(self, tmp_path):
+        """MNI152 atlases use the easyreg backend when registration_backend='easyreg'."""
+        import numpy as np
+        import nibabel as nib
+
+        handler = NiftiHandler()
+        assert handler.registration_backend == "easyreg"
+
+        atlas = MagicMock()
+        atlas.builtin = False
+        atlas.name = "myvol"
+        atlas.space = "MNI152NLin2009cAsym"
+
+        data = np.zeros((10, 10, 10))
+        img = nib.Nifti1Image(data, np.eye(4))
+        nii_path = tmp_path / "atlas.nii.gz"
+        nib.save(img, str(nii_path))
+
+        mri_dir = tmp_path / "mri"
+        (mri_dir / "atlas").mkdir(parents=True)
+        norm_mgz = mri_dir / "norm.mgz"
+        nib.save(img, str(norm_mgz))
+
+        subject = MagicMock()
+        subject.mri_dir = mri_dir
+        subject.norm_mgz = norm_mgz
+
+        fake_warp = MagicMock()
+        fake_warp.commands_run = []
+
+        with patch("fsatlas.core.formats._get_nifti_file", return_value=nii_path):
+            with patch(
+                "fsatlas.core.easyreg_registration.ensure_subject_to_template_warp",
+                return_value=fake_warp,
+            ) as mock_warp:
+                with patch(
+                    "fsatlas.core.easyreg_registration.apply_template_to_subject",
+                    return_value=["mri_easywarp", "--i", "..."],
+                ) as mock_apply:
+                    result = handler.transfer(atlas, subject, MagicMock(), overwrite=True)
+
+        mock_warp.assert_called_once()
+        mock_apply.assert_called_once()
+        assert "volume" in result.paths
+
+    def test_transfer_mni152_ants_backend(self, tmp_path):
+        """MNI152 atlases use the ANTs backend when registration_backend='ants'."""
+        import numpy as np
+        import nibabel as nib
+
+        handler = NiftiHandler()
+        handler.registration_backend = "ants"
+
+        atlas = MagicMock()
+        atlas.builtin = False
+        atlas.name = "myvol"
+        atlas.space = "MNI152NLin2009cAsym"
+
+        data = np.zeros((10, 10, 10))
+        img = nib.Nifti1Image(data, np.eye(4))
+        nii_path = tmp_path / "atlas.nii.gz"
+        nib.save(img, str(nii_path))
+
+        mri_dir = tmp_path / "mri"
+        (mri_dir / "atlas").mkdir(parents=True)
+        norm_mgz = mri_dir / "norm.mgz"
+        nib.save(img, str(norm_mgz))
+
+        subject = MagicMock()
+        subject.mri_dir = mri_dir
+        subject.norm_mgz = norm_mgz
+
+        fake_warp = MagicMock()
+        fake_warp.commands_run = []
+
+        with patch("fsatlas.core.formats._get_nifti_file", return_value=nii_path):
+            with patch(
+                "fsatlas.core.formats.ensure_subject_to_template_warp",
+                return_value=fake_warp,
+            ) as mock_warp:
+                with patch(
+                    "fsatlas.core.formats.apply_template_to_subject",
+                    return_value=["antsApplyTransforms", "..."],
+                ) as mock_apply:
+                    result = handler.transfer(atlas, subject, MagicMock(), overwrite=True)
+
+        mock_warp.assert_called_once()
+        mock_apply.assert_called_once()
         assert "volume" in result.paths
 
     def test_transfer_skips_if_output_matches_norm(self, tmp_path):

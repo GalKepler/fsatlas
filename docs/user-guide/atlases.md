@@ -1,6 +1,6 @@
 # Atlas Catalog
 
-fsatlas ships with **31 built-in atlases** across 8 families. All atlases are downloaded automatically on first use (including LUT generation) and cached to `~/.cache/fsatlas/atlases/`.
+fsatlas ships with **31 built-in atlases** across 8 families. All atlases and their LUT files are pre-populated inside the Docker and Apptainer images — no network access is needed at runtime.
 
 Use `fsatlas list-atlases` to view the catalog in your terminal.
 
@@ -8,7 +8,7 @@ Use `fsatlas list-atlases` to view the catalog in your terminal.
 
 ## Cortical Atlases (Surface)
 
-Surface atlases are stored as FreeSurfer annotation files (`.annot`) in `fsaverage` space. fsatlas transfers them to each subject's native surface via `mri_surf2surf`. A LUT TSV (`index`, `label`, `hemisphere`) is auto-generated from the `.annot` colour table at download time.
+Surface atlases are stored as FreeSurfer annotation files (`.annot`) in `fsaverage` space. fsatlas transfers them to each subject's native surface via `mri_surf2surf`. A LUT TSV (`index`, `label`, `hemisphere`) is generated from the `.annot` colour table when the atlas directory is populated.
 
 ### Schaefer 2018
 
@@ -194,24 +194,42 @@ A subcortical atlas with 56 regions derived from the 4S parcellation framework.
 
 ---
 
-## Pre-downloading Atlases
+## Populating Atlases (non-Docker)
 
-Before running a batch job, pre-download all needed atlases:
-
-```bash
-fsatlas download schaefer400-17
-fsatlas download tian-s2
-fsatlas download hcp-mmp
-```
-
-The cache directory is:
-
-```
-~/.cache/fsatlas/atlases/{atlas_id}/
-```
-
-To force re-download of a cached atlas:
+When running fsatlas outside a container (bare pip install), populate the atlas directory before your first run:
 
 ```bash
-fsatlas download --force schaefer400-7
+# Populate all built-in atlases
+fsatlas populate --output-dir /path/to/atlases
+
+# Or populate specific atlases
+fsatlas populate schaefer400-17 --output-dir /path/to/atlases
+fsatlas populate tian-s2 --output-dir /path/to/atlases
+fsatlas populate hcp-mmp --output-dir /path/to/atlases
+
+# Point fsatlas at that directory
+export FSATLAS_ATLAS_DIR=/path/to/atlases
 ```
+
+To force re-population of an already present atlas:
+
+```bash
+fsatlas populate --force schaefer400-7 --output-dir /path/to/atlases
+```
+
+The atlas directory follows the BIDS atlas naming convention:
+
+```
+/path/to/atlases/
+  dataset_description.json
+  atlas-Schaefer2018N400n7/
+    atlas-Schaefer2018N400n7_space-fsaverage_hemi-L_dseg.annot
+    atlas-Schaefer2018N400n7_space-fsaverage_hemi-R_dseg.annot
+    atlas-schaefer400_7net_dseg.tsv
+  atlas-Tian2020S2/
+    atlas-Tian2020S2_space-MNI152NLin6Asym_dseg.nii.gz
+    atlas-tian_s2_dseg.tsv
+  ...
+```
+
+Inside the Docker and Apptainer images, this directory is at `/opt/fsatlas/atlases/` and is pre-populated at build time — no `fsatlas populate` step is needed when using the container.

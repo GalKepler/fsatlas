@@ -15,7 +15,7 @@ import pandas as pd
 from rich.progress import BarColumn, Progress, SpinnerColumn, TextColumn
 
 from .. import __version__
-from ..atlases.registry import AnyAtlasSpec, AtlasRegistry, AtlasSpec
+from ..atlases.registry import AnyAtlasSpec
 from .bids import BidsEntities, build_bids_path, parse_bids_entities
 from .environment import FreeSurferEnv
 from .formats import AtlasFormatHandler, get_handler
@@ -25,17 +25,14 @@ logger = logging.getLogger(__name__)
 
 
 def _load_lut(atlas: AnyAtlasSpec, env: FreeSurferEnv | None = None) -> LookupTable:
-    """Load the LUT for *atlas*, generating it from cache if needed."""
+    """Load the LUT for *atlas* from the BIDS atlas directory."""
     lut_path = atlas.labels_tsv_path
-    if lut_path is None and isinstance(atlas, AtlasSpec):
-        # Try to generate on the fly (e.g. builtin annot atlas)
-        registry = AtlasRegistry()
-        registry.download(atlas.name, env=env)
-        lut_path = atlas.labels_tsv_path
     if lut_path is None:
         raise RuntimeError(
             f"No LUT found for atlas '{atlas.name}'. "
-            "Run 'fsatlas download <name>' first, or supply --lut."
+            "Ensure the BIDS atlas directory is populated. "
+            "Run 'fsatlas populate' or use the Docker/Apptainer image, "
+            "which includes all atlases pre-built."
         )
     return LookupTable.from_tsv(lut_path)
 
@@ -258,11 +255,11 @@ def _process_one_subject(
 
     try:
         if ctab_path is not None:
-            raw_df, tiv = _extract_with_ctab(
+            raw_df, header_measures = _extract_with_ctab(
                 handler, atlas, subject, env, transfer_result, ctab_path, force
             )
         else:
-            raw_df, tiv = handler.extract(atlas, subject, env, transfer_result, force)
+            raw_df, header_measures = handler.extract(atlas, subject, env, transfer_result, force)
     finally:
         if ctab_path is not None and ctab_path.exists():
             ctab_path.unlink(missing_ok=True)
@@ -270,7 +267,7 @@ def _process_one_subject(
     result_df = lut.merge_measures(
         raw_stats=raw_df,
         subject_id=subject_id,
-        tiv=tiv,
+        header_measures=header_measures,
         measure_map=handler.measure_map,
         join_on=handler.join_on,
     )
@@ -285,6 +282,7 @@ def run_extraction(
     force: bool = False,
     output_layout: str = "flat",
     jobs: int = 1,
+    registration_backend: str = "easyreg",
 ) -> dict[str, Path]:
     """Run the full extraction pipeline for one atlas across subjects.
 
@@ -310,6 +308,8 @@ def run_extraction(
 
     # Get handler for the atlas format
     handler = get_handler(atlas.format)
+    if hasattr(handler, "registration_backend"):
+        handler.registration_backend = registration_backend
 
     # Choose writer strategy
     if output_layout == "bids":
@@ -391,7 +391,7 @@ def _extract_with_ctab(handler, atlas, subject, env, transfer_result, ctab_path,
     The NiftiHandler and GcaHandler call ``_run_segstats`` without a ctab.
     We patch the call by temporarily overriding the segstats runner.
     """
-    from .extract import _parse_etiv_from_header, _parse_segstats_file, _run_segstats
+    from .extract import _parse_header_measures, _parse_segstats_file, _run_segstats
 
     seg_path = transfer_result.paths["volume"]
     stats_path = _run_segstats(
@@ -403,6 +403,6 @@ def _extract_with_ctab(handler, atlas, subject, env, transfer_result, ctab_path,
         force=force,
         command_log=transfer_result.commands_run,
     )
-    tiv = _parse_etiv_from_header(stats_path)
+    header_measures = _parse_header_measures(stats_path)
     df = _parse_segstats_file(stats_path)
-    return df, tiv
+    return df, header_measures

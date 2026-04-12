@@ -12,7 +12,7 @@ from rich.console import Console
 from rich.logging import RichHandler
 from rich.table import Table
 
-from ..atlases.registry import AtlasRegistry
+from ..atlases.registry import AtlasRegistry, AtlasSpec, _resolve_atlas_dir
 from ..core.environment import FreeSurferEnv
 from ..core.pipeline import run_extraction
 
@@ -40,10 +40,22 @@ def _setup_logging(verbose: bool) -> None:
     envvar="FS_LICENSE",
     help="Path to a FreeSurfer license.txt file. Required when running inside a container.",
 )
-def cli(freesurfer_license_file: Path | None) -> None:
+@click.option(
+    "--atlas-dir",
+    type=click.Path(file_okay=False, path_type=Path),
+    default=None,
+    envvar="FSATLAS_ATLAS_DIR",
+    help=(
+        "Path to the BIDS-atlas directory. "
+        "Defaults to /opt/fsatlas/atlases/ (container) or $FSATLAS_ATLAS_DIR."
+    ),
+)
+def cli(freesurfer_license_file: Path | None, atlas_dir: Path | None) -> None:
     """fsatlas — Extract morphometric measures from FreeSurfer subjects using arbitrary atlases."""
     if freesurfer_license_file is not None:
         os.environ["FS_LICENSE"] = str(freesurfer_license_file)
+    if atlas_dir is not None:
+        os.environ["FSATLAS_ATLAS_DIR"] = str(atlas_dir)
 
 
 @cli.command()
@@ -113,6 +125,18 @@ def cli(freesurfer_license_file: Path | None) -> None:
     show_default=True,
     help="Number of parallel worker threads for subject processing.",
 )
+@click.option(
+    "--registration", "-R",
+    type=click.Choice(["easyreg", "ants"]),
+    default="easyreg",
+    show_default=True,
+    help=(
+        "Nonlinear registration backend for MNI152-space volumetric atlases. "
+        "'easyreg' uses FreeSurfer's mri_easyreg (fast, no extra deps); "
+        "'ants' uses antsRegistration SyN via nipype. "
+        "Ignored for surface and MNI305 atlases."
+    ),
+)
 @click.option("--verbose", "-v", is_flag=True, help="Verbose logging.")
 def extract(
     subjects_dir: Path | None,
@@ -126,6 +150,7 @@ def extract(
     force: bool,
     output_layout: str,
     jobs: int,
+    registration: str,
     verbose: bool,
 ) -> None:
     """Extract morphometric measures for one or more atlases across subjects."""
@@ -165,15 +190,24 @@ def extract(
     for atlas_arg in atlas:
         atlas_spec = _resolve_atlas(registry, atlas_arg, atlas_format, lut)
 
-        # Download catalog atlas if needed
-        if hasattr(atlas_spec, "is_downloaded") and not atlas_spec.builtin:
-            if not atlas_spec.is_downloaded():
-                console.print(f"Downloading atlas [bold]{atlas_spec.name}[/bold]...")
-                registry.download(atlas_spec.name, env=env)
-        elif getattr(atlas_spec, "builtin", False):
-            # Ensure builtin LUT is cached
-            if not atlas_spec.is_downloaded():
-                registry.download(atlas_spec.name, env=env)
+        # Verify catalog atlas is available in the BIDS atlas directory
+        if isinstance(atlas_spec, AtlasSpec) and not atlas_spec.is_available():
+            atlas_root = _resolve_atlas_dir()
+            console.print(
+                f"[red]Atlas '{atlas_spec.name}' not found in the BIDS atlas directory.[/red]"
+            )
+            if atlas_root:
+                console.print(f"  Atlas directory: {atlas_root}")
+            else:
+                console.print(
+                    "  No atlas directory found. Set [bold]FSATLAS_ATLAS_DIR[/bold] or "
+                    "use --atlas-dir."
+                )
+            console.print(
+                "  Run [bold]fsatlas populate[/bold] to populate the atlas directory, "
+                "or use the Docker / Apptainer image which ships all atlases pre-built."
+            )
+            sys.exit(1)
 
         console.print(
             f"Atlas: [bold]{atlas_spec.name}[/bold] (format={atlas_spec.format}) | "
@@ -188,6 +222,7 @@ def extract(
             force=force,
             output_layout=output_layout,
             jobs=jobs,
+            registration_backend=registration,
         )
         for kind, path in output_paths.items():
             all_output_paths[f"{atlas_spec.name}:{kind}"] = path
@@ -259,7 +294,8 @@ def aggregate(
     """Aggregate BIDS-layout per-subject CSVs into a single wide-format table."""
     _setup_logging(verbose)
 
-    from ..core.aggregate import aggregate as run_aggregate, discover_atlases
+    from ..core.aggregate import aggregate as run_aggregate
+    from ..core.aggregate import discover_atlases
 
     if atlas is None:
         available = discover_atlases(bids_dir)
@@ -307,45 +343,97 @@ def list_atlases() -> None:
     registry = AtlasRegistry()
     atlases = registry.list_atlases()
 
+    atlas_root = _resolve_atlas_dir()
     table = Table(title="Available Atlases")
     table.add_column("Name", style="bold cyan")
     table.add_column("Format")
     table.add_column("Family")
     table.add_column("Description")
-    table.add_column("Cached", justify="center")
+    table.add_column("Available", justify="center")
 
     for a in atlases:
-        cached = "✓" if a.is_downloaded() else "—"
-        table.add_row(a.name, a.format, a.family, a.description, cached)
+        available = "✓" if a.is_available() else "—"
+        table.add_row(a.name, a.format, a.family, a.description, available)
 
     console.print(table)
+    if atlas_root:
+        console.print(f"Atlas directory: {atlas_root}")
+    else:
+        console.print(
+            "[yellow]No atlas directory found. "
+            "Set FSATLAS_ATLAS_DIR or run 'fsatlas populate'.[/yellow]"
+        )
 
 
 @cli.command()
-@click.argument("atlas_name")
-@click.option("--force", is_flag=True, help="Re-download even if cached.")
+@click.argument("atlas_name", required=False, default=None)
 @click.option(
-    "--subjects-dir", "-d",
+    "--output-dir", "-o",
+    type=click.Path(file_okay=False, path_type=Path),
+    default=None,
+    envvar="FSATLAS_ATLAS_DIR",
+    help=(
+        "BIDS-atlas directory to populate. "
+        "Defaults to FSATLAS_ATLAS_DIR / /opt/fsatlas/atlases/."
+    ),
+)
+@click.option("--force", "-f", is_flag=True, help="Re-download / re-generate existing files.")
+@click.option(
+    "--freesurfer-home",
     type=click.Path(exists=True, file_okay=False, path_type=Path),
     default=None,
-    help="FreeSurfer SUBJECTS_DIR (needed to generate LUT for built-in atlases).",
+    envvar="FREESURFER_HOME",
+    help="Path to FREESURFER_HOME (required for built-in atlas LUTs).",
 )
-def download(atlas_name: str, force: bool, subjects_dir: Path | None) -> None:
-    """Download an atlas from the catalog to local cache."""
-    registry = AtlasRegistry()
-    try:
-        env: FreeSurferEnv | None = None
-        try:
-            env = FreeSurferEnv.detect(subjects_dir)
-        except OSError:
-            pass  # env not required for non-builtin, non-annot atlases
-        atlas = registry.download(atlas_name, force=force, env=env)
-        console.print(f"[green]Atlas '{atlas.name}' ready at {atlas.cache_dir}[/green]")
-    except KeyError as e:
-        console.print(f"[red]{e}[/red]")
+@click.option("--verbose", "-v", is_flag=True, help="Verbose logging.")
+def populate(
+    atlas_name: str | None,
+    output_dir: Path | None,
+    force: bool,
+    freesurfer_home: Path | None,
+    verbose: bool,
+) -> None:
+    """Populate the BIDS-atlas directory with atlas files.
+
+    Downloads / copies atlas files and generates LUTs into the BIDS-atlas
+    directory.  Use this when running fsatlas outside of the Docker/Apptainer
+    image, which ships all atlases pre-built.
+
+    Examples:
+
+    \b
+      fsatlas populate --output-dir ./my-atlases
+      fsatlas populate schaefer100-7 --output-dir ./my-atlases
+      fsatlas populate --output-dir /opt/fsatlas/atlases --force
+    """
+    _setup_logging(verbose)
+
+    from ..atlases.populate import populate_all
+
+    target_dir = output_dir or _resolve_atlas_dir()
+    if target_dir is None:
+        console.print(
+            "[red]No atlas directory specified.[/red] "
+            "Pass --output-dir or set FSATLAS_ATLAS_DIR."
+        )
         sys.exit(1)
+
+    atlas_names = [atlas_name] if atlas_name else None
+    console.print(
+        f"Populating atlas directory: [bold]{target_dir}[/bold]"
+        + (f" (atlas: {atlas_name})" if atlas_name else " (all atlases)")
+    )
+
+    try:
+        populate_all(
+            output_dir=target_dir,
+            atlas_names=atlas_names,
+            force=force,
+            freesurfer_home=freesurfer_home,
+        )
+        console.print(f"[green]Done. Atlas directory ready at {target_dir}[/green]")
     except Exception as e:
-        console.print(f"[red]Download failed: {e}[/red]")
+        console.print(f"[red]Populate failed: {e}[/red]")
         sys.exit(1)
 
 
@@ -415,10 +503,10 @@ def generate_lut(
             lh_annot = fsavg / f"lh.{spec.annot_name}.annot"
             rh_annot = fsavg / f"rh.{spec.annot_name}.annot"
         else:
-            if not spec.is_downloaded():
+            if not spec.is_available():
                 console.print(
-                    f"[yellow]Atlas '{atlas}' not cached. "
-                    f"Run 'fsatlas download {atlas}' first.[/yellow]"
+                    f"[yellow]Atlas '{atlas}' not available. "
+                    f"Run 'fsatlas populate {atlas}' first.[/yellow]"
                 )
                 sys.exit(1)
             lh_annot = spec.get_file("lh.annot")

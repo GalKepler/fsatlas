@@ -117,10 +117,20 @@ def _standardize_dataframe(
     known_measures = (
         _CORTICAL_MEASURE_COLS if structure == "cortex" else _SUBCORTICAL_MEASURE_COLS
     )
+    _GLOBAL_MEASURE_COLS = [
+        "tiv_mm3",
+        "brain_seg_vol_mm3",
+        "brain_seg_no_vent_mm3",
+        "supratentorial_vol_mm3",
+        "cortex_vol_mm3",
+        "white_surf_area_mm2",
+        "total_gray_mm3",
+        "subcort_gray_mm3",
+    ]
     keep_cols = (
         [c for c in _ID_COLS if c in df.columns]
         + [c for c in df.columns if c in known_measures]
-        + (["tiv_mm3"] if "tiv_mm3" in df.columns else [])
+        + [c for c in _GLOBAL_MEASURE_COLS if c in df.columns]
     )
     out = df[keep_cols].copy().rename(columns={"gray_matter_volume_mm3": "volume_mm3"})
 

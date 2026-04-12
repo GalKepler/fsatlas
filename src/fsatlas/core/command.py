@@ -11,7 +11,9 @@ from .environment import FreeSurferEnv
 logger = logging.getLogger(__name__)
 
 
-def run_command(cmd: list[str], env: FreeSurferEnv) -> subprocess.CompletedProcess:
+def run_command(
+    cmd: list[str], env: FreeSurferEnv, timeout: int = 600
+) -> subprocess.CompletedProcess:
     """Run a FreeSurfer command with the proper environment variables set.
 
     Sets FREESURFER_HOME and SUBJECTS_DIR, captures stdout/stderr, and raises
@@ -31,7 +33,7 @@ def run_command(cmd: list[str], env: FreeSurferEnv) -> subprocess.CompletedProce
         capture_output=True,
         text=True,
         env=fs_env,
-        timeout=600,  # 10-minute timeout
+        timeout=timeout,
     )
 
     if result.returncode != 0:

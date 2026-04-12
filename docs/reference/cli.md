@@ -13,6 +13,7 @@ fsatlas --help
 | Option | Description |
 |--------|-------------|
 | `--freesurfer-license-file` | Path to FreeSurfer `license.txt`. Overrides the `FS_LICENSE` environment variable. |
+| `--atlas-dir` | Path to the BIDS atlas directory. Overrides the `FSATLAS_ATLAS_DIR` environment variable. |
 | `--version` | Show fsatlas version and exit |
 | `--help` | Show help message and exit |
 
@@ -30,18 +31,41 @@ fsatlas extract [OPTIONS]
 
 | Option | Short | Type | Required | Description |
 |--------|-------|------|----------|-------------|
-| `--atlas` | `-a` | TEXT | **Yes** | Atlas ID from catalog, or path to an atlas file |
+| `--atlas` | `-a` | TEXT | **Yes** | Atlas ID from catalog, or path to an atlas file. **Repeatable** — pass multiple times to process several atlases in one run. |
 | `--output-dir` | `-o` | PATH | No | Output directory (default: `fsatlas_output`) |
 | `--format` | `-F` | CHOICE | No | Atlas file format: `annot`, `nifti`, `dlabel_gii`, `gca`, `auto` (default: `auto`) |
 | `--lut` | `-l` | PATH | No | Path to a custom LUT TSV (`index`, `label`, `hemisphere`). Required for custom atlases without embedded labels. |
 | `--subjects` | `-s` | TEXT | No | Subject IDs to process (repeatable; default: all in `$SUBJECTS_DIR`) |
 | `--subjects-file` | | PATH | No | Text file with one subject ID per line |
 | `--output-layout` | | CHOICE | No | Output directory layout: `flat` (default) or `bids` |
+| `--jobs` | `-j` | INT | No | Number of parallel worker threads for subject processing (default: `1`) |
+| `--registration` | `-R` | CHOICE | No | Nonlinear registration backend for MNI152-space volumetric atlases: `easyreg` (default) or `ants`. Ignored for surface and MNI305 atlases. |
 | `--force` | `-f` | flag | No | Recompute even if cached outputs exist |
 | `--subjects-dir` | `-d` | PATH | No | Override `$SUBJECTS_DIR` for this run |
 | `--verbose` | `-v` | flag | No | Increase logging verbosity |
 
 `--atlas-type` is accepted for backward compatibility but is deprecated — use `--format` instead.
+
+#### `--jobs` details
+
+`--jobs` / `-j` controls the number of parallel worker threads used to process subjects. The default is `1` (serial). Set it to the number of available CPU cores to speed up large cohorts:
+
+```bash
+fsatlas extract --atlas schaefer400-17 --jobs 8 -o ./results
+```
+
+Each thread runs an independent FreeSurfer subprocess, so memory usage scales with `--jobs`. On a cluster node with 16 cores and 64 GB RAM, `--jobs 8` is a reasonable starting point.
+
+#### `--registration` details
+
+`--registration` / `-R` selects the nonlinear registration backend used to warp MNI152-space volumetric atlases (`.nii`/`.nii.gz`) into each subject's native space. It has no effect on surface (`.annot`, `.dlabel.gii`) or MNI305 (`.gca`) atlases.
+
+| Value | Backend | Speed | Dependencies |
+|-------|---------|-------|--------------|
+| `easyreg` (default) | FreeSurfer `mri_easyreg` | Fast | None (bundled with FreeSurfer 8) |
+| `ants` | ANTs `antsRegistration` SyN via nipype | Slower, higher accuracy | ANTs + nipype must be installed |
+
+Use `--registration ants` when you need higher registration accuracy for fine-grained subcortical atlases at the cost of longer runtimes and the ANTs dependency.
 
 #### `--output-layout` details
 
@@ -57,6 +81,12 @@ BIDS layout is useful when integrating fsatlas output into an existing BIDS deri
 ```bash
 # All subjects, catalog atlas
 fsatlas extract --atlas schaefer100-7 -o ./results
+
+# Multiple atlases in a single run
+fsatlas extract --atlas schaefer100-7 --atlas tian-s2 -o ./results
+
+# Parallel processing (8 threads)
+fsatlas extract --atlas schaefer400-17 --jobs 8 -o ./results
 
 # Specific subjects
 fsatlas extract --atlas schaefer100-7 -s sub-01 -s sub-02 -o ./results
@@ -75,6 +105,9 @@ fsatlas extract \
     --atlas /data/atlases/my_atlas.nii.gz \
     --lut /data/atlases/my_atlas_lut.tsv \
     -o ./results
+
+# Use ANTs registration for higher-accuracy subcortical alignment
+fsatlas extract --atlas tian-s4 --registration ants -o ./results
 
 # CIFTI atlas
 fsatlas extract \
@@ -191,65 +224,74 @@ fsatlas list-atlases
 | Format | File format: `annot`, `nifti`, `dlabel_gii`, or `gca` |
 | Family | Atlas family / publication |
 | Description | Short description |
-| Cached | Whether the atlas is already in the local cache (✓ or —) |
+| Available | Whether the atlas is present in the resolved atlas directory (✓ or —) |
 
 ### Example output
 
 ```
-┌─────────────────┬────────┬──────────────┬───────────────────────────┬────────┐
-│ Name            │ Format │ Family       │ Description               │ Cached │
-├─────────────────┼────────┼──────────────┼───────────────────────────┼────────┤
-│ schaefer100-7   │ annot  │ schaefer2018 │ Schaefer 2018, 100 parcels│   ✓    │
-│ schaefer200-7   │ annot  │ schaefer2018 │ Schaefer 2018, 200 parcels│   —    │
-│ tian-s1         │ nifti  │ tian2020     │ Tian 2020 Scale I (16 reg)│   —    │
-│ desikan         │ annot  │ freesurfer.. │ Desikan-Killiany (builtin)│   —    │
-└─────────────────┴────────┴──────────────┴───────────────────────────┴────────┘
+┌─────────────────┬────────┬──────────────┬───────────────────────────┬───────────┐
+│ Name            │ Format │ Family       │ Description               │ Available │
+├─────────────────┼────────┼──────────────┼───────────────────────────┼───────────┤
+│ schaefer100-7   │ annot  │ schaefer2018 │ Schaefer 2018, 100 parcels│     ✓     │
+│ schaefer200-7   │ annot  │ schaefer2018 │ Schaefer 2018, 200 parcels│     —     │
+│ tian-s1         │ nifti  │ tian2020     │ Tian 2020 Scale I (16 reg)│     —     │
+│ desikan         │ annot  │ freesurfer.. │ Desikan-Killiany (builtin)│     —     │
+└─────────────────┴────────┴──────────────┴───────────────────────────┴───────────┘
 ```
 
 ---
 
-## `fsatlas download`
+## `fsatlas populate`
 
-Pre-downloads an atlas to the local cache and generates its LUT.
+Populate a BIDS atlas directory with atlas files and LUT TSVs. Use this when running fsatlas outside the Docker/Apptainer container.
 
 ```bash
-fsatlas download [OPTIONS] ATLAS_NAME
+fsatlas populate [OPTIONS] [ATLAS_NAMES]...
 ```
 
 ### Arguments
 
 | Argument | Description |
 |----------|-------------|
-| `ATLAS_NAME` | Atlas ID to download (from the catalog) |
+| `ATLAS_NAME` | A single atlas ID from the catalog. If omitted, all atlases are populated. Run the command once per atlas to populate multiple atlases individually. |
 
 ### Options
 
 | Option | Description |
 |--------|-------------|
-| `--force` | Re-download even if already cached |
-| `--subjects-dir`, `-d` | FreeSurfer SUBJECTS_DIR (needed to generate LUTs for built-in surface atlases) |
+| `--output-dir` | Directory to populate (default: `FSATLAS_ATLAS_DIR` or `./atlases`) |
+| `--force` | Re-populate even if already present |
+| `--freesurfer-home` | Path to FreeSurfer installation (needed for built-in surface atlases such as `desikan`, `dkt`, `destrieux`) |
 
 ### Examples
 
 ```bash
-# Download and cache atlas + LUT
-fsatlas download schaefer400-7
+# Populate all atlases
+fsatlas populate --output-dir /path/to/atlases
 
-# Built-in atlas LUT generation (requires FREESURFER_HOME)
-fsatlas download desikan
+# Populate a specific atlas (one at a time)
+fsatlas populate schaefer400-7 --output-dir /path/to/atlases
+fsatlas populate tian-s2 --output-dir /path/to/atlases
 
-# Force re-download
-fsatlas download --force schaefer100-7
+# Force re-population
+fsatlas populate schaefer100-7 --force --output-dir /path/to/atlases
+
+# Built-in atlas (reads from fsaverage; requires FREESURFER_HOME)
+fsatlas populate desikan --output-dir /path/to/atlases
 ```
 
-### Cache location
+### Output layout
 
 ```
-~/.cache/fsatlas/atlases/{atlas_name}/
-    lh.annot          # surface atlases
-    rh.annot
-    labels.tsv        # LUT (auto-generated or downloaded)
-    atlas.nii.gz      # volumetric atlases
+/path/to/atlases/
+  dataset_description.json
+  atlas-Schaefer2018N400n7/
+    atlas-Schaefer2018N400n7_space-fsaverage_hemi-L_dseg.annot
+    atlas-Schaefer2018N400n7_space-fsaverage_hemi-R_dseg.annot
+    atlas-schaefer400_7net_dseg.tsv
+  atlas-Tian2020S2/
+    atlas-Tian2020S2_space-MNI152NLin6Asym_dseg.nii.gz
+    atlas-tian_s2_dseg.tsv
 ```
 
 ---
@@ -283,8 +325,8 @@ fsatlas generate-lut \
     --rh-annot /data/rh.myatlas.annot \
     --output myatlas_lut.tsv
 
-# From a downloaded catalog atlas
-fsatlas download schaefer100-7
+# From a catalog atlas (must be populated first)
+fsatlas populate schaefer100-7 --output-dir /path/to/atlases
 fsatlas generate-lut --atlas schaefer100-7 --output schaefer100-7_lut.tsv
 
 # From a FreeSurfer built-in (reads from fsaverage)
@@ -310,5 +352,6 @@ index   label                   hemisphere
 | `FREESURFER_HOME` | **Yes** | Path to FreeSurfer installation |
 | `SUBJECTS_DIR` | **Yes** | Path to FreeSurfer subjects directory |
 | `FS_LICENSE` | No | Path to FreeSurfer `license.txt` (alternative to `--freesurfer-license-file`) |
+| `FSATLAS_ATLAS_DIR` | No | Path to a BIDS atlas directory (alternative to `--atlas-dir`). Pre-set to `/opt/fsatlas/atlases/` inside the container image. |
 
-These are typically set by FreeSurfer's `SetUpFreeSurfer.sh` script. `SUBJECTS_DIR` can be overridden per-run with `--subjects-dir`.
+`FREESURFER_HOME` and `SUBJECTS_DIR` are typically set by FreeSurfer's `SetUpFreeSurfer.sh` script. `SUBJECTS_DIR` can be overridden per-run with `--subjects-dir`.

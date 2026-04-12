@@ -73,19 +73,34 @@ uv add fsatlas
 
 ---
 
-## Atlas Cache
+## Atlas Directory
 
-Built-in atlases are downloaded on first use and cached to:
+Built-in atlases are pre-populated inside the Docker and Apptainer images at `/opt/fsatlas/atlases/`. No network access is required at runtime.
 
-```
-~/.cache/fsatlas/atlases/
-```
+The atlas directory is resolved in this order:
 
-This directory is managed automatically via [platformdirs](https://github.com/platformdirs/platformdirs). You can pre-download any atlas before running a batch job:
+1. `FSATLAS_ATLAS_DIR` environment variable (if set)
+2. `/opt/fsatlas/atlases/` — baked into the container image
+3. `src/fsatlas/atlases/bids_atlases/` — package data fallback (pip install)
+
+If you are running fsatlas **outside a container** (bare pip install), populate the atlas directory before your first run:
 
 ```bash
-fsatlas download schaefer400-7
-fsatlas download tian-s2
+# Populate all built-in atlases into a directory of your choice
+fsatlas populate --output-dir /path/to/atlases
+
+# Or populate individual atlases
+fsatlas populate schaefer400-7 --output-dir /path/to/atlases
+fsatlas populate tian-s2 --output-dir /path/to/atlases
+
+# Tell fsatlas where to find the atlases
+export FSATLAS_ATLAS_DIR=/path/to/atlases
+```
+
+Alternatively, pass `--atlas-dir` per invocation:
+
+```bash
+fsatlas --atlas-dir /path/to/atlases extract --atlas schaefer400-7 -o ./results
 ```
 
 ---

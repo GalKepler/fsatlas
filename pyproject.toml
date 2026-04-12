@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "fsatlas"
-version = "0.1.0"
+version = "0.3.1"
 description = "Extract morphometric measures from FreeSurfer-processed subjects using arbitrary atlases"
 readme = "README.md"
 license = "MIT"
@@ -39,8 +39,8 @@ dependencies = [
     "pyyaml>=6.0",
     "click>=8.0",
     "rich>=13.0",
-    "platformdirs>=3.0",
-    "requests>=2.28",
+    "templateflow>=25.1.2",
+    "nipype>=1.10",
 ]
 
 [project.optional-dependencies]

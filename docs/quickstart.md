@@ -28,7 +28,7 @@ Run on all subjects discovered in `$SUBJECTS_DIR`:
 fsatlas extract --atlas schaefer100-7 --output-dir ./results
 ```
 
-On first run, fsatlas downloads the Schaefer 100-parcel atlas to `~/.cache/fsatlas/atlases/`. Subsequent runs use the cached copy.
+The Schaefer atlas is pre-populated inside the Docker/Apptainer image. If running outside a container, populate the atlas directory first — see [step 6](#6-populate-atlases-non-docker) below.
 
 **Output files:**
 
@@ -98,14 +98,72 @@ fsatlas extract --atlas hcp-mmp -o ./results
 
 ---
 
-## 6. Pre-Download Before a Batch Job
+## 5a. Process Multiple Atlases in One Run
 
-To avoid download latency during a long batch run, pre-download atlases:
+Repeat `--atlas` to process several atlases without re-discovering subjects or re-validating the environment:
 
 ```bash
-fsatlas download schaefer400-7
-fsatlas download tian-s2
+fsatlas extract \
+    --atlas schaefer400-17 \
+    --atlas tian-s2 \
+    -o ./results
 ```
+
+Output:
+
+```
+results/
+├── schaefer400-17.tsv
+├── schaefer400-17_failures.tsv
+├── tian-s2.tsv
+└── tian-s2_failures.tsv
+```
+
+---
+
+## 5b. Parallel Processing
+
+Use `--jobs` / `-j` to process subjects in parallel threads. This is especially useful for large cohorts on multi-core machines or cluster nodes:
+
+```bash
+# Use 8 parallel threads
+fsatlas extract --atlas schaefer400-17 --jobs 8 -o ./results
+```
+
+Memory usage scales with `--jobs`. A safe starting point is half the number of available CPU cores.
+
+---
+
+## 5c. Registration Backend for Volumetric Atlases
+
+MNI152-space volumetric atlases (`.nii.gz`) are registered to each subject's native space using a nonlinear registration step. The default backend is `easyreg` (FreeSurfer's `mri_easyreg` — fast, no extra dependencies). To use ANTs SyN for higher accuracy:
+
+```bash
+# Higher-accuracy registration with ANTs (requires ANTs + nipype)
+fsatlas extract --atlas tian-s4 --registration ants -o ./results
+```
+
+`--registration` is ignored for surface (`.annot`, `.dlabel.gii`) and MNI305 (`.gca`) atlases.
+
+---
+
+## 6. Populate Atlases (non-Docker)
+
+If you are running fsatlas outside the Docker/Apptainer container (bare pip install), populate the atlas directory before extraction:
+
+```bash
+# Populate all built-in atlases
+fsatlas populate --output-dir /path/to/atlases
+
+# Or populate only the ones you need (one at a time)
+fsatlas populate schaefer400-7 --output-dir /path/to/atlases
+fsatlas populate tian-s2 --output-dir /path/to/atlases
+
+# Tell fsatlas where to find them
+export FSATLAS_ATLAS_DIR=/path/to/atlases
+```
+
+Inside the container, all atlases are already at `/opt/fsatlas/atlases/` — no populate step needed.
 
 ---
 
@@ -174,8 +232,8 @@ fsatlas extract \
 # Desikan atlas (FreeSurfer built-in)
 fsatlas generate-lut --atlas desikan --output desikan_lut.tsv
 
-# Schaefer 400-parcel (must be downloaded first)
-fsatlas download schaefer400-7
+# Schaefer 400-parcel (must be populated first outside the container)
+fsatlas populate schaefer400-7 --output-dir /path/to/atlases
 fsatlas generate-lut --atlas schaefer400-7 --output schaefer400-7_lut.tsv
 ```
 

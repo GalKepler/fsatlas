@@ -16,6 +16,7 @@ import nibabel as nib
 import pandas as pd
 
 from ..atlases.registry import AtlasSpec, CustomAtlasSpec
+from .ants_registration import apply_template_to_subject, ensure_subject_to_template_warp
 from .command import run_command
 from .environment import FreeSurferEnv, SubjectPaths
 from .extract import (
@@ -23,7 +24,7 @@ from .extract import (
     CORTICAL_MEASURES,
     VOLUMETRIC_MEASURES,
     _parse_cortical_stats_file,
-    _parse_etiv_from_header,
+    _parse_header_measures,
     _parse_segstats_file,
     _run_anatomical_stats,
     _run_segstats,
@@ -122,13 +123,14 @@ class AtlasFormatHandler(ABC):
         env: FreeSurferEnv,
         transfer_result: TransferResult,
         force: bool = False,
-    ) -> tuple[pd.DataFrame, float | None]:
-        """Run the FreeSurfer stats command and return (raw_stats_df, tiv).
+    ) -> tuple[pd.DataFrame, dict[str, float]]:
+        """Run the FreeSurfer stats command and return (raw_stats_df, header_measures).
 
         The returned DataFrame contains the raw columns from the .stats file
-        (e.g. StructName, ThickAvg …).  Merging with the LUT and producing
-        the wide-format output is handled by ``LookupTable.merge_measures``,
-        not here.
+        (e.g. StructName, ThickAvg …).  ``header_measures`` is a dict of global
+        measures parsed from the stats file header (e.g. ``{"tiv_mm3": 1.23e6,
+        "total_gray_mm3": 4.56e5, ...}``).  Merging with the LUT and producing
+        the wide-format output is handled by ``LookupTable.merge_measures``.
         """
 
 
@@ -201,9 +203,9 @@ class AnnotHandler(AtlasFormatHandler):
         env: FreeSurferEnv,
         transfer_result: TransferResult,
         force: bool = False,
-    ) -> tuple[pd.DataFrame, float | None]:
+    ) -> tuple[pd.DataFrame, dict[str, float]]:
         frames: list[pd.DataFrame] = []
-        tiv: float | None = None
+        header_measures: dict[str, float] = {}
 
         for hemi, annot_path in transfer_result.paths.items():
             stats_path = _run_anatomical_stats(
@@ -215,49 +217,16 @@ class AnnotHandler(AtlasFormatHandler):
                 force=force,
                 command_log=transfer_result.commands_run,
             )
-            if tiv is None:
-                tiv = _parse_etiv_from_header(stats_path)
+            if not header_measures:
+                header_measures = _parse_header_measures(stats_path)
             df = _parse_cortical_stats_file(stats_path)
-            df["_hemi"] = hemi          # carry hemisphere through for the merge
+            df["hemisphere"] = hemi      # used by merge_measures for hemisphere-aware join
             frames.append(df)
 
         if not frames:
-            return pd.DataFrame(columns=CORTICAL_COLUMNS), None
+            return pd.DataFrame(columns=CORTICAL_COLUMNS), {}
 
-        return pd.concat(frames, ignore_index=True), tiv
-
-
-# ---------------------------------------------------------------------------
-# mni152reg helper
-# ---------------------------------------------------------------------------
-
-def _ensure_mni152_reg(subject: SubjectPaths, env: FreeSurferEnv) -> list[list[str]]:
-    """Run ``mni152reg`` if ``reg.mni152.2mm.dat`` does not already exist.
-
-    ``mni152reg`` registers the MNI152 2mm template to the subject's native
-    space via ``fslregister``, producing ``mri/transforms/reg.mni152.2mm.dat``.
-    That file is required by ``mri_vol2vol --reg`` to correctly resample
-    MNI152 atlases into native space.
-
-    Returns the command list if mni152reg was run, empty list if it was skipped.
-    """
-    reg_dat = subject.mni152_reg_dat
-    if reg_dat.exists():
-        logger.info(f"  MNI152 registration already at {reg_dat}, skipping mni152reg")
-        return []
-
-    logger.info(f"  Running mni152reg for {subject.subject_id} → {reg_dat}")
-    cmd = [
-        "mni152reg",
-        "--s", subject.subject_id,
-    ]
-    run_command(cmd, env)
-    if not reg_dat.exists():
-        raise RuntimeError(
-            f"mni152reg completed but {reg_dat} was not created. "
-            "Check the mni152reg log in the subject's scripts/ directory."
-        )
-    return [cmd]
+        return pd.concat(frames, ignore_index=True), header_measures
 
 
 # ---------------------------------------------------------------------------
@@ -267,16 +236,30 @@ def _ensure_mni152_reg(subject: SubjectPaths, env: FreeSurferEnv) -> list[list[s
 class NiftiHandler(AtlasFormatHandler):
     """Handler for NIfTI volumetric atlases.
 
-    Transfer: ``mni152reg`` (once per subject) + ``mri_vol2vol`` with the
-              resulting ``reg.mni152.2mm.dat`` to resample MNI152 atlases into
-              native space.
+    Transfer: nonlinear registration between the subject T1 and the MNI152
+              template, then nearest-neighbour resampling to preserve integer
+              ROI labels.  Two backends are supported:
+
+              * ``"easyreg"`` (default) — FreeSurfer's ``mri_easyreg`` /
+                ``mri_easywarp``.  Fast, no extra Python dependencies.
+              * ``"ants"`` — ANTs SyN via ``antsRegistration`` /
+                ``antsApplyTransforms`` (requires nipype).
+
+              MNI305 atlases always fall back to the linear
+              ``mri_vol2vol --xfm talairach.xfm`` path regardless of backend.
+
     Extract:  ``mri_segstats`` → volumetric .stats file.
     """
 
     format_id = "nifti"
     measure_map = VOLUMETRIC_MEASURES
     join_on = "index"
-    commands = ["mni152reg", "mri_vol2vol", "mri_segstats"]
+    registration_backend: str = "easyreg"
+    commands = [
+        "mri_synthseg", "mri_easyreg", "mri_easywarp",  # easyreg backend
+        "mri_convert", "antsRegistration", "antsApplyTransforms",  # ants backend
+        "mri_vol2vol", "mri_segstats",
+    ]
 
     def transfer(
         self,
@@ -309,14 +292,24 @@ class NiftiHandler(AtlasFormatHandler):
         commands_run: list[list[str]] = []
 
         if atlas_space in ("MNI152NLin6Asym", "MNI152NLin2009cAsym"):
-            # Ensure reg.mni152.2mm.dat exists (run mni152reg if needed).
-            # reg.mni152.2mm.dat was produced by fslregister with --mov $mni152
-            # --s $subject, so it maps MNI152 (movable) → native (target).
-            # mri_vol2vol --reg with this file and no --inv resamples the MNI152
-            # atlas into the norm.mgz geometry: for each native output voxel the
-            # tool looks up the atlas by applying inv(reg) = native→MNI152.
-            commands_run += _ensure_mni152_reg(subject, env)
-            reg_arg = ["--reg", str(subject.mni152_reg_dat)]
+            if self.registration_backend == "easyreg":
+                from .easyreg_registration import (
+                    apply_template_to_subject as _easyreg_apply,
+                )
+                from .easyreg_registration import (
+                    ensure_subject_to_template_warp as _easyreg_warp,
+                )
+                warp = _easyreg_warp(subject, atlas_space, env)
+                apply_cmds = _easyreg_apply(src, warp, out_path, env)
+            else:
+                # "ants" — original nipype-based SyN path
+                warp = ensure_subject_to_template_warp(subject, atlas_space, env)
+                apply_cmds = apply_template_to_subject(src, warp, out_path)
+            commands_run.extend(warp.commands_run)
+            commands_run.append(apply_cmds)
+            return TransferResult(
+                paths={"volume": out_path}, format_id=self.format_id, commands_run=commands_run
+            )
         elif atlas_space == "MNI305":
             # talairach.xfm maps native → MNI305 (correct direction for --xfm
             # without --inv: the XFM is applied directly as the targ→mov lookup).
@@ -351,7 +344,7 @@ class NiftiHandler(AtlasFormatHandler):
         env: FreeSurferEnv,
         transfer_result: TransferResult,
         force: bool = False,
-    ) -> tuple[pd.DataFrame, float | None]:
+    ) -> tuple[pd.DataFrame, dict[str, float]]:
         seg_path = transfer_result.paths["volume"]
         stats_path = _run_segstats(
             subject=subject,
@@ -362,9 +355,9 @@ class NiftiHandler(AtlasFormatHandler):
             force=force,
             command_log=transfer_result.commands_run,
         )
-        tiv = _parse_etiv_from_header(stats_path)
+        header_measures = _parse_header_measures(stats_path)
         df = _parse_segstats_file(stats_path)
-        return df, tiv
+        return df, header_measures
 
 
 # ---------------------------------------------------------------------------
@@ -399,10 +392,12 @@ class DlabelGiiHandler(AtlasFormatHandler):
             dlabel_key = f"{hemi}.dlabel.gii"
             dlabel_src = atlas.get_file(dlabel_key)
 
-            # Convert .dlabel.gii -> .annot in the cache dir
+            # Convert .dlabel.gii -> .annot in a temporary directory
             annot_name = _atlas_annot_name(atlas)
-            converted_annot = atlas.cache_dir / f"{hemi}.{annot_name}.annot"
-            if not converted_annot.exists() or overwrite:
+            import tempfile as _tempfile
+            _tmpdir = Path(_tempfile.mkdtemp(prefix="fsatlas_dlabel_"))
+            converted_annot = _tmpdir / f"{hemi}.{annot_name}.annot"
+            if True:  # always convert into the fresh temp dir
                 logger.info(f"  {hemi}: mris_convert {dlabel_src} -> {converted_annot}")
                 sphere = (
                     env.freesurfer_home / "subjects" / "fsaverage" / "surf"
@@ -518,7 +513,7 @@ class GcaHandler(AtlasFormatHandler):
         env: FreeSurferEnv,
         transfer_result: TransferResult,
         force: bool = False,
-    ) -> tuple[pd.DataFrame, float | None]:
+    ) -> tuple[pd.DataFrame, dict[str, float]]:
         seg_path = transfer_result.paths["volume"]
         stats_path = _run_segstats(
             subject=subject,
@@ -529,9 +524,9 @@ class GcaHandler(AtlasFormatHandler):
             force=force,
             command_log=transfer_result.commands_run,
         )
-        tiv = _parse_etiv_from_header(stats_path)
+        header_measures = _parse_header_measures(stats_path)
         df = _parse_segstats_file(stats_path)
-        return df, tiv
+        return df, header_measures
 
 
 # ---------------------------------------------------------------------------

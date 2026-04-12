@@ -60,6 +60,7 @@ VOLUMETRIC_COLUMNS = [
     "normMin",
     "normMax",
     "normRange",
+    "normSNR",   # added by --snr
 ]
 
 VOLUMETRIC_MEASURES: dict[str, str] = {
@@ -70,6 +71,7 @@ VOLUMETRIC_MEASURES: dict[str, str] = {
     "normMin": "intensity_min",
     "normMax": "intensity_max",
     "normRange": "intensity_range",
+    "normSNR": "intensity_snr",
 }
 
 
@@ -134,8 +136,11 @@ def _run_segstats(
         "mri_segstats",
         "--seg", str(seg_path),
         "--i", str(subject.norm_mgz),
+        "--pv", str(subject.norm_mgz),
         "--excludeid", "0",
         "--etiv",
+        "--subcortgray",
+        "--snr",
         "--sum", str(stats_path),
         "--subject", subject.subject_id,
         "--sd", str(env.subjects_dir),
@@ -152,13 +157,44 @@ def _run_segstats(
 # Stats file parsers
 # ---------------------------------------------------------------------------
 
-def _parse_etiv_from_header(stats_path: Path) -> float | None:
-    """Extract eTIV from the stats file header (works for both cortical and volumetric)."""
+# Maps FreeSurfer header Measure short-names to output column names.
+# Format differs between tools but the SHORT NAME (2nd field) is consistent:
+#   mri_segstats:          # Measure eTIV, eTIV, ...
+#   mris_anatomical_stats: # Measure EstimatedTotalIntraCranialVol, eTIV, ...
+# Matching on the short name handles both.
+_HEADER_MEASURE_MAP: dict[str, str] = {
+    # Universal
+    "eTIV":                   "tiv_mm3",
+    "BrainSegVol":            "brain_seg_vol_mm3",
+    "BrainSegVolNotVent":     "brain_seg_no_vent_mm3",
+    "SupraTentorialVol":      "supratentorial_vol_mm3",
+    # Cortical (mris_anatomical_stats)
+    "CortexVol":              "cortex_vol_mm3",
+    "WhiteSurfArea":          "white_surf_area_mm2",
+    # Subcortical (mri_segstats --subcortgray)
+    "SubCortGrayVol":         "subcort_gray_mm3",
+}
+
+# Capture the SHORT NAME (2nd token) and the numeric value.
+_HEADER_MEASURE_RE = re.compile(r"#\s+Measure\s+\w+,\s*(\w+),\s*.+?,\s*([\d.]+),")
+
+
+def _parse_header_measures(stats_path: Path) -> dict[str, float]:
+    """Extract global header measures from a FreeSurfer stats file.
+
+    Parses all ``# Measure TAG, ...`` lines and returns a dict mapping output
+    column names (e.g. ``"tiv_mm3"``) to float values.  Unknown tags are silently
+    ignored.  Works for both cortical (.stats from mris_anatomical_stats) and
+    volumetric (.stats from mri_segstats) files.
+    """
+    measures: dict[str, float] = {}
     for line in stats_path.read_text().splitlines():
-        m = re.search(r"Measure\s+\w+,\s*eTIV\s*,.*,\s*([\d.]+)\s*,\s*mm\^3", line)
+        m = _HEADER_MEASURE_RE.search(line)
         if m:
-            return float(m.group(1))
-    return None
+            tag, value_str = m.group(1), m.group(2)
+            if tag in _HEADER_MEASURE_MAP:
+                measures[_HEADER_MEASURE_MAP[tag]] = float(value_str)
+    return measures
 
 
 def _parse_cortical_stats_file(stats_path: Path) -> pd.DataFrame:
@@ -179,7 +215,11 @@ def _parse_cortical_stats_file(stats_path: Path) -> pd.DataFrame:
 
 
 def _parse_segstats_file(stats_path: Path) -> pd.DataFrame:
-    """Parse a .stats file produced by mri_segstats."""
+    """Parse a .stats file produced by mri_segstats.
+
+    Handles both the standard 10-column output and the 11-column output
+    produced when ``--snr`` is passed (adds ``normSNR`` as the last column).
+    """
     if not stats_path.exists():
         raise FileNotFoundError(f"Stats file not found: {stats_path}")
     lines = stats_path.read_text().splitlines()
@@ -187,9 +227,11 @@ def _parse_segstats_file(stats_path: Path) -> pd.DataFrame:
     if not data_lines:
         logger.warning(f"No data rows in {stats_path}")
         return pd.DataFrame(columns=VOLUMETRIC_COLUMNS)
+    n_cols = len(data_lines[0].split())
+    names = VOLUMETRIC_COLUMNS[:n_cols]
     return pd.read_csv(
         io.StringIO("\n".join(data_lines)),
         sep=r"\s+",
         header=None,
-        names=VOLUMETRIC_COLUMNS,
+        names=names,
     )

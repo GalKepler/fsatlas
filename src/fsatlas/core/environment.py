@@ -148,14 +148,30 @@ class SubjectPaths:
         return self.mri_dir / "transforms" / "talairach.m3z"
 
     @property
-    def mni152_reg_dat(self) -> Path:
-        """Path to reg.mni152.2mm.dat produced by mni152reg.
+    def ants_dir(self) -> Path:
+        """Directory for ANTs warp caches: ``<sub>/mri/transforms/ants``."""
+        return self.mri_dir / "transforms" / "ants"
 
-        This file registers the MNI152 2mm template to the subject's native
-        space and is required for resampling MNI152 volumetric atlases.
-        Generate it by running: ``mni152reg --s <subject_id>``
+    @property
+    def subject_t1w_nii(self) -> Path:
+        """Cached NIfTI copy of ``norm.mgz`` for use as ANTs fixed image."""
+        return self.ants_dir / "subject_T1w.nii.gz"
+
+    @property
+    def easyreg_dir(self) -> Path:
+        """Directory for EasyReg warp caches: ``<sub>/mri/transforms/easyreg``."""
+        return self.mri_dir / "transforms" / "easyreg"
+
+    @property
+    def subject_synthseg(self) -> Path:
+        """SynthSeg parcellation of ``norm.mgz``.
+
+        Recon-all (FS 7.4+) writes this as part of the standard subject
+        pipeline, so it normally already exists.  The easyreg backend reuses
+        this file when present and only falls back to running ``mri_synthseg``
+        when it is missing.
         """
-        return self.mri_dir / "transforms" / "reg.mni152.2mm.dat"
+        return self.mri_dir / "synthseg.rca.mgz"
 
     @property
     def sphere_reg(self) -> dict[str, Path]:

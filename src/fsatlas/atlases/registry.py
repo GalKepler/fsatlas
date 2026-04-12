@@ -1,27 +1,60 @@
-"""Atlas registry: catalog loading, downloading, and path resolution."""
+"""Atlas registry: catalog loading and path resolution.
+
+Atlas files are resolved from a pre-populated BIDS-atlas directory rather than
+downloaded at runtime.  Set ``FSATLAS_ATLAS_DIR`` to point to your atlas
+directory, or run ``fsatlas populate`` to populate one.
+"""
 
 from __future__ import annotations
 
 import logging
+import os
 import re
 import shutil
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Literal
 
-import requests
 import yaml
-from platformdirs import user_cache_dir
 
 logger = logging.getLogger(__name__)
 
 CATALOG_PATH = Path(__file__).parent / "catalog.yaml"
-CACHE_DIR = Path(user_cache_dir("fsatlas")) / "atlases"
+
+# Package-bundled fallback atlas data (source files used by the build script).
+_BUNDLED_DATA_DIR = Path(__file__).parent / "data"
+
+
+def _resolve_atlas_dir() -> Path | None:
+    """Locate the BIDS-atlas directory.
+
+    Resolution order:
+    1. ``FSATLAS_ATLAS_DIR`` environment variable (if set and is a directory).
+    2. ``/opt/fsatlas/atlases/`` — container default (Docker / Apptainer).
+    3. Package data fallback: ``src/fsatlas/atlases/bids_atlases/``.
+    """
+    env_dir = os.environ.get("FSATLAS_ATLAS_DIR")
+    if env_dir:
+        p = Path(env_dir)
+        if p.is_dir():
+            return p
+        logger.warning(
+            f"FSATLAS_ATLAS_DIR='{env_dir}' is set but does not exist as a directory."
+        )
+
+    container_default = Path("/opt/fsatlas/atlases")
+    if container_default.is_dir():
+        return container_default
+
+    pkg_dir = Path(__file__).parent / "bids_atlases"
+    if pkg_dir.is_dir():
+        return pkg_dir
+
+    return None
 
 
 def _infer_format(atlas_type: str, files: dict[str, str]) -> str:
     """Derive a format id from the legacy ``type`` field and file extensions."""
-    # Scan files for unambiguous extensions
     for key in files:
         if key.endswith(".dlabel.gii") or key.endswith(".gii"):
             return "dlabel_gii"
@@ -31,7 +64,6 @@ def _infer_format(atlas_type: str, files: dict[str, str]) -> str:
             return "annot"
         if key.endswith(".nii.gz") or key.endswith(".nii"):
             return "nifti"
-    # Fall back to type field
     return "annot" if atlas_type == "surface" else "nifti"
 
 
@@ -46,17 +78,18 @@ class AtlasSpec:
     space: str
     citation: str
     family: str = ""
-    source_url: str = ""
-    files: dict[str, str] = field(default_factory=dict)
-    labels_tsv: str = ""                 # source filename; cached as labels.tsv
+    source_url: str = ""                 # build-time: used by populate script
+    files: dict[str, str] = field(default_factory=dict)  # build-time: source filenames
+    labels_tsv: str = ""                 # build-time: source labels filename
+    dseg_tsv: str = ""                   # build-time: rich BIDS dseg.tsv source
     builtin: bool = False
-    annot_name: str = ""                 # For FreeSurfer built-in surface atlases
-    local_source_dir: str = ""           # Local dir to copy from (priority over URL)
-    bids_name: str = ""                  # BIDS atlas entity value (e.g. "Glasser2016")
+    annot_name: str = ""                 # for FreeSurfer built-in surface atlases
+    local_source_dir: str = ""           # build-time: local dir to copy from
+    bids_name: str = ""                  # BIDS atlas entity value
 
     @property
     def structure(self) -> str:
-        """BIDS structure entity: 'cortex' for surface atlases, 'subcortex' for volumetric."""
+        """BIDS structure entity: 'cortex' for surface, 'subcortex' for volumetric."""
         return "cortex" if self.type == "surface" else "subcortex"
 
     @property
@@ -67,31 +100,68 @@ class AtlasSpec:
         return re.sub(r"[^a-zA-Z0-9]", "", self.name)
 
     @property
-    def cache_dir(self) -> Path:
-        return CACHE_DIR / self.name
+    def _safe_name(self) -> str:
+        """Sanitized atlas name for use in filenames (no special chars)."""
+        return re.sub(r"[^a-zA-Z0-9]", "", self.name)
+
+    @property
+    def atlas_dir(self) -> Path:
+        """Path to this atlas's sub-directory within the BIDS atlas directory."""
+        atlas_root = _resolve_atlas_dir()
+        if atlas_root is None:
+            # Return a placeholder path — callers check is_available() before using
+            return Path("/opt/fsatlas/atlases") / f"atlas-{self.bids_atlas_name}"
+        return atlas_root / f"atlas-{self.bids_atlas_name}"
 
     @property
     def labels_tsv_path(self) -> Path | None:
-        """Return the cached LUT path, or None if not yet generated/downloaded."""
-        p = self.cache_dir / "labels.tsv"
+        """Return the LUT path in the BIDS atlas directory, or None if not present."""
+        p = self.atlas_dir / f"atlas-{self._safe_name}_dseg.tsv"
         return p if p.exists() else None
 
-    def is_downloaded(self) -> bool:
-        """Check if all atlas files (and the LUT) are present in cache."""
+    def is_available(self) -> bool:
+        """Check if all atlas files (and the LUT) are present in the BIDS atlas directory."""
+        if self.labels_tsv_path is None:
+            return False
         if self.builtin:
-            # Builtins only need the LUT in cache (annot files come from FS itself)
-            return self.labels_tsv_path is not None
-        has_files = all((self.cache_dir / local_name).exists() for local_name in self.files)
-        has_lut = self.labels_tsv_path is not None
-        return has_files and has_lut
+            # Builtins only need the LUT (annot/nifti files come from FreeSurfer itself)
+            return True
+        # Verify expected data files exist
+        for key in self.files:
+            try:
+                p = self.get_file(key)
+                if not p.exists():
+                    return False
+            except KeyError:
+                return False
+        return True
+
+    # Keep backward-compatible alias
+    def is_downloaded(self) -> bool:
+        return self.is_available()
 
     def get_file(self, key: str) -> Path:
-        """Get the local path for a specific atlas file."""
-        if key not in self.files:
-            raise KeyError(
-                f"Atlas '{self.name}' has no file '{key}'. Available: {list(self.files)}"
-            )
-        return self.cache_dir / key
+        """Resolve a logical file key to its BIDS path in the atlas directory."""
+        base = f"atlas-{self.bids_atlas_name}_space-{self.space}"
+
+        if key == "lh.annot":
+            return self.atlas_dir / f"{base}_hemi-L_dseg.annot"
+        if key == "rh.annot":
+            return self.atlas_dir / f"{base}_hemi-R_dseg.annot"
+        if key in ("atlas.nii.gz", "atlas.nii") or (
+            key.endswith(".nii.gz") or (key.endswith(".nii") and not key.endswith(".annot"))
+        ):
+            return self.atlas_dir / f"{base}_dseg.nii.gz"
+        if key.endswith(".gca"):
+            return self.atlas_dir / f"atlas-{self.bids_atlas_name}_dseg.gca"
+        if key.endswith(".dlabel.gii"):
+            hemi = "L" if key.startswith("lh.") else "R"
+            return self.atlas_dir / f"{base}_hemi-{hemi}_dseg.dlabel.gii"
+
+        raise KeyError(
+            f"Atlas '{self.name}' has no BIDS mapping for key '{key}'. "
+            f"Available keys: {list(self.files)}"
+        )
 
 
 @dataclass
@@ -145,7 +215,7 @@ AnyAtlasSpec = AtlasSpec | CustomAtlasSpec
 
 
 class AtlasRegistry:
-    """Registry of available atlases with download and resolution capabilities."""
+    """Registry of available atlases, resolved from the BIDS-atlas directory."""
 
     def __init__(self, catalog_path: Path | None = None) -> None:
         self._catalog_path = catalog_path or CATALOG_PATH
@@ -161,13 +231,6 @@ class AtlasRegistry:
             files: dict[str, str] = entry.get("files", {})
             fmt: str = entry.get("format", "") or _infer_format(atlas_type, files)
 
-            labels_tsv = entry.get("labels_tsv", "")
-            if not labels_tsv:
-                logger.warning(
-                    f"Catalog atlas '{key}' has no labels_tsv defined. "
-                    "A LUT is required for extraction."
-                )
-
             self._atlases[key] = AtlasSpec(
                 name=entry.get("name", key),
                 family=entry.get("family", ""),
@@ -177,7 +240,8 @@ class AtlasRegistry:
                 space=entry.get("space", ""),
                 source_url=entry.get("source_url", "") or "",
                 files=files,
-                labels_tsv=labels_tsv,
+                labels_tsv=entry.get("labels_tsv", "") or "",
+                dseg_tsv=entry.get("dseg_tsv", "") or "",
                 builtin=entry.get("builtin", False),
                 annot_name=entry.get("annot_name", ""),
                 citation=entry.get("citation", ""),
@@ -193,133 +257,6 @@ class AtlasRegistry:
             available = ", ".join(sorted(self._atlases.keys()))
             raise KeyError(f"Atlas '{name}' not found. Available: {available}")
         return self._atlases[name]
-
-    def download(self, name: str, force: bool = False, env=None) -> AtlasSpec:
-        """Download (or copy) atlas files to local cache and generate the LUT.
-
-        For surface atlases the LUT is auto-generated from the .annot colour
-        table using ``LookupTable.from_annot`` after the annot files are
-        fetched.  For volumetric atlases the labels file is copied/downloaded
-        as before.
-
-        Parameters
-        ----------
-        env:
-            Optional ``FreeSurferEnv`` instance.  Required for FreeSurfer
-            built-in atlases so that fsaverage annot files can be located.
-        """
-        from ..core.lut import LookupTable
-
-        atlas = self.get(name)
-
-        if atlas.builtin:
-            return self._download_builtin(atlas, env, force)
-
-        if atlas.is_downloaded() and not force:
-            logger.info(f"Atlas '{name}' already cached at {atlas.cache_dir}")
-            return atlas
-
-        atlas.cache_dir.mkdir(parents=True, exist_ok=True)
-
-        # Download/copy atlas files
-        for local_name, remote_filename in atlas.files.items():
-            dest = atlas.cache_dir / local_name
-            if atlas.local_source_dir:
-                local_dir: Path | None = Path(atlas.local_source_dir)
-                if not local_dir.is_absolute():
-                    local_dir = CATALOG_PATH.parent / local_dir
-            else:
-                local_dir = None
-            if local_dir and (local_dir / remote_filename).exists():
-                logger.info(f"Copying {local_dir / remote_filename} -> {dest}")
-                shutil.copy2(local_dir / remote_filename, dest)
-            else:
-                url = f"{atlas.source_url}/{remote_filename}"
-                logger.info(f"Downloading {url} -> {dest}")
-                _download_file(url, dest)
-
-        # Generate / download the LUT
-        lut_dest = atlas.cache_dir / "labels.tsv"
-        if not lut_dest.exists() or force:
-            if atlas.format == "annot":
-                # Auto-generate from the .annot colour table
-                lh_annot = atlas.cache_dir / "lh.annot"
-                rh_annot = atlas.cache_dir / "rh.annot"
-                if lh_annot.exists() and rh_annot.exists():
-                    logger.info(f"Generating LUT from .annot files for '{name}'")
-                    lut = LookupTable.from_annot(lh_annot, rh_annot)
-                    lut.to_tsv(lut_dest)
-                else:
-                    logger.warning(
-                        f"Cannot generate LUT for '{name}': annot files not found in cache."
-                    )
-            else:
-                # Volumetric: download or copy the labels file
-                self._fetch_labels_tsv(atlas, lut_dest)
-
-        logger.info(f"Atlas '{name}' ready at {atlas.cache_dir}")
-        return atlas
-
-    def _download_builtin(
-        self, atlas: AtlasSpec, env, force: bool
-    ) -> AtlasSpec:
-        """Ensure a built-in atlas has its LUT cached."""
-        from ..core.lut import LookupTable
-
-        lut_dest = atlas.cache_dir / "labels.tsv"
-        if lut_dest.exists() and not force:
-            return atlas
-
-        atlas.cache_dir.mkdir(parents=True, exist_ok=True)
-
-        if atlas.format == "annot":
-            # Try bundled package file first (e.g. aseg_labels.tsv)
-            bundled = CATALOG_PATH.parent / atlas.labels_tsv
-            if bundled.exists() and bundled != lut_dest:
-                shutil.copy2(bundled, lut_dest)
-                return atlas
-
-            # Generate from fsaverage annot files
-            if env is None:
-                logger.warning(
-                    f"Cannot generate LUT for built-in '{atlas.name}' without FreeSurferEnv."
-                )
-                return atlas
-            fsavg_label = env.freesurfer_home / "subjects" / "fsaverage" / "label"
-            lh = fsavg_label / f"lh.{atlas.annot_name}.annot"
-            rh = fsavg_label / f"rh.{atlas.annot_name}.annot"
-            if lh.exists() and rh.exists():
-                logger.info(f"Generating LUT for built-in '{atlas.name}' from fsaverage")
-                lut = LookupTable.from_annot(lh, rh)
-                lut.to_tsv(lut_dest)
-            else:
-                logger.warning(
-                    f"fsaverage annot files not found for '{atlas.name}' at {fsavg_label}."
-                )
-        elif atlas.format == "nifti":
-            # For aseg: copy the bundled labels TSV
-            bundled = CATALOG_PATH.parent / atlas.labels_tsv
-            if bundled.exists():
-                shutil.copy2(bundled, lut_dest)
-            else:
-                logger.warning(f"Bundled labels file not found for '{atlas.name}': {bundled}")
-
-        return atlas
-
-    def _fetch_labels_tsv(self, atlas: AtlasSpec, dest: Path) -> None:
-        """Download or copy the raw labels file and normalise it as labels.tsv."""
-        if not atlas.labels_tsv:
-            return
-        catalog_labels = CATALOG_PATH.parent / atlas.labels_tsv
-        if catalog_labels.exists():
-            logger.info(f"Copying catalog labels {catalog_labels} -> {dest}")
-            shutil.copy2(catalog_labels, dest)
-        elif atlas.source_url:
-            url = f"{atlas.source_url}/{atlas.labels_tsv}"
-            logger.info(f"Downloading labels {url} -> {dest}")
-            _download_file(url, dest)
-        else:
-            logger.warning(f"No labels_tsv source for '{atlas.name}'.")
 
     # ------------------------------------------------------------------
     # Custom atlas factories
@@ -415,10 +352,78 @@ class AtlasRegistry:
         )
 
 
-def _download_file(url: str, dest: Path) -> None:
-    """Download a file with progress logging, respecting Content-Encoding decompression."""
-    resp = requests.get(url, stream=True, timeout=60)
-    resp.raise_for_status()
-    with open(dest, "wb") as f:
-        for chunk in resp.iter_content(chunk_size=65536):
-            f.write(chunk)
+def _add_annot_labels_to_lut(lut_path: Path, lh_annot: Path, rh_annot: Path) -> None:
+    """Enrich a dseg.tsv-based LUT with an 'annot_label' column.
+
+    Surface atlas annot files encode region names in their colour table (e.g.
+    ``L_V1_ROI``).  These are the StructName values that appear in
+    ``mris_anatomical_stats`` output.  But BIDS dseg.tsv files use a different
+    convention (e.g. ``V1_L``).  This function reads both annot colour tables,
+    builds a case-insensitive label→annot_label mapping, and writes the result
+    back into the LUT TSV.
+    """
+    import nibabel.freesurfer as nfs
+    import pandas as pd
+
+    def _norm(label: str) -> str:
+        s = label.replace("_ROI", "").replace("-ROI", "")
+        parts = s.split("_", 1)
+        if len(parts) == 2 and parts[0].upper() in ("L", "R"):
+            hemi, name = parts
+            return f"{name}_{hemi}".lower()
+        return s.lower()
+
+    annot_map: dict[str, str] = {}
+    for annot_path in (lh_annot, rh_annot):
+        _, _, names = nfs.read_annot(str(annot_path))
+        for raw in names:
+            label = raw.decode() if isinstance(raw, bytes) else raw
+            if label in ("???", "", "unknown"):
+                continue
+            annot_map[_norm(label)] = label
+
+    lut_df = pd.read_csv(lut_path, sep="\t")
+    lut_df["annot_label"] = lut_df["label"].map(
+        lambda lbl: annot_map.get(lbl.lower(), lbl)
+    )
+    n_matched = (lut_df["annot_label"] != lut_df["label"]).sum()
+    logger.info(f"annot_label cross-reference: {n_matched}/{len(lut_df)} dseg labels matched")
+    lut_df.to_csv(lut_path, sep="\t", index=False)
+
+
+def _copy_file_from_source(
+    local_name: str,
+    remote_filename: str,
+    dest: Path,
+    local_source_dir: str,
+    source_url: str,
+) -> None:
+    """Copy or download a single atlas file to *dest*.
+
+    Used by the populate script.  Kept here so it can be imported without
+    requiring the ``requests`` library at the module level.
+    """
+    import requests
+
+    if local_source_dir:
+        local_dir: Path | None = Path(local_source_dir)
+        if not local_dir.is_absolute():
+            local_dir = CATALOG_PATH.parent / local_dir
+    else:
+        local_dir = None
+
+    if local_dir and (local_dir / remote_filename).exists():
+        logger.info(f"Copying {local_dir / remote_filename} -> {dest}")
+        shutil.copy2(local_dir / remote_filename, dest)
+    elif source_url:
+        url = f"{source_url}/{remote_filename}"
+        logger.info(f"Downloading {url} -> {dest}")
+        resp = requests.get(url, stream=True, timeout=60)
+        resp.raise_for_status()
+        with open(dest, "wb") as f:
+            for chunk in resp.iter_content(chunk_size=65536):
+                f.write(chunk)
+    else:
+        raise RuntimeError(
+            f"Cannot fetch '{local_name}': no local_source_dir and no source_url."
+        )

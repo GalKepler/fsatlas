@@ -32,6 +32,9 @@ mri_ca_label  → mri_segstats         → parse output
 - **Custom atlas support** — Point at any supported file; provide a LUT TSV for the output schema.
 - **LUT-based wide output** — Each row is one region from the atlas LUT; measures are columns. Schema: `subject_id | index | label | hemisphere | measure1 | … | tiv_mm3`.
 - **LUT generation** — `fsatlas generate-lut` extracts the embedded colour table from `.annot` files into a reusable TSV.
+- **Multi-atlas runs** — Repeat `--atlas` to extract multiple atlases in a single command.
+- **Parallel processing** — `--jobs` runs subject extraction across multiple threads.
+- **Registration backend selection** — Choose between `easyreg` (fast, default) and `ants` (SyN, higher accuracy) for volumetric atlas registration.
 - **Batch processing** — Process all subjects in `$SUBJECTS_DIR` or a specified list.
 - **BIDS output layout** — Optionally write per-subject CSVs in a BIDS derivative directory tree.
 - **BIDS aggregation** — `fsatlas aggregate` combines per-subject BIDS CSVs into a single wide-format table across all subjects and sessions, with cortical and subcortical rows stacked.
@@ -136,10 +139,22 @@ fsatlas extract \
     -o ./results
 ```
 
-### Pre-download an atlas
+### Process multiple atlases in one run
 
 ```bash
-fsatlas download schaefer400-7
+fsatlas extract --atlas schaefer100-7 --atlas tian-s2 -o ./results
+```
+
+### Speed up large cohorts with parallel threads
+
+```bash
+fsatlas extract --atlas schaefer400-17 --jobs 8 -o ./results
+```
+
+### Populate the atlas directory (non-Docker)
+
+```bash
+fsatlas populate schaefer400-7 --output-dir ./atlases
 ```
 
 ### Use BIDS output layout
@@ -262,11 +277,11 @@ Both images are based on `freesurfer/freesurfer:8.0.0` with a self-contained Pyt
 ```
 src/fsatlas/
 ├── cli/
-│   └── main.py           # Click CLI: extract, aggregate, list-atlases, download, generate-lut
+│   └── main.py           # Click CLI: extract, aggregate, list-atlases, populate, generate-lut
 ├── atlases/
 │   ├── catalog.yaml      # Built-in atlas definitions (31 atlases)
-│   ├── *_labels.tsv      # Bundled LUT files for volumetric atlases
-│   └── registry.py       # Atlas loading, downloading, LUT generation
+│   ├── populate.py       # BIDS atlas directory population (build-time + fsatlas populate)
+│   └── registry.py       # Atlas loading, path resolution, custom atlas factories
 └── core/
     ├── aggregate.py      # BIDS CSV discovery + wide-format aggregation
     ├── bids.py           # BIDS output path construction

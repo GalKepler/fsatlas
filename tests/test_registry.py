@@ -176,36 +176,52 @@ class TestAtlasSpecProperties:
         # bids_name is empty → sanitize the name (alphanumeric only)
         assert bool(_re.match(r"^[a-zA-Z0-9]+$", atlas.bids_atlas_name))
 
-    def test_cache_dir(self, registry):
+    def test_atlas_dir_contains_bids_name(self, registry):
         atlas = registry.get("test_surface")
-        assert "test_surface" in str(atlas.cache_dir)
+        # atlas_dir is {atlas_root}/atlas-{bids_atlas_name}
+        assert "atlas-TestSurface" in str(atlas.atlas_dir)
 
-    def test_get_file_success(self, registry):
+    def test_get_file_lh_annot_bids_name(self, registry):
         atlas = registry.get("test_surface")
-        # returns cache_dir / "lh.annot"
         p = atlas.get_file("lh.annot")
-        assert p.name == "lh.annot"
+        # BIDS-named: atlas-TestSurface_space-fsaverage_hemi-L_dseg.annot
+        assert "hemi-L" in p.name
+        assert p.name.endswith("_dseg.annot")
 
-    def test_get_file_missing_key_raises(self, registry):
+    def test_get_file_nifti(self, registry):
+        atlas = registry.get("test_volumetric")
+        p = atlas.get_file("atlas.nii.gz")
+        assert p.name.endswith("_dseg.nii.gz")
+
+    def test_get_file_unknown_key_raises(self, registry):
         atlas = registry.get("test_surface")
         with pytest.raises(KeyError):
-            atlas.get_file("nonexistent.file")
+            atlas.get_file("completely_unknown.xyz")
 
-    def test_labels_tsv_path_none_when_not_cached(self, registry):
+    def test_labels_tsv_path_none_when_dir_absent(self, registry):
         atlas = registry.get("test_surface")
-        # cache_dir doesn't exist in tmp_path => labels.tsv not present
+        # atlas_dir doesn't exist => labels TSV not present
         assert atlas.labels_tsv_path is None
 
-    def test_is_downloaded_false_when_not_cached(self, registry):
+    def test_is_available_false_when_dir_absent(self, registry):
+        atlas = registry.get("test_surface")
+        assert atlas.is_available() is False
+
+    # backward-compatible alias
+    def test_is_downloaded_alias(self, registry):
         atlas = registry.get("test_surface")
         assert atlas.is_downloaded() is False
 
-    def test_is_downloaded_builtin_requires_only_lut(self, registry, tmp_path):
+    def test_is_available_builtin_requires_only_lut(self, registry, tmp_path, monkeypatch):
         atlas = registry.get("test_builtin")
-        # Create the labels.tsv in the cache_dir
-        atlas.cache_dir.mkdir(parents=True, exist_ok=True)
-        (atlas.cache_dir / "labels.tsv").touch()
-        assert atlas.is_downloaded() is True
+        # Point the atlas dir to tmp_path via env var
+        monkeypatch.setenv("FSATLAS_ATLAS_DIR", str(tmp_path))
+        atlas_subdir = tmp_path / f"atlas-{atlas.bids_atlas_name}"
+        atlas_subdir.mkdir(parents=True)
+        # Create the LUT file with the correct BIDS name
+        lut_file = atlas_subdir / f"atlas-{atlas._safe_name}_dseg.tsv"
+        lut_file.touch()
+        assert atlas.is_available() is True
 
 
 def re_sub_check(s: str) -> bool:

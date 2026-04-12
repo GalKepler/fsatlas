@@ -48,3 +48,7 @@ results/
 site/
 *.sif
 validation_test.ipynb
+plans
+
+# BIDS-atlas directory (build artifact — populated by scripts/build_bids_atlases.py)
+src/fsatlas/atlases/bids_atlases/

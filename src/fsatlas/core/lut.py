@@ -51,6 +51,22 @@ def _infer_hemisphere(label: str) -> str:
     return "bilateral"
 
 
+_HEMI_NORMALISE: dict[str, str] = {
+    "l": "lh", "left": "lh", "lh": "lh",
+    "r": "rh", "right": "rh", "rh": "rh",
+    "bilateral": "bilateral", "both": "bilateral",
+}
+
+
+def _normalise_hemisphere(value: str) -> str:
+    """Normalise hemisphere strings to lh / rh / bilateral.
+
+    Handles 'L', 'R', 'left', 'right', 'lh', 'rh', and 'bilateral'.
+    Unknown values are returned unchanged.
+    """
+    return _HEMI_NORMALISE.get(value.lower(), value)
+
+
 # ---------------------------------------------------------------------------
 # LookupTable
 # ---------------------------------------------------------------------------
@@ -127,13 +143,15 @@ class LookupTable:
         """Extract a LUT from a pair of FreeSurfer .annot files.
 
         Uses ``nibabel.freesurfer.read_annot`` to read the embedded colour
-        table.  The two hemispheres are merged; duplicate labels (same name in
-        both) get a ``bilateral`` hemisphere.
+        table.  Each hemisphere keeps its own row, so labels that appear in
+        both hemispheres (e.g. all regions in ``aparc``) produce two entries
+        (hemisphere ``lh`` and ``rh``) rather than a single ``bilateral`` row.
+        This ensures ``merge_measures`` can match stats from each hemisphere
+        independently without creating duplicate rows in the output.
         """
         import nibabel.freesurfer as nfs
 
         rows: list[dict] = []
-        seen: dict[str, dict] = {}
 
         for hemi, annot_path in (("lh", lh_annot), ("rh", rh_annot)):
             _, ctab, names = nfs.read_annot(str(annot_path))
@@ -143,20 +161,14 @@ class LookupTable:
                 if label in ("unknown", "???", ""):
                     continue
                 idx = int(ctab[i, 4]) if ctab is not None and i < len(ctab) else i
-                entry = {
+                rows.append({
                     _INDEX_COL: idx,
                     _LABEL_COL: label,
                     _HEMI_COL: hemi,
-                }
-                if label in seen and seen[label][_HEMI_COL] != hemi:
-                    seen[label][_HEMI_COL] = "bilateral"
-                else:
-                    seen[label] = entry
-                    rows.append(entry)
-        df = pd.DataFrame(rows).drop_duplicates(subset=[_INDEX_COL, _LABEL_COL])
-        df = df.sort_values(_INDEX_COL).reset_index(drop=True)
-        df["hemi"] = df[_LABEL_COL].map(_infer_hemisphere)
-        return cls(df=df)
+                })
+        df = pd.DataFrame(rows).drop_duplicates(subset=[_LABEL_COL, _HEMI_COL])
+        df = df.sort_values([_INDEX_COL, _HEMI_COL]).reset_index(drop=True)
+        return cls._finalise(df)
 
     # ------------------------------------------------------------------
     # Internal helpers
@@ -164,12 +176,12 @@ class LookupTable:
 
     @classmethod
     def _finalise(cls, df: pd.DataFrame) -> LookupTable:
-        """Ensure required columns exist, cast types, infer hemisphere."""
+        """Ensure required columns exist, cast types, infer/normalise hemisphere."""
         if _HEMI_COL not in df.columns:
             df[_HEMI_COL] = df[_LABEL_COL].map(_infer_hemisphere)
         df[_INDEX_COL] = df[_INDEX_COL].astype(int)
         df[_LABEL_COL] = df[_LABEL_COL].astype(str)
-        df[_HEMI_COL] = df[_HEMI_COL].astype(str)
+        df[_HEMI_COL] = df[_HEMI_COL].astype(str).map(_normalise_hemisphere)
         return cls(df=df.reset_index(drop=True))
 
     # ------------------------------------------------------------------
@@ -208,7 +220,7 @@ class LookupTable:
         self,
         raw_stats: pd.DataFrame,
         subject_id: str,
-        tiv: float | None,
+        header_measures: dict[str, float],
         measure_map: dict[str, str],
         join_on: str = "label",
     ) -> pd.DataFrame:
@@ -222,8 +234,9 @@ class LookupTable:
             (for index-based joins).
         subject_id:
             Subject identifier to add as the first column.
-        tiv:
-            Estimated total intracranial volume (mm³), or None.
+        header_measures:
+            Dict of global measures parsed from the stats file header, e.g.
+            ``{"tiv_mm3": 1.23e6, "total_gray_mm3": 4.56e5, ...}``.
         measure_map:
             Mapping from raw_stats column names to output measure column names.
             E.g. ``{"ThickAvg": "thickness_mean_mm", ...}``.
@@ -235,17 +248,46 @@ class LookupTable:
         -------
         Wide-format DataFrame:
             ``subject_id | index | label | hemisphere | [extra LUT cols] | measure1 | ...
-            | tiv_mm3``
+            | tiv_mm3 | total_gray_mm3 | subcort_gray_mm3``
         """
         lut_df = self.df.copy()
 
         if join_on == "label":
-            # Join on StructName ↔ label
-            stats = raw_stats.rename(columns={"StructName": _LABEL_COL})
-            measure_cols = [c for c in measure_map if c in stats.columns]
-            stats_slim = stats[[_LABEL_COL] + measure_cols].copy()
-            stats_slim = stats_slim.rename(columns=measure_map)
-            merged = lut_df.merge(stats_slim, on=_LABEL_COL, how="left")
+            # If the LUT has an 'annot_label' column (added when a dseg.tsv is enriched
+            # with the annot colour table), use it as the join key so that the richer
+            # dseg.tsv metadata (name, lobe, cortex_type, …) flows into the output
+            # even when the annot and dseg.tsv label formats differ (e.g. L_V1_ROI vs V1_L).
+            if "annot_label" in lut_df.columns:
+                stats = raw_stats.rename(columns={"StructName": "annot_label"})
+                measure_cols = [c for c in measure_map if c in stats.columns]
+                stats_slim = stats[["annot_label"] + measure_cols].copy()
+                stats_slim = stats_slim.rename(columns=measure_map)
+                merged = lut_df.merge(stats_slim, on="annot_label", how="left")
+                merged = merged.drop(columns=["annot_label"])
+            else:
+                # Join on StructName ↔ label.  When the stats DataFrame carries a
+                # "hemisphere" column (set by AnnotHandler) AND the LUT has
+                # hemisphere-specific rows (lh/rh, not all-bilateral), include
+                # hemisphere in the join key so that regions whose name is shared
+                # across hemispheres (e.g. aparc built-ins like "bankssts") produce
+                # two distinct rows rather than duplicates.
+                stats = raw_stats.rename(columns={"StructName": _LABEL_COL})
+                measure_cols = [c for c in measure_map if c in stats.columns]
+                has_hemi = (
+                    "hemisphere" in stats.columns
+                    and _HEMI_COL in lut_df.columns
+                    and (lut_df[_HEMI_COL] != "bilateral").any()
+                )
+                if has_hemi:
+                    stats["hemisphere"] = (
+                        stats["hemisphere"].astype(str).map(_normalise_hemisphere)
+                    )
+                    join_cols = [_LABEL_COL, _HEMI_COL]
+                else:
+                    join_cols = [_LABEL_COL]
+                stats_slim = stats[join_cols + measure_cols].copy()
+                stats_slim = stats_slim.rename(columns=measure_map)
+                merged = lut_df.merge(stats_slim, on=join_cols, how="left")
         else:
             # Join on SegId ↔ index
             stats = raw_stats.rename(columns={"SegId": _INDEX_COL})
@@ -260,5 +302,6 @@ class LookupTable:
                 merged[out_col] = pd.to_numeric(merged[out_col], errors="coerce")
 
         merged.insert(0, "subject_id", subject_id)
-        merged["tiv_mm3"] = tiv if tiv is not None else np.nan
+        for col, val in header_measures.items():
+            merged[col] = val
         return merged

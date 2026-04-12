@@ -49,41 +49,26 @@ SEGSTATS = textwrap.dedent("""\
 # ---------------------------------------------------------------------------
 
 class TestLoadLutAtlasSpec:
-    def test_loads_after_download_for_atlas_spec(self, tmp_path):
-        """_load_lut triggers download when labels_tsv_path is None for AtlasSpec."""
+    def test_loads_when_lut_present(self, tmp_path):
+        """_load_lut reads the LUT file directly from the BIDS atlas directory."""
         lut_file = tmp_path / "labels.tsv"
         lut_file.write_text("index\tlabel\themisphere\n1\tlh_r\tlh\n")
 
         atlas = MagicMock(spec=AtlasSpec)
         atlas.name = "test_atlas"
-        # labels_tsv_path returns None on first call, then the file on second
-        atlas.labels_tsv_path = None
+        atlas.labels_tsv_path = lut_file
 
-        mock_registry = MagicMock()
-
-        def side_effect_download(name, env=None):
-            # After download, update labels_tsv_path
-            atlas.labels_tsv_path = lut_file
-
-        mock_registry.download.side_effect = side_effect_download
-
-        with patch("fsatlas.core.pipeline.AtlasRegistry", return_value=mock_registry):
-            lut = _load_lut(atlas, env=None)
-
+        lut = _load_lut(atlas, env=None)
         assert len(lut.df) == 1
 
-    def test_raises_if_still_none_after_download(self, tmp_path):
-        """If download doesn't produce a LUT, _load_lut raises RuntimeError."""
+    def test_raises_if_lut_missing(self, tmp_path):
+        """_load_lut raises RuntimeError when the LUT file is not present."""
         atlas = MagicMock(spec=AtlasSpec)
         atlas.name = "bad_atlas"
-        atlas.labels_tsv_path = None  # stays None even after download
+        atlas.labels_tsv_path = None  # not in BIDS dir
 
-        mock_registry = MagicMock()
-        mock_registry.download.return_value = None  # download doesn't set labels_tsv_path
-
-        with patch("fsatlas.core.pipeline.AtlasRegistry", return_value=mock_registry):
-            with pytest.raises(RuntimeError, match="No LUT found"):
-                _load_lut(atlas)
+        with pytest.raises(RuntimeError, match="No LUT found"):
+            _load_lut(atlas)
 
 
 # ---------------------------------------------------------------------------

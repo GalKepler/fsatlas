@@ -49,15 +49,15 @@ class TestCliGroup:
         result = runner.invoke(cli, ["--help"])
         assert "extract" in result.output
         assert "list-atlases" in result.output
-        assert "download" in result.output
+        assert "populate" in result.output
 
     def test_extract_help(self, runner):
         result = runner.invoke(cli, ["extract", "--help"])
         assert result.exit_code == 0
         assert "--atlas" in result.output
 
-    def test_download_help(self, runner):
-        result = runner.invoke(cli, ["download", "--help"])
+    def test_populate_help(self, runner):
+        result = runner.invoke(cli, ["populate", "--help"])
         assert result.exit_code == 0
 
     def test_generate_lut_help(self, runner):
@@ -66,35 +66,29 @@ class TestCliGroup:
 
 
 # ---------------------------------------------------------------------------
-# download command
+# populate command
 # ---------------------------------------------------------------------------
 
-class TestDownloadCommand:
-    def test_download_nonexistent_atlas_fails(self, runner):
-        result = runner.invoke(cli, ["download", "nonexistent_atlas_xyz"])
-        assert result.exit_code != 0
+class TestPopulateCommand:
+    def test_populate_requires_output_dir_or_env(self, runner, tmp_path):
+        """populate with --output-dir should call populate_all."""
+        with patch("fsatlas.atlases.populate.populate_all") as mock_pop:
+            result = runner.invoke(
+                cli,
+                ["populate", "--output-dir", str(tmp_path)],
+            )
+        # Should call populate_all (may fail later due to missing FS, but cli exits OK)
+        # Exit code depends on whether populate_all raises — we mock it successfully
+        mock_pop.assert_called_once()
 
-    def test_download_valid_atlas_name(self, runner):
-        """Download with mocked registry should succeed."""
-        mock_atlas = MagicMock()
-        mock_atlas.name = "schaefer100_7net"
-        mock_atlas.cache_dir = Path("/tmp/fake_cache")
-
-        with patch("fsatlas.cli.main.AtlasRegistry") as MockRegistry:
-            instance = MockRegistry.return_value
-            instance.download.return_value = mock_atlas
-            result = runner.invoke(cli, ["download", "schaefer100_7net"])
-        # May fail due to env check, but we verify the registry is called
-        # or we get a meaningful error
-
-    def test_download_with_force_flag(self, runner):
-        mock_atlas = MagicMock()
-        mock_atlas.name = "schaefer100_7net"
-
-        with patch("fsatlas.cli.main.AtlasRegistry") as MockRegistry:
-            instance = MockRegistry.return_value
-            instance.download.return_value = mock_atlas
-            runner.invoke(cli, ["download", "schaefer100_7net", "--force"])
+    def test_populate_specific_atlas(self, runner, tmp_path):
+        with patch("fsatlas.atlases.populate.populate_all") as mock_pop:
+            runner.invoke(
+                cli,
+                ["populate", "schaefer100-7", "--output-dir", str(tmp_path)],
+            )
+        call_kwargs = mock_pop.call_args
+        assert call_kwargs is not None
 
 
 # ---------------------------------------------------------------------------
